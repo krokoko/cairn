@@ -85,10 +85,16 @@ Load `references/verification-taxonomy.md` for oracle types.
 | Statistical threshold | Stochastic outputs with bounded distributions |
 | Performance envelope | Measurable load/latency/resource bounds that must hold |
 | Replay/held-out data | Historical inputs with known-good outputs |
+| Behavioral twin | Third-party integrations where interface mocks can't verify real behavior |
 | LLM-as-Judge | Non-deterministic output where human review is too slow/costly |
 | Human judgment | Ambiguous outputs requiring domain expertise |
 
-Flag components with **no oracle at all** as critical gaps.
+For components with third-party integrations, specifically assess:
+- Are external services verified via behavioral twins or only interface mocks?
+- Are integration scenarios stored externally as holdout sets (inaccessible to agents)?
+- Is verification measured as satisfaction (probabilistic) or boolean pass/fail?
+
+Flag components with **no oracle at all** as critical gaps. Flag third-party integrations verified only via interface mocks as oracle weakness — agents can fabricate plausible API behavior that mocks will not catch.
 
 ### Step 5: Classify correctness feasibility
 
@@ -178,7 +184,30 @@ For each verification method found in Step 1, classify its current execution tie
 
 Flag checks that run only at T3-T4 but could run at T1-T2 (e.g., type checking only in CI, no pre-commit hooks, no focused test mode).
 
-### Step 11: Assess AgentOps telemetry
+### Step 11: Assess documentation verification
+
+Evaluate whether documentation stays synchronized with code through automated checks.
+
+Load `references/documentation-verification.md` for assessment dimensions and maturity levels.
+
+Search for indicators:
+- **Auto-generation**: OpenAPI/Swagger from annotations, TypeDoc, rustdoc, Sphinx autodoc, `protoc-gen-doc`
+- **Doc build in CI**: Docs site build step that fails on errors, broken refs, missing pages
+- **Link validation**: `markdown-link-check`, `linkinator`, internal cross-ref checks
+- **Example testing**: `doctest` (Python/Rust), tested code blocks in Markdown, `markdown-exec`
+- **Schema-doc sync**: OpenAPI validated against implementation, generated client docs
+- **Doc freshness**: PRs requiring doc updates alongside code changes, stale-doc detection
+- **ADR/changelog enforcement**: ADR templates for architectural changes, changelog entries per PR
+
+Classify overall documentation verification level (0-3):
+- **Level 0**: Docs are manually maintained, no automated sync or validation
+- **Level 1**: Some docs auto-generated (e.g., API docs from code) but no CI validation
+- **Level 2**: Doc build in CI, link checking, example testing for some docs
+- **Level 3**: Full sync enforcement — docs derived from code, freshness tracked, examples tested, schema-doc pipeline validated
+
+Flag Level 0-1 as a risk: stale docs become a fabrication vector for agents relying on them for context.
+
+### Step 12: Assess AgentOps telemetry
 
 Evaluate whether verification outputs are observable and measurable at the operational level.
 
@@ -202,82 +231,8 @@ For each telemetry stream, classify the current level (0-3):
 
 Flag critical gaps: verification that cannot be improved because there is no measurement of its effectiveness.
 
-### Step 12: Write the report
+### Step 13: Write the report
 
-Write `verification-report.md`:
+Load `references/report-template.md` for the output structure.
 
-```markdown
-# Software Verification Report
-
-## Verification Maturity
-
-**Overall tier**: X/5 — [Tier Name]
-
-## Component Breakdown
-
-| Component | Archetype | Criticality | Current methods | Maturity tier |
-|-----------|-----------|-------------|-----------------|---------------|
-| ... | ... | ... | ... | ... |
-
-## Missing Oracles
-
-| Component | Current oracle | Gap | Recommended oracle type |
-|-----------|---------------|-----|------------------------|
-| ... | ... | ... | ... |
-
-## Exactness Analysis
-
-| Component | Feasibility | Rationale |
-|-----------|-------------|-----------|
-| ... | Exact / Statistical / Mixed | ... |
-
-## Human Review Requirements
-
-| Component | Reason | Review type |
-|-----------|--------|-------------|
-| ... | ... | ... |
-
-## Autonomy Candidates
-
-| Component | Readiness | Confidence | Remaining gaps |
-|-----------|-----------|------------|----------------|
-| ... | Ready / Near-ready / Not ready | H/M/L | ... |
-
-## Feedback Loop Completeness
-
-**Overall level**: X/3 — [Level Name]
-
-| Verification method | Output format | Routable to agents? | Level | Gap |
-|---------------------|--------------|---------------------|-------|-----|
-| ... | ... | ... | ... | ... |
-
-## Workflow Gate Assessment
-
-| Gate | Risk class | Throughput concern? | Recommendation |
-|------|-----------|---------------------|----------------|
-| ... | ... | ... | Keep / Automate / Remove / Add |
-
-**Bottleneck gates**: ...
-**Missing gates**: ...
-
-## Shift-Left Assessment
-
-| Check | Current tier | Ideal tier | Gap | Recommendation |
-|-------|-------------|-----------|-----|----------------|
-| ... | ... | ... | ... | ... |
-
-**Checks running too late**: ...
-
-## AgentOps Telemetry
-
-**Overall observability level**: X/3
-
-| Stream | Level | Key gaps | Recommendation |
-|--------|-------|----------|----------------|
-| Trajectory | 0-3 | ... | ... |
-| Cost | 0-3 | ... | ... |
-| Quality | 0-3 | ... | ... |
-| Autonomy compliance | 0-3 | ... | ... |
-
-**Critical blind spots**: ...
-```
+Write `verification-report.md` following the template. Include all sections assessed in Steps 1-12: maturity tier, component breakdown, missing oracles, exactness analysis, human review requirements, autonomy candidates, feedback loops, workflow gates, shift-left, documentation verification, and AgentOps telemetry.

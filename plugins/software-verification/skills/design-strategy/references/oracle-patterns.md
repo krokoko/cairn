@@ -12,6 +12,7 @@
 | Performance envelope | Measurable load/latency/resource bounds | Machine-checkable; prevents perf regressions | Doesn't verify functional correctness |
 | LLM-as-Judge | Separate model scores output against rubric | Cheaper than human, handles ambiguity | Biases (position, verbosity, self-preference); needs calibration |
 | Human | Domain expert judgment | Handles ambiguity | Slow, expensive, inconsistent |
+| Behavioral twin | High-fidelity clone of external service | Tests real behavior, not assumptions; holdout scenarios prevent agent gaming | Requires building/maintaining clone; fidelity drift |
 
 ## When to use each oracle
 
@@ -25,6 +26,7 @@
 | Performance envelope | Performance constraints must hold | `assert p99 < 100ms, mem < 512MB` | APIs, pipelines, real-time |
 | LLM-as-Judge | Non-deterministic, human review too slow | `assert judge(output, rubric) >= threshold` | Docs quality, style, UX copy |
 | Human | Domain judgment required | Route to review queue with criteria | Content moderation, design |
+| Behavioral twin | Third-party integrations, agent-written code | `assert twin(request) ≈ production(request)` | API integrations, SaaS connectors |
 
 ### Metamorphic relations catalog
 
@@ -41,6 +43,30 @@ Position bias, verbosity bias, self-preference bias, authority bias. Use differe
 ### Human oracle
 
 Route low-confidence outputs to human review queue with structured evaluation criteria. Use only when no automated or LLM-based method can assess correctness.
+
+### Behavioral twin pattern
+
+A behavioral twin is a high-fidelity clone of an external service (SaaS API, third-party system) built specifically for testing. Unlike interface mocks (which verify assumptions) or contract tests (which verify schemas), twins verify **actual behavioral compatibility**.
+
+**When to recommend:**
+- Codebase integrates with 3+ external services
+- Integration code is agent-written (high plausible fabrication risk)
+- Interface mocks exist but integration bugs still reach production
+- Rate limits or costs prevent testing against real services at scale
+
+**Architecture:**
+- Twin built from public API docs + SDK compatibility targets
+- Self-contained binary (no network dependencies)
+- Scenarios stored externally as holdout sets (agents cannot access or game them)
+- Verification measured as satisfaction (probabilistic) not boolean pass/fail
+
+**Key distinction from mocking:**
+
+| Approach | Verifies | Agent can game? | Catches fabrication? |
+|----------|----------|-----------------|---------------------|
+| Interface mocks | Code structure | Yes | No |
+| Contract tests | Schema compliance | Partially | Partially |
+| Behavioral twins | End-to-end scenario satisfaction | No (holdout) | Yes |
 
 ## Converting implicit oracles to explicit ones
 

@@ -206,121 +206,37 @@ For each recommended application:
 - How to integrate into existing CI (independent tests merge, disagreements escalate)
 - Cost-management strategy (when to use, when to skip)
 
-### Step 12: Produce implementation roadmap
+### Step 12: Design documentation verification
+
+If `verification-report.md` exists, read the Documentation Verification section. Otherwise, check:
+- Whether API docs are auto-generated from code or manually maintained
+- Whether doc builds run in CI with strict mode (fail on broken refs)
+- Whether code examples in docs are tested
+
+Recommend documentation-as-code practices based on current gaps:
+
+| Current state | Recommendation | Tools |
+|---------------|---------------|-------|
+| No auto-generated docs | Add doc generation from code annotations | TypeDoc, Sphinx autodoc, rustdoc, springdoc |
+| Docs exist but not in CI | Add strict doc build + link checking to CI | `mkdocs build --strict`, `markdown-link-check` |
+| Examples not tested | Add doctest or tested snippet pipeline | `pytest --doctest-modules`, `cargo test` (doc examples) |
+| No schema-doc sync | Validate API spec against implementation | schemathesis, openapi-diff, prism mock validation |
+| Docs not updated with code | Add freshness enforcement (co-change requirements) | CODEOWNERS on docs, CI check for doc-alongside-code |
+
+For each recommendation, specify the concrete tool and config needed. Priority: schema-doc sync (prevents fabrication) > example testing (catches drift) > freshness enforcement (process-level).
+
+### Step 13: Produce implementation roadmap
 
 Order recommendations by priority:
 
-1. **Quick wins** (small effort, high impact): Add pre-commit hooks, shift type checking/linting to per-file, add structured CI reporters, add first fitness function
-2. **Foundation** (medium effort, enables future): Add property tests, set up contract testing, close feedback loops, add focused test scripts, seed eval suite
-3. **Deep investment** (large effort, high assurance): Formal specifications, model checking, shadow testing infrastructure, gate redesign, generator-evaluator for critical paths
+1. **Quick wins** (small effort, high impact): Add pre-commit hooks, shift type checking/linting to per-file, add structured CI reporters, add first fitness function, add doc link checking
+2. **Foundation** (medium effort, enables future): Add property tests, set up contract testing, close feedback loops, add focused test scripts, seed eval suite, add schema-doc sync validation
+3. **Deep investment** (large effort, high assurance): Formal specifications, model checking, shadow testing infrastructure, gate redesign, generator-evaluator for critical paths, behavioral twins for third-party integrations
 
 For each item specify: action, component, effort, dependencies, tools to install.
 
-### Step 13: Write the strategy
+### Step 14: Write the strategy
 
-Write `verification-strategy.md`:
+Load `references/strategy-report-template.md` for the output structure.
 
-```markdown
-# Verification Strategy
-
-## Component Strategies
-
-| Component | Archetype | Current | Recommended additions | Effort |
-|-----------|-----------|---------|----------------------|--------|
-| ... | ... | ... | ... | ... |
-
-### [Component Name]
-
-**Current state**: ...
-**Target state**: ...
-**Actions**:
-1. ...
-2. ...
-
-## Oracle Strategy
-
-| Component | Oracle type | Implementation | Properties to check |
-|-----------|-------------|----------------|---------------------|
-| ... | ... | ... | ... |
-
-## Evidence Pipeline
-
-### Merge requirements by risk level
-
-| Risk level | Required checks |
-|------------|----------------|
-| Low | ... |
-| Medium | ... |
-| High | ... |
-| Critical | ... |
-
-### Deployment requirements
-
-...
-
-### Rollback triggers
-
-...
-
-## Shift-Left Recommendations
-
-| Check | Current tier | Target tier | Action | Tool/config |
-|-------|-------------|------------|--------|-------------|
-| ... | ... | ... | ... | ... |
-
-## Feedback Loop Improvements
-
-| Verification method | Current level | Target level | Action | Config change |
-|---------------------|--------------|--------------|--------|---------------|
-| ... | ... | ... | ... | ... |
-
-## Workflow Gate Optimization
-
-| Gate | Current state | Recommendation | Risk class | Impact on agent throughput |
-|------|--------------|----------------|-----------|---------------------------|
-| ... | ... | ... | ... | ... |
-
-## Architecture Fitness Functions
-
-| Property | Type | Tool | Runs at | Maturity |
-|----------|------|------|---------|----------|
-| ... | Dependency/API/Performance/Structural/Security | ... | Pre-commit/Local/CI | 0-4 |
-
-## Eval Framework
-
-### Seed tasks
-
-| Task | Source | Difficulty | Files | Success criteria |
-|------|--------|-----------|-------|------------------|
-| ... | ... | ... | ... | ... |
-
-### Measurement plan
-
-| Dimension | How to measure | Target |
-|-----------|---------------|--------|
-| Correctness | Tests pass rate across eval runs | >90% |
-| Convention | Lint/instruction violations per task | <2 |
-| Efficiency | Average iterations per task | <5 |
-
-## Generator-Evaluator Recommendations
-
-| Component | Variant | When to apply | Cost management |
-|-----------|---------|--------------|-----------------|
-| ... | ... | ... | ... |
-
-## Implementation Roadmap
-
-### Phase 1: Quick wins (week 1)
-
-| # | Action | Component | Effort | Tools |
-|---|--------|-----------|--------|-------|
-| 1 | ... | ... | ... | ... |
-
-### Phase 2: Foundation (weeks 2-4)
-
-...
-
-### Phase 3: Deep investment (month 2+)
-
-...
-```
+Write `verification-strategy.md` following the template. Include all sections designed in Steps 1-13: component strategies, oracle strategy, evidence pipeline, shift-left, feedback loops, workflow gates, fitness functions, eval framework, generator-evaluator, documentation verification, and implementation roadmap.

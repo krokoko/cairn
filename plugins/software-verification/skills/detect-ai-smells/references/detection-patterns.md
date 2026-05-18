@@ -10,6 +10,10 @@ What tools and gate configurations catch each AI smell. Use this to map existing
 | Type checking | `tsc --noEmit`, `mypy`, `pyright` | Calls to non-existent functions/methods |
 | Schema validation | OpenAPI linting, protobuf compilation | API calls to undefined endpoints |
 | Lockfile integrity | `npm ci`, `pip install --require-hashes` | References to non-existent package versions |
+| Behavioral twin testing | Agent-built service clones, scenario runners | Fabricated API behavior that mocks wouldn't catch |
+| Contract tests | Pact, Spring Cloud Contract | Schema drift between services |
+
+**Note:** Interface mocks (`jest.mock`, `unittest.mock`) do NOT catch fabrication — the agent writes both code and mocks, creating a closed plausibility loop. Only external verification (twins, contracts against real schemas) breaks this circularity.
 
 ## AI002: Cargo-Cult Patterns
 

@@ -86,6 +86,8 @@ Coverage levels:
 - **Partial**: Some indicators caught but significant gaps remain
 - **None**: No automated mechanism exists for this category
 
+For AI001 (Plausible Fabrication) specifically: note that interface mocks alone do NOT protect against fabrication — an agent writing both code and mocks creates a closed loop of plausibility. Behavioral twins or contract tests against real API behavior are required for full coverage. If only interface mocks exist for third-party integrations, classify as "Partial" at best.
+
 ### Step 4: Assess gate maturity
 
 Load `references/ci-integration.md` for pipeline positioning and fitness function patterns.

@@ -14,6 +14,7 @@ Ratings: VH=Very High, H=High, M=Medium, L=Low. Columns: Assurance / Cost / Auto
 | Property-based testing | Hypothesis, fast-check, proptest | H / M / H / H / M | Clear invariants: round-trips, ordering, idempotence |
 | Fuzzing | libFuzzer, AFL, cargo-fuzz | M-H / M / H / H / M | Parsers, codecs, security-sensitive inputs |
 | Consumer-driven contracts | Pact, Spring Cloud Contract | M-H / M / H / H / M | Multi-service APIs; prevents agent-caused breaking changes |
+| Behavioral twin testing | Agent-built service clones, scenario runners | H / M-H / H / H / M | Third-party integrations; verifies real behavior, not assumptions |
 | Regression replay | Captured inputs/outputs | M / L-M / H / H / L | Every bug becomes a permanent test case |
 | Mutation testing | mutmut, Stryker, cargo-mutants | M / M / H / M / M | Assessing test suite quality and strength |
 
@@ -58,6 +59,7 @@ Ratings: VH=Very High, H=High, M=Medium, L=Low. Columns: Assurance / Cost / Auto
 | Replay | Historical inputs with validated outputs | Production traces as regression |
 | LLM-as-Judge | Non-deterministic output, human review too slow | Generated docs, UI copy, refactoring quality |
 | Human | Requires domain judgment | UX quality, ambiguous correctness |
+| Behavioral twin | Third-party integrations needing real-behavior verification | Clone of external service exercised via scenarios |
 
 ## Key insight
 
