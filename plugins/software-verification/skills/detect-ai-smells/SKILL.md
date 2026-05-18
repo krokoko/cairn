@@ -126,6 +126,7 @@ Load `references/git-history-signals.md` for vibe-coding signal patterns.
 Check for mechanisms that enforce commit/PR quality:
 - Commit message format enforcement (commitlint, gitlint)
 - PR description requirements (templates, bot checks)
+- PR-to-issue linking enforcement (GitHub branch protection, bot checks requiring `Closes #`, `Fixes #`)
 - PR size warnings or limits
 - Required test additions with source changes
 - Review requirements scaled to diff size
@@ -172,6 +173,7 @@ Write `ai-smells-gates-report.md`:
 |--------|-------------|-----------|-------------|
 | Commit message quality | ... | ... | ... |
 | PR descriptions | ... | ... | ... |
+| PR-to-issue linking | ... | ... | ... |
 | Test coverage with changes | ... | ... | ... |
 | PR size awareness | ... | ... | ... |
 

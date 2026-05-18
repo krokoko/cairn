@@ -51,6 +51,10 @@ git log --diff-filter=A --numstat | awk '$1 > 300 { print $3 }'
 # PRs with empty descriptions
 gh pr list --state merged --limit 20 --json body
 
+# PRs with no linked issue (missing traceability)
+gh pr list --state merged --limit 20 --json number,title,body | \
+  jq '[.[] | select(.body | test("(close[sd]?|fix(e[sd])?|resolve[sd]?)\\s+#"; "i") | not)]'
+
 # PRs with 0 review comments touching >5 files
 gh pr list --state merged --limit 20 --json comments,files
 
@@ -68,6 +72,7 @@ gh pr diff <number> --stat | # compare src vs test additions
 | Bulk file creation | 2 | >5 similar files in one commit |
 | Large initial files | 1 | >300 lines on creation |
 | Empty PR descriptions | 2 | >50% of PRs |
+| PRs without linked issues | 3 | >50% of PRs missing issue reference |
 | Zero-comment PRs (>5 files) | 2 | Any occurrence |
 
 **Risk levels:**
