@@ -3,7 +3,9 @@
   "name": "codebase-ai-readiness",
   "version": "0.1.0",
   "description": "Assess how AI-friendly a codebase is and produce an autonomy maturity map with scores, blockers, and a roadmap",
-  "author": "Alain Krok",
+  "author": {
+    "name": "Alain Krok"
+  },
   "keywords": ["readiness", "assessment", "maturity", "autonomy-levels", "diagnosis"],
   "license": "Apache-2.0"
 }

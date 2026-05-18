@@ -3,7 +3,9 @@
   "name": "software-verification",
   "version": "0.1.0",
   "description": "Design verification strategies that unlock higher levels of autonomous software development",
-  "author": "Alain Krok",
+  "author": {
+    "name": "Alain Krok"
+  },
   "keywords": ["verification", "testing", "formal-methods", "oracles", "strategy"],
   "license": "Apache-2.0"
 }
