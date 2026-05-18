@@ -14,17 +14,17 @@ Smell-specific gates by pipeline stage:
 
 | Stage | Gates | Smells caught |
 |-------|-------|---------------|
-| Pre-commit | Empty catch lint, commit message lint | AI004, git hygiene |
-| CI - fast | Type check, dead code, import boundaries | AI001, AI002, AI003, AI007 |
-| CI - slow | Mutation testing, duplication detection | AI005, AI006 |
-| PR review | PR template check, test-with-source requirement | Git hygiene |
+| Pre-commit | Empty catch lint, commit message lint, magic number lint | AI004, AI007, git hygiene |
+| CI - fast | Type check, dead code, import boundaries, version pin check | AI001, AI002, AI003, AI007, AI008 |
+| CI - slow | Mutation testing, duplication detection, silent success scan | AI004, AI005, AI006 |
+| PR review | PR template check, test-with-source requirement, Docker tag lint | Git hygiene, AI008 |
 
 ## Enforcement Levels
 
 | Level | Meaning | When appropriate |
 |-------|---------|-----------------|
 | **Blocking** | Fails build, prevents merge | High-severity smells (AI001, AI004) |
-| **Warning** | PR annotation, does not block | Medium-severity (AI002, AI003, AI005, AI007) |
+| **Warning** | PR annotation, does not block | Medium-severity (AI002, AI003, AI005, AI007, AI008) |
 | **Informational** | Report only, trend tracked | Low-severity (AI006), new gates in trial period |
 
 ## Feedback Quality Criteria
@@ -49,6 +49,8 @@ Applicable metrics:
 - Duplication percentage (should not increase)
 - Dead code count (should not increase)
 - Import depth maximum (should not increase)
+- Unpinned reference count (should not increase)
+- Silent success patterns (should not increase)
 
 ### Trend tracking (recommended for maturity)
 
@@ -70,5 +72,5 @@ Track per gate:
 |-------|-------------|------------|
 | 0 | No AI smell gates | No mutation testing, no import limits, basic lint only |
 | 1 | Partial coverage | Some gates exist (e.g., empty catch rules) but gaps in 4+ categories |
-| 2 | Broad coverage | Gates for 5+ categories, mix of blocking and warning |
-| 3 | Fitness function maturity | Trend tracking, per-PR deltas, gate effectiveness measurement |
+| 2 | Broad coverage | Gates for 6+ categories, mix of blocking and warning, pinning + fail-fast covered |
+| 3 | Fitness function maturity | Trend tracking, per-PR deltas, gate effectiveness measurement, automated update mechanisms for pins |

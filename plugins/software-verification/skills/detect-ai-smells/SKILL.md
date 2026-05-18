@@ -12,22 +12,23 @@ user-invocable: true
 
 # Assess AI Smell Detection Gates
 
-Assess whether a codebase has gates in place to catch AI-generated code smells — patterns indicating output was produced for plausibility rather than understanding. Produce an `ai-smells-gates-report.md` with coverage of the 7 AI smell categories, gap analysis, and recommendations for missing gates.
+Assess whether a codebase has gates in place to catch AI-generated code smells — patterns indicating output was produced for plausibility rather than understanding. Produce an `ai-smells-gates-report.md` with coverage of the 8 AI smell categories, gap analysis, recommendations for missing gates, and human review heuristics for what automation can't catch.
 
 ## Workflow
 
 ### Step 1: Load smell taxonomy
 
-Load `references/ai-smells-taxonomy.md` for the 7 AI smell categories and their detection approaches.
+Load `references/ai-smells-taxonomy.md` for the 8 AI smell categories and their detection approaches.
 
 These are the categories of AI-generated quality problems the codebase should be protected against:
 1. Plausible Fabrication
 2. Cargo-Cult Patterns
 3. Architecture Astronaut
-4. Shallow Error Handling
+4. Shallow Error Handling (including silent success masking and missing boundary validation)
 5. Tests Mirroring Implementation
 6. Symmetry Without Substance
-7. Local Reasoning Violations
+7. Local Reasoning Violations (including hard-coded magic values)
+8. Implicit Drift (unpinned references that silently resolve differently over time)
 
 ### Step 2: Inventory existing gates
 
@@ -53,6 +54,21 @@ Search for mechanisms that would catch AI smells:
 **Error handling checks:**
 - Linter rules for empty catch blocks (eslint no-empty, ruff B001/E722)
 - Custom rules requiring error context propagation
+- Silent success masking detection (catch blocks returning [], null, {}, or default values)
+- Startup/boundary validation enforcement (config validated at init, not lazily)
+
+**Pinning and drift prevention:**
+- Lockfile enforcement (`npm ci`, `pip install --require-hashes`)
+- Docker base image pinning (hadolint, Dockerfile lint)
+- GitHub Action SHA pinning (`actionlint`, `pin-github-action`)
+- Version range restrictions (no `^`/`~`/`*` beyond patch)
+- Automated update mechanisms (Dependabot, Renovate)
+- Model ID version pinning (for AI-using codebases)
+
+**Hard-coded value detection:**
+- Magic number linting (eslint `no-magic-numbers`, ruff `PLR2004`)
+- Repeated string literal detection
+- Config scatter patterns (same value in multiple files)
 
 **Commit/PR hygiene:**
 - Commit message linting: `commitlint`, `gitlint`, conventional commits config
@@ -69,7 +85,7 @@ Search for mechanisms that would catch AI smells:
 
 Load `references/detection-patterns.md` for what patterns each gate should catch.
 
-For each of the 7 AI smells, determine which existing gates provide coverage:
+For each of the 8 AI smells, determine which existing gates provide coverage:
 
 | Smell | Covered by | Coverage level |
 |-------|-----------|----------------|
@@ -80,6 +96,7 @@ For each of the 7 AI smells, determine which existing gates provide coverage:
 | AI005: Tests Mirroring Implementation | ... | ... |
 | AI006: Symmetry Without Substance | ... | ... |
 | AI007: Local Reasoning Violations | ... | ... |
+| AI008: Implicit Drift | ... | ... |
 
 Coverage levels:
 - **Full**: Automated gate would block or warn on this smell category
@@ -87,6 +104,10 @@ Coverage levels:
 - **None**: No automated mechanism exists for this category
 
 For AI001 (Plausible Fabrication) specifically: note that interface mocks alone do NOT protect against fabrication — an agent writing both code and mocks creates a closed loop of plausibility. Behavioral twins or contract tests against real API behavior are required for full coverage. If only interface mocks exist for third-party integrations, classify as "Partial" at best.
+
+For AI004 (Shallow Error Handling): assess both traditional empty-catch detection AND silent success masking. If only empty-catch rules exist but no detection of `catch { return [] }` / `catch { return null }` patterns, classify as "Partial". Full coverage requires startup validation enforcement and boundary validation checks.
+
+For AI008 (Implicit Drift): check for both the pin itself AND an automated update mechanism. Lockfile enforcement without Dependabot/Renovate is "Partial" — it prevents drift but accumulates staleness. Full coverage requires pinning + deliberate update process.
 
 ### Step 4: Assess gate maturity
 
@@ -109,7 +130,18 @@ Check for mechanisms that enforce commit/PR quality:
 - Required test additions with source changes
 - Review requirements scaled to diff size
 
-### Step 6: Write the report
+### Step 6: Assess human review readiness
+
+Check for mechanisms that support taste-based quality judgment:
+- Review checklists or guidelines mentioning AI-generated code
+- PR review templates with quality heuristic questions
+- CONTRIBUTING.md or review guides with proportionality/clarity criteria
+- ADRs (Architecture Decision Records) that capture "why" for reviewers
+- Style guides that go beyond formatting to address design intent
+
+If no human review heuristics exist, the report should recommend establishing them — these smells (proportionality, coherence, clarity, appropriateness) cannot be fully automated but can be systematized through review culture.
+
+### Step 7: Write the report
 
 Write `ai-smells-gates-report.md`:
 
@@ -118,7 +150,7 @@ Write `ai-smells-gates-report.md`:
 
 ## Gate Coverage Summary
 
-**Overall coverage**: X/7 smell categories with at least partial automated detection
+**Overall coverage**: X/8 smell categories with at least partial automated detection
 **Enforcement level**: [Blocking / Warning / None] for detected smells
 
 ## Coverage Matrix
@@ -132,6 +164,7 @@ Write `ai-smells-gates-report.md`:
 | AI005: Tests Mirroring Implementation | ... | ... | ... | ... |
 | AI006: Symmetry Without Substance | ... | ... | ... | ... |
 | AI007: Local Reasoning Violations | ... | ... | ... | ... |
+| AI008: Implicit Drift | ... | ... | ... | ... |
 
 ## Git History Hygiene
 
@@ -163,4 +196,28 @@ Write `ai-smells-gates-report.md`:
 
 ### Strengthen existing gates
 1. ...
+
+## Human Review Heuristics
+
+These quality signals require human judgment and cannot be fully automated. Recommend reviewers ask:
+
+### Proportionality
+- Does this solution's complexity match the problem's complexity?
+- Could this be simpler without losing correctness?
+- Are there abstraction layers that serve no current consumer?
+
+### Coherence
+- Does this code feel like it belongs in this codebase?
+- Are naming conventions consistent with surrounding code?
+- Does the error handling strategy match the project's established patterns?
+
+### Clarity
+- Do names communicate intent or just describe structure?
+- Would a new team member understand why this code exists (not just what it does)?
+- Are there "vocabulary inflation" patterns (Platform, Engine, Manager) in small-scope contexts?
+
+### Appropriateness
+- Is this the right solution for this team's skill level and maintenance capacity?
+- Does the approach fit the project's timeline and constraints?
+- Would this code be reviewable in a single PR review session?
 ```
