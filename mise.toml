@@ -1,0 +1,17 @@
+min_version = "2026.2.6"
+
+[tools]
+"npm:check-jsonschema" = "latest"
+"npm:markdownlint-cli2" = "latest"
+
+[tasks.lint]
+description = "Lint all plugin manifests, skill files, and markdown"
+run = "bash scripts/lint.sh"
+
+[tasks.validate]
+description = "Validate all JSON files against schemas"
+run = "bash scripts/validate-schemas.sh"
+
+[tasks.check]
+description = "Run all checks (lint + validate)"
+depends = ["lint", "validate"]

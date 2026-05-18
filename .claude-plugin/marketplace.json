@@ -1,0 +1,22 @@
+{
+  "$schema": "../schemas/marketplace.schema.json",
+  "name": "autonomy-rails",
+  "version": "0.1.0",
+  "description": "Plugin marketplace for making codebases ready for autonomous AI development",
+  "plugins": [
+    {
+      "name": "codebase-ai-readiness",
+      "path": "plugins/codebase-ai-readiness",
+      "version": "0.1.0",
+      "description": "Assess how AI-friendly a codebase is and produce an autonomy maturity map",
+      "keywords": ["readiness", "assessment", "maturity", "autonomy-levels", "diagnosis"]
+    },
+    {
+      "name": "software-verification",
+      "path": "plugins/software-verification",
+      "version": "0.1.0",
+      "description": "Design verification strategies that unlock higher levels of autonomous software development",
+      "keywords": ["verification", "testing", "formal-methods", "oracles", "strategy"]
+    }
+  ]
+}

@@ -1,0 +1,45 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://autonomy-rails/schemas/skill-frontmatter.schema.json",
+  "title": "Skill Frontmatter",
+  "description": "Schema for SKILL.md YAML frontmatter in autonomy-rails plugins",
+  "type": "object",
+  "required": ["name", "description"],
+  "properties": {
+    "name": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9-]*$",
+      "maxLength": 64,
+      "description": "Kebab-case skill identifier, must match the directory name"
+    },
+    "description": {
+      "type": "string",
+      "minLength": 20,
+      "maxLength": 1024,
+      "description": "Trigger description explaining what the skill does and when to invoke it"
+    },
+    "argument-hint": {
+      "type": "string",
+      "description": "Hint for expected arguments"
+    },
+    "allowed-tools": {
+      "type": "string",
+      "description": "Space-delimited list of pre-approved tools"
+    },
+    "user-invocable": {
+      "type": "boolean",
+      "default": true,
+      "description": "Whether the skill appears in the slash command menu"
+    },
+    "context": {
+      "type": "string",
+      "enum": ["fork"],
+      "description": "Set to fork to run in a subagent"
+    },
+    "model": {
+      "type": "string",
+      "description": "Model override when skill is active"
+    }
+  },
+  "additionalProperties": false
+}
