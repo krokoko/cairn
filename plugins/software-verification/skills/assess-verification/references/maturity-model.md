@@ -48,6 +48,18 @@
 - Automated promotion/rollback based on evidence thresholds
 - Human review is exception-based, not routine-based
 
+## Agentic test pyramid
+
+For agent-driven codebases, organize tests by **uncertainty tolerance** not just type:
+
+| Layer | What belongs | Speed | Reliability |
+|-------|-------------|-------|-------------|
+| Base (most tests) | Deterministic tests on non-LLM components: validators, state machines, tool handlers | ms | High |
+| Middle | Recorded tool interactions + LLM-as-judge evaluations against rubrics | seconds | Medium |
+| Top (fewest tests) | Live staging simulations, agentic QA charters, human spot-checks | minutes | Variable |
+
+Push determinism as low as possible — base-layer tests are cheap, fast, and trustworthy.
+
 ## Mapping to autonomy levels
 
 | Verification tier | Enables autonomy level | Rationale |

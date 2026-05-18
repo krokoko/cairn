@@ -75,7 +75,7 @@ These plugins assess current readiness and provide recommendations to move to th
 
 This plugin helps to answer the following question: "how AI friendly is my codebase, and what can I do to unlock more autonomy ?"
 
-Most companies are not ready for autonomous coding. Their codebases often lack clear structure, consistent docs, testable boundaries, reliable CI, strong typing, deterministic local setup, and explicit architecture decisions.
+Most companies are not ready for autonomous coding. Their codebases often lack clear structure, consistent docs, testable boundaries, reliable CI, strong typing, deterministic environments and deployment, and explicit architecture decisions.
 
 This plugin reviews an existing codebase and produces an autonomy maturity map.
 
@@ -86,6 +86,20 @@ The output includes a numeric score, a category breakdown of the findings, a rec
 This plugin helps to answer the following question: "given this codebase, these components, and these risks, what is the verification strategy that would unlock more autonomy ?".
 
 The output is a maturity of the current verification strategy, breakdown of components in the codebase with a recommended verification path for each one of them, missing oracles, insights on where exact correctness is possible, where only statistical/empirical validation is realistic, recommendations on which components require human review, which parts are candidate for autonomous agent iteration.
+
+### Coming soon
+
+#### Organization readiness plugin (Layer 1: diagnose)
+
+A codebase can be technically ready for autonomy (L4) while the team around it remains stuck at individual tooling. This plugin will assess **organizational readiness** for agentic workflows — covering review process bottlenecks, knowledge accessibility, and feedback loop completeness.
+
+It will help answer: "Is my team structured to absorb the output of autonomous agents, or will increased agent throughput just pile up in review queues?"
+
+Assessment dimensions will include:
+- **Review gate design** — where humans are in the loop today, and whether those gates are positioned for high-value judgment vs. rubber-stamping
+- **Knowledge accessibility** — whether decisions, specs, and context are machine-readable and travel with the work (vs. trapped in Slack/meetings)
+- **Feedback routing** — whether CI/verification results flow back into agent re-execution or terminate in human-only dashboards
+- **Adoption maturity** — individual tooling, team-scale orchestration, or org-scale platform
 
 ## Contributing
 

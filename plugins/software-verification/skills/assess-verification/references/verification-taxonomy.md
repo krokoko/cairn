@@ -13,6 +13,7 @@ Ratings: VH=Very High, H=High, M=Medium, L=Low. Columns: Assurance / Cost / Auto
 | System testing | End-to-end frameworks | M-H / H / M / L-M / M | Release gates, customer-visible workflows |
 | Property-based testing | Hypothesis, fast-check, proptest | H / M / H / H / M | Clear invariants: round-trips, ordering, idempotence |
 | Fuzzing | libFuzzer, AFL, cargo-fuzz | M-H / M / H / H / M | Parsers, codecs, security-sensitive inputs |
+| Consumer-driven contracts | Pact, Spring Cloud Contract | M-H / M / H / H / M | Multi-service APIs; prevents agent-caused breaking changes |
 | Regression replay | Captured inputs/outputs | M / L-M / H / H / L | Every bug becomes a permanent test case |
 | Mutation testing | mutmut, Stryker, cargo-mutants | M / M / H / M / M | Assessing test suite quality and strength |
 
@@ -37,10 +38,12 @@ Ratings: VH=Very High, H=High, M=Medium, L=Low. Columns: Assurance / Cost / Auto
 
 | Method | Key tools | Ratings (A/C/Au/S/E) | When to use |
 |--------|-----------|----------------------|-------------|
+| Agentic manual testing | Playwright, CDP, shell + QA charters | M / M / H / M / L-M | Integration flows, UI validation, exploratory QA |
 | Runtime verification | Monitors, RV-Monitor | M-H / M / H / M / H | Temporal protocols, API usage rules |
 | Shadow testing | Traffic mirroring | H / M / H / H / M | Rewrites, replacements, before promotion |
 | Canary / progressive delivery | Argo Rollouts, feature flags | M-H / M / H / H / M | All production-facing releases |
 | Chaos engineering | Chaos Monkey, Litmus | M / M / M / M / M | Distributed systems, failover paths |
+| LLM-as-Judge evaluation | Model scoring against rubrics | M / L-M / H / H / M | Non-deterministic outputs, style, generated content |
 | Human review | Code review, approvals | Variable / M / M / M / M | High-risk, ambiguous, low-confidence changes |
 
 ## Oracle types
@@ -51,7 +54,9 @@ Ratings: VH=Very High, H=High, M=Medium, L=Low. Columns: Assurance / Cost / Auto
 | Metamorphic | Transformations have known effects | `search(q) ⊆ search(broader_q)` |
 | Differential | Multiple implementations to compare | Old vs new version |
 | Statistical | Bounded stochastic output | Accuracy > 0.95, p99 < 200ms |
+| Performance envelope | Measurable load/latency/resource bounds | p99 < 100ms under 10k req/s, memory < 512MB |
 | Replay | Historical inputs with validated outputs | Production traces as regression |
+| LLM-as-Judge | Non-deterministic output, human review too slow | Generated docs, UI copy, refactoring quality |
 | Human | Requires domain judgment | UX quality, ambiguous correctness |
 
 ## Key insight

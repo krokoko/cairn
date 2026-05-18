@@ -9,13 +9,14 @@
 | Module boundaries | Separate packages, `exports`, `__init__.py`, `mod.rs` |
 | Naming consistency | File and directory naming patterns |
 | Separation of concerns | Routes vs logic vs data in distinct directories |
+| Architectural isolation | WASM, sandboxed containers, process separation, stable/experimental split |
+| Mechanically-enforced boundaries | Custom linters, structural tests, or dependency-direction checks in CI |
 
 ### Documentation
 | Signal | Where to check |
 |--------|----------------|
 | README with setup instructions | Root README.md |
-| API documentation | `docs/api/`, generated docs config, docstrings |
-| ADRs | `docs/adr/`, `ADR/`, `docs/decisions/` |
+| API docs + ADRs | `docs/api/`, docstrings, `docs/adr/`, `docs/decisions/` |
 | Changelog | `CHANGELOG.md`, conventional commits config |
 
 ### Testable boundaries
@@ -30,9 +31,9 @@
 | Signal | Where to check |
 |--------|----------------|
 | CI config exists | `.github/workflows/`, `.gitlab-ci.yml`, `Jenkinsfile` |
-| Multiple checks | Count distinct jobs/steps |
-| Coverage + required checks | `codecov.yml`, branch protection rules |
+| Multiple checks + coverage | Count jobs/steps; `codecov.yml`, branch protection rules |
 | Flakiness signals | `retry:`, `flaky` annotations, timeout overrides |
+| Shift-left checks | `.pre-commit-config.yaml`, `.husky/`, `lefthook.yml`, watch mode configs |
 
 ### Typing strength
 | Signal | Where to check |
@@ -41,12 +42,15 @@
 | Escape hatches | Count of `any`, `type: ignore`, `as unknown`, `unsafe` |
 | Typed boundaries | Request/response types, API contracts typed |
 
-### Deterministic local setup
+### Deterministic environment and deployment
 | Signal | Where to check |
 |--------|----------------|
 | Container / reproducible env | `Dockerfile`, `.devcontainer/`, `flake.nix`, `mise.toml` |
 | Env template | `.env.example`, `.env.template` |
 | Setup script | `Makefile`, `just`, `mise run setup`, documented one-liner |
+| Infrastructure as Code | `cdk.json`, `*.tf`, `Pulumi.yaml`, `template.yaml` (SAM), `*.bicep` |
+| Deployment codified | IaC in version control, not manually provisioned (no click-ops) |
+| IaC tested | `cdk synth`, `terraform plan` in CI, infrastructure unit tests |
 
 ### Architecture decisions
 | Signal | Where to check |
@@ -58,18 +62,18 @@
 ### Machine-readable intent
 | Signal | Where to check |
 |--------|----------------|
-| API schemas | `openapi.*`, `swagger.*`, `*.graphql`, `*.proto` |
-| Data schemas | `*.schema.json`, Zod/Pydantic models |
+| API + data schemas | `openapi.*`, `*.graphql`, `*.proto`, `*.schema.json`, Zod/Pydantic |
 | Contracts / property tests | Assertions, invariants, Hypothesis, fast-check |
 | Formal specs | `*.tla`, `*.als` (Alloy), `*.dfy` (Dafny) |
+| Regenerative readiness | Components definable by specs+tests alone; can be deleted and rebuilt |
 
 ### Progressive context disclosure
 | Signal | Where to check |
 |--------|----------------|
 | Agent context file | `AGENTS.md`, `CLAUDE.md`, `.cursorrules`, `.cursor/rules/` |
 | Layered docs | Root README links to deeper docs; per-folder READMEs |
-| Cross-linking | Documents reference each other (not orphaned) |
-| Entry point clarity | README states what it does, how to run, where to go next |
+| Cross-linking + entry point | Docs reference each other; README states what/how/where next |
+| Plans as versioned artifacts | `docs/plans/`, `docs/exec-plans/`, active/completed plans in-repo |
 
 ### Hidden state and magic
 | Signal | Where to check |
@@ -93,4 +97,4 @@
 | No swallowed exceptions | Grep for empty `catch`, `except: pass`, `|| true` |
 | Structured errors | Error classes or codes, not just string messages |
 | Fail-fast patterns | Validation at boundaries, early returns on bad input |
-| Actionable logging | Error messages say what to do; structured logs with levels |
+| Agent-targeted remediation | Lint/CI errors include fix instructions, not just failure names |

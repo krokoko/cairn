@@ -37,22 +37,23 @@ Requirements for advancing from one autonomy level to the next.
 **Minimum requirements:**
 - Property-based tests or contracts cover critical invariants
 - Coverage is tracked and enforced above a threshold
-- Deterministic local setup (reproducible environment)
+- Deterministic environment and deployment (reproducible environment, infrastructure as code)
 - Architecture decisions are documented
 - CI is the authority for merge decisions
 
-**Gating categories:** Machine-readable intent, Testable boundaries, Deterministic setup, Progressive context disclosure
+**Gating categories:** Machine-readable intent, Testable boundaries, Deterministic environment and deployment, Progressive context disclosure
 
 ## L4 to L5: Verified autonomy -> End-to-end autonomous
 
 **Minimum requirements:**
 - Machine-readable specifications for all critical behavior
-- Oracles exist for all critical paths (exact, property, or statistical)
+- Oracles exist for all critical paths (exact, property, statistical, or LLM-as-judge)
 - Evidence pipeline: structured verification evidence feeds merge/deploy decisions
 - Progressive delivery with automated rollback
 - Human review limited to exceptions and architecture changes
 - All hidden state documented and config validated
 - Consistent naming and patterns across entire repository
 - Structured errors with actionable messages everywhere
+- Regenerative components: key modules rebuildable from specs/tests without knowledge loss
 
 **Gating categories:** Machine-readable intent (must be 90+), all other categories 75+

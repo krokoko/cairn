@@ -22,12 +22,15 @@ Use Glob and Grep to understand the project:
 
 - Identify language(s) and framework(s) from package manifests (`package.json`, `Cargo.toml`, `go.mod`, `pyproject.toml`, `pom.xml`, `*.csproj`)
 - Find CI configuration (`.github/workflows/`, `.gitlab-ci.yml`, `Jenkinsfile`, `.circleci/`)
+- Find pre-commit hooks (`.pre-commit-config.yaml`, `.husky/`, `lefthook.yml`, `.git/hooks/`)
 - Find test directories (`test/`, `tests/`, `__tests__/`, `*_test.go`, `*_spec.rb`)
 - Find documentation (`README.md`, `docs/`, `CHANGELOG.md`, `ADR/`, `adr/`)
 - Find type configuration (`tsconfig.json`, `mypy.ini`, `pyrightconfig.json`, `.strict`)
 - Find containerization (`Dockerfile`, `docker-compose.yml`, `.devcontainer/`, `flake.nix`, `mise.toml`)
+- Find Infrastructure as Code (`cdk.json`, `cdktf.json`, `terraform/`, `*.tf`, `Pulumi.yaml`, `template.yaml` (SAM), `*.bicep`, `cloudformation/`)
 - Find schemas and contracts (`*.proto`, `openapi.*`, `*.schema.json`, `swagger.*`)
 - Find agent context files (`AGENTS.md`, `CLAUDE.md`, `.cursorrules`, `.cursor/rules/`)
+- Find execution plans (`docs/plans/`, `docs/exec-plans/`, `PLANS.md`)
 - Find config documentation (`.env.example`, `config.schema.json`)
 - Find ownership files (`CODEOWNERS`, `OWNERS`)
 
@@ -40,6 +43,9 @@ Evaluate 12 categories. Load `references/category-definitions.md` for detailed s
 - Module/package boundaries (separate packages, clear exports)
 - Naming conventions consistency
 - Absence of circular dependencies
+- Architectural isolation (sandboxed execution, containerized components, WASM modules)
+- Separation of stable vs experimental services/components
+- Mechanically-enforced boundaries (custom linters, structural tests, dependency direction checks in CI)
 
 **2.2 Documentation**
 - README presence and completeness
@@ -60,6 +66,7 @@ Evaluate 12 categories. Load `references/category-definitions.md` for detailed s
 - Coverage reporting configured
 - Required/protected branch checks
 - Evidence of flakiness (retry configs, `flaky` labels)
+- Shift-left checks present (pre-commit hooks, focused test scripts, watch mode configs)
 
 **2.5 Typing strength**
 - Type annotations coverage
@@ -67,11 +74,13 @@ Evaluate 12 categories. Load `references/category-definitions.md` for detailed s
 - Absence of escape hatches (`any`, `type: ignore`, `as unknown`)
 - Typed API boundaries (request/response types)
 
-**2.6 Deterministic local setup**
+**2.6 Deterministic environment and deployment**
 - Reproducible environment (Docker, Nix, devcontainer, mise)
 - Seed data or fixtures for local development
 - Environment template (`.env.example`, `.env.template`)
 - Single-command setup documented
+- Infrastructure as Code (AWS CDK, Terraform, Pulumi, CloudFormation, Bicep)
+- Deployment codified in version control (not manually provisioned)
 
 **2.7 Architecture decisions**
 - ADR directory exists with entries
@@ -84,12 +93,14 @@ Evaluate 12 categories. Load `references/category-definitions.md` for detailed s
 - Property-based tests
 - Formal specifications (TLA+, Alloy)
 - Configuration schemas with validation
+- Regenerative readiness (components definable by specs/tests, rebuildable without loss)
 
 **2.9 Progressive context disclosure**
 - AGENTS.md or equivalent agent-specific context file
 - Layered documentation (root README -> CONTRIBUTING -> per-folder READMEs)
 - Cross-links between documents
 - Clear entry point for newcomers (human or agent)
+- Plans as first-class versioned artifacts (execution plans, progress logs, decision logs in-repo)
 
 **2.10 Hidden state and magic**
 - Environment variables documented in one place (`.env.example`, config schema)
@@ -108,6 +119,7 @@ Evaluate 12 categories. Load `references/category-definitions.md` for detailed s
 - Error messages include what failed, where, and what to do next
 - Failures are loud and early (fail-fast patterns)
 - Logging is structured and actionable
+- Lint/CI error messages contain agent-targeted remediation instructions (what to fix, not just what failed)
 
 ### Step 3: Score each category
 
@@ -163,7 +175,7 @@ Write the file `readiness-report.md` in the codebase root with this structure:
 | Testable boundaries | XX | ... |
 | CI reliability | XX | ... |
 | Typing strength | XX | ... |
-| Deterministic local setup | XX | ... |
+| Deterministic environment and deployment | XX | ... |
 | Architecture decisions | XX | ... |
 | Machine-readable intent | XX | ... |
 | Progressive context disclosure | XX | ... |

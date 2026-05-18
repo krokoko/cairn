@@ -5,17 +5,18 @@
 | Action | Effort | Impact | Notes |
 |--------|--------|--------|-------|
 | Organize source into feature directories | Medium | +15-25 | Group related files by domain |
-| Extract shared utilities into a package | Medium | +10-15 | Reduces coupling |
-| Add barrel exports / `__init__.py` | Small | +5-10 | Clarifies public API |
-| Add a dependency analysis tool to CI | Small | +5-10 | madge, deptry, cargo-deny |
+| Extract shared utilities; add barrel exports | Medium | +10-15 | Reduces coupling, clarifies public API |
+| Add dependency analysis + custom boundary linters to CI | Medium | +10-20 | madge/deptry + mechanical enforcement of layer constraints |
+| Isolate agent-writable components (containers, WASM, sandbox) | Medium | +10-20 | Safe iteration without risk to production-critical paths |
+
 ## Documentation
 
 | Action | Effort | Impact | Notes |
 |--------|--------|--------|-------|
 | Write or improve README with setup steps | Small | +15-20 | Most impactful single doc action |
 | Add ADR directory with first decisions | Small | +10-15 | Template: MADR format |
-| Add inline docstrings to public APIs | Medium | +10-15 | Focus on exported interfaces |
-| Add CHANGELOG or conventional commits | Small | +5-10 | Use commitlint or similar |
+| Add inline docstrings + CHANGELOG | Medium | +10-15 | Public API docs; commitlint for changelog |
+
 ## Testable boundaries
 
 | Action | Effort | Impact | Notes |
@@ -24,14 +25,15 @@
 | Separate unit and integration tests | Small | +10-15 | Different directories or markers |
 | Add test fixtures / factories | Medium | +10-15 | Reduces test setup duplication |
 | Add property-based tests for key functions | Medium | +15-20 | Hypothesis, fast-check, proptest |
+
 ## CI reliability
 
 | Action | Effort | Impact | Notes |
 |--------|--------|--------|-------|
 | Add CI pipeline with test execution | Medium | +20-30 | GitHub Actions is simplest start |
-| Add coverage reporting | Small | +10-15 | Codecov, coveralls, or built-in |
-| Enable required checks on main branch | Small | +10-15 | Branch protection rules |
+| Add coverage reporting + required checks | Small | +10-15 | Codecov; branch protection rules |
 | Add linting to CI | Small | +5-10 | ESLint, ruff, clippy, golangci-lint |
+| Add pre-commit hooks for type checking and linting | Small | +10-15 | Shift checks left; agents catch errors per-file, not per-PR |
 
 ## Typing strength
 
@@ -41,13 +43,14 @@
 | Remove type escape hatches | Medium | +10-20 | Eliminate `any`, `type: ignore` |
 | Add typed API boundaries | Medium | +10-15 | Request/response types |
 
-## Deterministic local setup
+## Deterministic environment and deployment
 
 | Action | Effort | Impact | Notes |
 |--------|--------|--------|-------|
 | Add Docker or devcontainer config | Medium | +15-25 | One-command reproducible env |
 | Add `.env.example` with all variables | Small | +10-15 | Document required config |
 | Add mise.toml or Nix flake for tools | Small | +10-15 | Pin tool versions |
+| Add Infrastructure as Code (CDK, Terraform, Pulumi) with CI validation | Large | +20-30 | Codify deployment; agents can review and modify infra |
 
 ## Architecture decisions
 
@@ -62,23 +65,22 @@
 |--------|--------|--------|-------|
 | Add OpenAPI or protobuf for APIs | Medium | +15-25 | Machine-checkable API contracts |
 | Add JSON Schema for config files | Small | +10-15 | Validates configuration |
-| Add property-based tests | Medium | +15-20 | Machine-checkable invariants |
-| Add assertion contracts in code | Small | +5-10 | Pre/postcondition checks |
+| Add property-based tests + assertion contracts | Medium | +15-20 | Machine-checkable invariants and pre/postconditions |
+| Make key modules regenerative (specs+tests define behavior fully) | Large | +10-20 | Components rebuildable from contracts alone; L5 enabler |
 
 ## Progressive context disclosure
 
 | Action | Effort | Impact | Notes |
 |--------|--------|--------|-------|
 | Add CLAUDE.md / AGENTS.md at root | Small | +15-25 | Entry point for AI agents |
-| Add per-directory READMEs for complex areas | Medium | +10-15 | Layered navigation |
-| Cross-link docs (root links to deeper) | Small | +5-10 | Prevents orphaned docs |
+| Add per-directory READMEs; cross-link docs | Medium | +10-15 | Layered navigation, prevents orphaned docs |
+| Add versioned execution plans directory | Small | +10-15 | Active plans, progress logs, decision logs in-repo |
 
 ## Hidden state and magic
 
 | Action | Effort | Impact | Notes |
 |--------|--------|--------|-------|
-| Create `.env.example` documenting all vars | Small | +15-20 | Makes config discoverable |
-| Add config schema validation | Medium | +10-15 | Zod, Pydantic, JSON Schema |
+| Create `.env.example` + config schema validation | Medium | +15-20 | Discoverable config; Zod/Pydantic/JSON Schema enforced |
 | Document feature flags in one place | Small | +5-10 | Central registry of toggles |
 
 ## Repository-scale reasoning
@@ -95,4 +97,4 @@
 |--------|--------|--------|-------|
 | Audit and remove swallowed exceptions | Medium | +15-20 | No empty catch/except blocks |
 | Add structured error types or codes | Medium | +10-15 | Error classes, not just strings |
-| Add fail-fast validation at boundaries | Small | +5-10 | Early returns on bad input |
+| Write agent-targeted remediation in lint/CI error messages | Small | +10-15 | Errors tell agents what to fix, not just what failed |

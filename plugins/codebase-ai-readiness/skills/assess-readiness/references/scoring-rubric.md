@@ -9,7 +9,7 @@
 | Testable boundaries | 0.15 | Tests are the primary verification mechanism |
 | CI reliability | 0.12 | Unreliable CI blocks autonomous iteration |
 | Typing strength | 0.08 | Types prevent entire bug classes cheaply |
-| Deterministic local setup | 0.08 | Agents need reproducible environments |
+| Deterministic environment and deployment | 0.08 | Agents need reproducible environments and codified deployment |
 | Architecture decisions | 0.05 | Helps agents understand constraints |
 | Machine-readable intent | 0.12 | Enables automated verification of correctness |
 | Progressive context disclosure | 0.05 | Agents discover context through layered docs |

@@ -26,12 +26,12 @@ Takes an existing readiness report and generates a detailed improvement plan to 
 
 | Category | What it measures |
 |----------|-----------------|
-| Structure and modularity | Directory organization, module boundaries, naming |
+| Structure and modularity | Directory organization, module boundaries, naming, architectural isolation |
 | Documentation | README, API docs, ADRs, changelogs |
 | Testable boundaries | Test coverage, isolation, fixtures |
 | CI reliability | Pipeline existence, check count, flakiness |
 | Typing strength | Annotations, strict mode, escape hatches |
-| Deterministic local setup | Containers, reproducible envs, seed data |
+| Deterministic environment and deployment | Containers, reproducible envs, seed data, Infrastructure as Code |
 | Architecture decisions | ADRs, design docs, ownership |
 | Machine-readable intent | Schemas, contracts, property tests, specs |
 | Progressive context disclosure | Agent context files, layered docs, cross-linking |

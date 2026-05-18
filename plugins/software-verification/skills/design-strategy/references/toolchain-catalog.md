@@ -82,6 +82,7 @@ Tools organized by language ecosystem and verification category.
 
 | Category | Tools |
 |----------|-------|
+| Consumer-driven contracts | Pact (any language), Spring Cloud Contract (JVM), Specmatic |
 | Formal specification | TLA+ (TLC, Apalache), Alloy, Stateright (Rust) |
 | SMT solving | Z3, CVC5 |
 | Deductive verification | Dafny, Why3, Frama-C/WP, SPARK |
@@ -92,4 +93,6 @@ Tools organized by language ecosystem and verification category.
 | Progressive delivery | Argo Rollouts, Flagger, LaunchDarkly |
 | Chaos engineering | Chaos Monkey, Litmus, Gremlin |
 | Runtime monitoring | OpenTelemetry, Prometheus + alerts |
+| Agentic QA | Playwright + agent charters, CDP, Cypress + AI drivers |
+| LLM-as-Judge | OpenAI Evals, Braintrust, custom rubric evaluators |
 | Statistical model checking | PRISM, UPPAAL, Monte Carlo methods |

@@ -12,7 +12,7 @@ user-invocable: true
 
 # Software Verification Assessment
 
-Assess the current verification maturity of a codebase. Produce a `verification-report.md` with maturity tier, component breakdown, missing oracles, exactness analysis, human review requirements, and autonomy candidates.
+Assess the current verification maturity of a codebase. Produce a `verification-report.md` with maturity tier, component breakdown, missing oracles, exactness analysis, human review requirements, autonomy candidates, feedback loop completeness, workflow gate assessment, and shift-left positioning.
 
 ## Workflow
 
@@ -37,6 +37,7 @@ Search for all verification-related artifacts:
 **Contracts and schemas:**
 - Schemas: `*.schema.json`, `*.proto`, `openapi.*`, `*.graphql`
 - Contracts: assertions, `icontract`, `contracts` library imports, `invariant`
+- Consumer-driven contracts: `pact/`, `pacts/`, Pact broker config, Spring Cloud Contract stubs
 - Formal specs: `*.tla`, `*.cfg` (TLC), `*.als`, `*.dfy`
 
 **CI and operational:**
@@ -82,7 +83,9 @@ Load `references/verification-taxonomy.md` for oracle types.
 | Metamorphic relations | Output hard to predict but transformations have known effects |
 | Differential oracle | Multiple implementations or versions to compare |
 | Statistical threshold | Stochastic outputs with bounded distributions |
+| Performance envelope | Measurable load/latency/resource bounds that must hold |
 | Replay/held-out data | Historical inputs with known-good outputs |
+| LLM-as-Judge | Non-deterministic output where human review is too slow/costly |
 | Human judgment | Ambiguous outputs requiring domain expertise |
 
 Flag components with **no oracle at all** as critical gaps.
@@ -113,7 +116,69 @@ Components where AI agents could iterate autonomously:
 - Low blast radius or easy rollback
 - Clear, well-scoped responsibilities
 
-### Step 8: Write the report
+### Step 8: Assess feedback loop completeness
+
+Evaluate whether verification outputs can be consumed by agents for self-correction.
+
+Load `references/feedback-loop-model.md` for maturity levels and assessment criteria.
+
+Search for indicators:
+- **Structured output formats**: JUnit XML generation, SARIF reports, JSON test summaries, coverage in lcov/cobertura
+- **CI artifact storage**: Upload steps in CI config (actions/upload-artifact, artifacts: paths)
+- **API accessibility**: GitHub Checks API usage, status check webhooks, CI notification configs
+- **Agent re-execution triggers**: Workflow dispatch events, retry-on-failure configs, bot-triggered re-runs
+- **Failure attribution**: Error formatters that include file paths and line numbers, PR annotations
+- **Agent-accessible observability**: Local observability stack (Loki, Prometheus, Tempo, Vector), queryable logs/metrics/traces, per-worktree app isolation
+
+For each verification method found in Step 1, classify its feedback loop level (0-3):
+
+| Method | Output format | Routable? | Feedback loop level |
+|--------|--------------|-----------|---------------------|
+| ... | ... | ... | ... |
+
+Flag methods at Level 0-1 as gaps: verification exists but agents cannot act on its results.
+
+### Step 9: Assess workflow gate placement
+
+Identify all human review and approval checkpoints in the development workflow:
+
+- **PR review requirements**: Branch protection rules, CODEOWNERS, required approvals count
+- **Deployment gates**: Manual approval steps in CI/CD, environment protection rules
+- **Change advisory**: CAB processes, architecture review boards referenced in docs
+- **Compliance gates**: Security review requirements, audit sign-offs
+
+For each gate, evaluate:
+
+| Gate | Risk class served | Rejection rate (if estimable) | Could agent pre-review replace? | Produces actionable feedback? |
+|------|-------------------|-------------------------------|-------------------------------|-------------------------------|
+| ... | ... | ... | ... | ... |
+
+Identify:
+- **Bottleneck gates**: Required human review on low-risk changes where CI is authoritative
+- **Missing gates**: High-risk components with no human checkpoint
+- **Duplicate gates**: Same validation done by both CI and human reviewer
+
+### Step 10: Assess shift-left positioning
+
+Evaluate whether checks run at the earliest possible point in the development loop.
+
+Load `references/shift-left-model.md` for the tier model and indicators.
+
+Search for shift-left indicators:
+- **Pre-commit hooks**: `.pre-commit-config.yaml`, `.husky/`, `lefthook.yml`, `.git/hooks/`
+- **Post-tool-use hooks**: Agent hook configs running checks after each file write
+- **Watch mode / focused tests**: `jest --watch`, `vitest`, `cargo-watch`, scripts for changed-files-only test runs
+- **Editor-time checks**: LSP config, IDE settings running type checker on save
+
+For each verification method found in Step 1, classify its current execution tier (T1-T4):
+
+| Check | Current tier | Ideal tier | Shift-left gap? |
+|-------|-------------|-----------|-----------------|
+| ... | ... | ... | ... |
+
+Flag checks that run only at T3-T4 but could run at T1-T2 (e.g., type checking only in CI, no pre-commit hooks, no focused test mode).
+
+### Step 11: Write the report
 
 Write `verification-report.md`:
 
@@ -153,4 +218,29 @@ Write `verification-report.md`:
 | Component | Readiness | Confidence | Remaining gaps |
 |-----------|-----------|------------|----------------|
 | ... | Ready / Near-ready / Not ready | H/M/L | ... |
+
+## Feedback Loop Completeness
+
+**Overall level**: X/3 — [Level Name]
+
+| Verification method | Output format | Routable to agents? | Level | Gap |
+|---------------------|--------------|---------------------|-------|-----|
+| ... | ... | ... | ... | ... |
+
+## Workflow Gate Assessment
+
+| Gate | Risk class | Throughput concern? | Recommendation |
+|------|-----------|---------------------|----------------|
+| ... | ... | ... | Keep / Automate / Remove / Add |
+
+**Bottleneck gates**: ...
+**Missing gates**: ...
+
+## Shift-Left Assessment
+
+| Check | Current tier | Ideal tier | Gap | Recommendation |
+|-------|-------------|-----------|-----|----------------|
+| ... | ... | ... | ... | ... |
+
+**Checks running too late**: ...
 ```
