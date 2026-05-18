@@ -4,37 +4,57 @@
   "title": "Marketplace Registry",
   "description": "Schema for the autonomy-rails plugin marketplace registry",
   "type": "object",
-  "required": ["name", "version", "plugins"],
+  "required": ["name", "owner", "plugins"],
   "properties": {
-    "$schema": {
-      "type": "string"
+    "metadata": {
+      "type": "object",
+      "properties": {
+        "description": {
+          "type": "string",
+          "description": "Marketplace description"
+        },
+        "version": {
+          "type": "string",
+          "pattern": "^\\d+\\.\\d+\\.\\d+(-[a-zA-Z0-9.]+)?(\\+[a-zA-Z0-9.]+)?$",
+          "description": "Marketplace version"
+        }
+      }
     },
     "name": {
       "type": "string",
       "description": "Marketplace name"
     },
-    "version": {
-      "type": "string",
-      "pattern": "^\\d+\\.\\d+\\.\\d+(-[a-zA-Z0-9.]+)?(\\+[a-zA-Z0-9.]+)?$",
-      "description": "Marketplace version"
-    },
-    "description": {
-      "type": "string",
-      "description": "Marketplace description"
+    "owner": {
+      "type": "object",
+      "required": ["name"],
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Owner name"
+        },
+        "email": {
+          "type": "string",
+          "description": "Owner contact email"
+        },
+        "url": {
+          "type": "string",
+          "description": "Owner homepage URL"
+        }
+      }
     },
     "plugins": {
       "type": "array",
       "items": {
         "type": "object",
-        "required": ["name", "path", "version", "description"],
+        "required": ["name", "source", "description"],
         "properties": {
           "name": {
             "type": "string",
             "pattern": "^[a-z][a-z0-9-]*$"
           },
-          "path": {
+          "source": {
             "type": "string",
-            "description": "Relative path to the plugin directory"
+            "description": "Relative path to the plugin directory (e.g. ./plugins/my-plugin)"
           },
           "version": {
             "type": "string",
@@ -43,14 +63,19 @@
           "description": {
             "type": "string"
           },
+          "category": {
+            "type": "string"
+          },
           "keywords": {
             "type": "array",
             "items": { "type": "string" }
+          },
+          "tags": {
+            "type": "array",
+            "items": { "type": "string" }
           }
-        },
-        "additionalProperties": false
+        }
       }
     }
-  },
-  "additionalProperties": false
+  }
 }

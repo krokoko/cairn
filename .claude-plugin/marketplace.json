@@ -1,22 +1,28 @@
 {
-  "$schema": "../schemas/marketplace.schema.json",
+  "metadata": {
+    "description": "Plugin marketplace for making codebases ready for autonomous AI development",
+    "version": "0.1.0"
+  },
   "name": "autonomy-rails",
-  "version": "0.1.0",
-  "description": "Plugin marketplace for making codebases ready for autonomous AI development",
+  "owner": {
+    "name": "krokoko"
+  },
   "plugins": [
     {
-      "name": "codebase-ai-readiness",
-      "path": "plugins/codebase-ai-readiness",
-      "version": "0.1.0",
+      "category": "assessment",
       "description": "Assess how AI-friendly a codebase is and produce an autonomy maturity map",
-      "keywords": ["readiness", "assessment", "maturity", "autonomy-levels", "diagnosis"]
+      "keywords": ["readiness", "assessment", "maturity", "autonomy-levels", "diagnosis"],
+      "name": "codebase-ai-readiness",
+      "source": "./plugins/codebase-ai-readiness",
+      "version": "0.1.0"
     },
     {
-      "name": "software-verification",
-      "path": "plugins/software-verification",
-      "version": "0.1.0",
+      "category": "verification",
       "description": "Design verification strategies that unlock higher levels of autonomous software development",
-      "keywords": ["verification", "testing", "formal-methods", "oracles", "strategy"]
+      "keywords": ["verification", "testing", "formal-methods", "oracles", "strategy"],
+      "name": "software-verification",
+      "source": "./plugins/software-verification",
+      "version": "0.1.0"
     }
   ]
 }
