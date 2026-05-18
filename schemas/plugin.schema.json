@@ -26,8 +26,19 @@
       "description": "Short description of the plugin"
     },
     "author": {
-      "type": "string",
-      "description": "Plugin author name"
+      "type": "object",
+      "required": ["name"],
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Author name"
+        },
+        "email": {
+          "type": "string",
+          "description": "Author contact email"
+        }
+      },
+      "description": "Plugin author"
     },
     "keywords": {
       "type": "array",
@@ -38,6 +49,5 @@
       "type": "string",
       "description": "SPDX license identifier"
     }
-  },
-  "additionalProperties": false
+  }
 }

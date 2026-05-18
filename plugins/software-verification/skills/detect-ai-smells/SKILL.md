@@ -1,0 +1,164 @@
+---
+name: detect-ai-smells
+description: |
+  Assess whether a codebase has gates to detect AI-generated code smells and recommend what to add.
+  Trigger phrases: "detect ai smells", "check for ai slop gates", "ai code quality gates",
+  "do I have ai smell detection", "ai hygiene checks",
+  "what checks catch ai slop", "ai quality gates assessment"
+argument-hint: "[path-to-codebase] (defaults to current directory)"
+allowed-tools: Read Bash Glob Grep
+user-invocable: true
+---
+
+# Assess AI Smell Detection Gates
+
+Assess whether a codebase has gates in place to catch AI-generated code smells — patterns indicating output was produced for plausibility rather than understanding. Produce an `ai-smells-gates-report.md` with coverage of the 7 AI smell categories, gap analysis, and recommendations for missing gates.
+
+## Workflow
+
+### Step 1: Load smell taxonomy
+
+Load `references/ai-smells-taxonomy.md` for the 7 AI smell categories and their detection approaches.
+
+These are the categories of AI-generated quality problems the codebase should be protected against:
+1. Plausible Fabrication
+2. Cargo-Cult Patterns
+3. Architecture Astronaut
+4. Shallow Error Handling
+5. Tests Mirroring Implementation
+6. Symmetry Without Substance
+7. Local Reasoning Violations
+
+### Step 2: Inventory existing gates
+
+Search for mechanisms that would catch AI smells:
+
+**Static analysis rules:**
+- Custom semgrep rules: `.semgrep/`, `semgrep.yml`, semgrep configs in CI
+- Custom lint rules: eslint plugins, ruff extensions, custom clippy lints
+- Complexity checkers: cognitive complexity limits, import depth limits
+- Architecture enforcement: dependency-cruiser, ArchUnit, deptry, import-linter
+
+**CI quality gates:**
+- Test coverage thresholds that would catch "tests mirroring implementation" (mutation testing is stronger signal)
+- Mutation testing: `stryker`, `mutmut`, `cargo-mutants` (catches AI005 — tests mirroring implementation)
+- Dead code detection: `knip`, `ts-prune`, `vulture` (catches AI002/AI003 — unnecessary abstractions)
+- Duplication detection: `jscpd`, `cpd`, `dupfinder` (catches AI006 — symmetry without substance)
+
+**Dependency/import validation:**
+- Import boundary enforcement: eslint-plugin-boundaries, dependency-cruiser rules
+- Unused dependency detection: `depcheck`, `deptry`
+- Package existence validation in lockfiles
+
+**Error handling checks:**
+- Linter rules for empty catch blocks (eslint no-empty, ruff B001/E722)
+- Custom rules requiring error context propagation
+
+**Commit/PR hygiene:**
+- Commit message linting: `commitlint`, `gitlint`, conventional commits config
+- PR template enforcement: `.github/PULL_REQUEST_TEMPLATE.md`
+- PR size limits or warnings
+- Required test file changes with source changes
+
+**Review gates:**
+- CODEOWNERS requiring review for high-risk paths
+- Required approvals gating on diff size
+- Bot checks that flag PRs without descriptions or tests
+
+### Step 3: Map gates to smell categories
+
+Load `references/detection-patterns.md` for what patterns each gate should catch.
+
+For each of the 7 AI smells, determine which existing gates provide coverage:
+
+| Smell | Covered by | Coverage level |
+|-------|-----------|----------------|
+| AI001: Plausible Fabrication | [existing gates or "None"] | Full / Partial / None |
+| AI002: Cargo-Cult Patterns | ... | ... |
+| AI003: Architecture Astronaut | ... | ... |
+| AI004: Shallow Error Handling | ... | ... |
+| AI005: Tests Mirroring Implementation | ... | ... |
+| AI006: Symmetry Without Substance | ... | ... |
+| AI007: Local Reasoning Violations | ... | ... |
+
+Coverage levels:
+- **Full**: Automated gate would block or warn on this smell category
+- **Partial**: Some indicators caught but significant gaps remain
+- **None**: No automated mechanism exists for this category
+
+### Step 4: Assess gate maturity
+
+Load `references/ci-integration.md` for pipeline positioning and fitness function patterns.
+
+For each existing gate, evaluate:
+- **Where it runs**: Pre-commit / CI / PR review / manual
+- **Enforcement level**: Blocking (fails build) / Warning (annotation) / Informational (report only)
+- **Feedback quality**: Does it produce actionable output for agents? (file, line, fix suggestion)
+- **Trend visibility**: Is there historical tracking of gate findings?
+
+### Step 5: Assess git history hygiene gates
+
+Load `references/git-history-signals.md` for vibe-coding signal patterns.
+
+Check for mechanisms that enforce commit/PR quality:
+- Commit message format enforcement (commitlint, gitlint)
+- PR description requirements (templates, bot checks)
+- PR size warnings or limits
+- Required test additions with source changes
+- Review requirements scaled to diff size
+
+### Step 6: Write the report
+
+Write `ai-smells-gates-report.md`:
+
+```markdown
+# AI Smell Detection Gates Report
+
+## Gate Coverage Summary
+
+**Overall coverage**: X/7 smell categories with at least partial automated detection
+**Enforcement level**: [Blocking / Warning / None] for detected smells
+
+## Coverage Matrix
+
+| Smell | Gate exists? | Tool/mechanism | Enforcement | Feedback quality |
+|-------|-------------|----------------|-------------|------------------|
+| AI001: Plausible Fabrication | ... | ... | ... | ... |
+| AI002: Cargo-Cult Patterns | ... | ... | ... | ... |
+| AI003: Architecture Astronaut | ... | ... | ... | ... |
+| AI004: Shallow Error Handling | ... | ... | ... | ... |
+| AI005: Tests Mirroring Implementation | ... | ... | ... | ... |
+| AI006: Symmetry Without Substance | ... | ... | ... | ... |
+| AI007: Local Reasoning Violations | ... | ... | ... | ... |
+
+## Git History Hygiene
+
+| Signal | Gate exists? | Mechanism | Enforcement |
+|--------|-------------|-----------|-------------|
+| Commit message quality | ... | ... | ... |
+| PR descriptions | ... | ... | ... |
+| Test coverage with changes | ... | ... | ... |
+| PR size awareness | ... | ... | ... |
+
+## Gap Analysis
+
+### Unprotected smell categories
+- [List smells with no coverage and their risk]
+
+### Weak enforcement
+- [List gates that exist but only as warnings or reports]
+
+### Missing fitness functions
+- [List where trend tracking would help]
+
+## Recommendations
+
+### Quick wins (add to existing CI)
+1. ...
+
+### New gates to introduce
+1. ...
+
+### Strengthen existing gates
+1. ...
+```
