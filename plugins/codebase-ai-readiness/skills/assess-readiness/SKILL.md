@@ -33,10 +33,15 @@ Use Glob and Grep to understand the project:
 - Find execution plans (`docs/plans/`, `docs/exec-plans/`, `PLANS.md`)
 - Find config documentation (`.env.example`, `config.schema.json`)
 - Find ownership files (`CODEOWNERS`, `OWNERS`)
+- Find module boundary enforcement (`eslint-plugin-boundaries` in config, `deptry`, `madge`, ArchUnit, structural tests)
+- Find templates and generators (`plop`, `hygen`, cookiecutter, `.template` files)
+- Find agent skills and workflows (`.claude/skills/`, agent skill directories)
+- Find agent hooks (agent hook configs, `hooks.json`, post-tool-use automation)
+- Measure file size distribution (sample files, count lines, identify outliers >500 lines)
 
 ### Step 2: Assess each category
 
-Evaluate 12 categories. Load `references/category-definitions.md` for detailed signals. Also load `references/agent-contributor-model.md` for the framing principles.
+Evaluate 15 categories. Load `references/category-definitions.md` for detailed signals. Also load `references/agent-contributor-model.md` for the framing principles.
 
 **2.1 Structure and modularity**
 - Directory organization clarity
@@ -121,6 +126,38 @@ Evaluate 12 categories. Load `references/category-definitions.md` for detailed s
 - Logging is structured and actionable
 - Lint/CI error messages contain agent-targeted remediation instructions (what to fix, not just what failed)
 
+**2.13 Feedforward surfaces**
+
+Load `references/feedforward-surfaces.md` for detailed scoring signals.
+
+- Instruction files with project-specific rules (CLAUDE.md, AGENTS.md) — count actionable rules
+- Strict type checking with few escape hatches
+- Module boundary enforcement via linter or structural tests
+- Pre-commit hooks running type checker + linter + formatter per-file
+- Templates and generators for common file patterns
+- Security scanners in pre-commit or per-file hooks
+
+**2.14 Compound engineering readiness**
+
+Load `references/compound-engineering.md` for detailed scoring signals.
+
+- Instruction file with evidence of iterative growth (>10 rules, recently updated)
+- Custom skills or packaged workflows for repeated tasks
+- Hooks that enforce conventions discovered through past mistakes
+- Tests encoding past bugs as regression checks
+- Evidence of maintenance (recent updates, hooks matching current tooling)
+- Durable surfaces exist where lessons can land (not just ephemeral chat/PR comments)
+
+**2.15 Context engineering friendliness**
+
+Load `references/context-engineering.md` for detailed scoring signals.
+
+- File size distribution: 90%+ files under 300 lines (good), many >500 lines (problematic)
+- Layered documentation from root README to module-level docs
+- Clear entry points and explicit module exports
+- Retrieval-friendly naming: no generic names (utils, helpers, misc), consistent terms
+- Structured headings in documentation for searchability
+
 ### Step 3: Score each category
 
 Load `references/scoring-rubric.md` for scoring criteria.
@@ -182,6 +219,9 @@ Write the file `readiness-report.md` in the codebase root with this structure:
 | Hidden state and magic | XX | ... |
 | Repository-scale reasoning | XX | ... |
 | Failure mode legibility | XX | ... |
+| Feedforward surfaces | XX | ... |
+| Compound engineering readiness | XX | ... |
+| Context engineering friendliness | XX | ... |
 
 ## Blockers
 

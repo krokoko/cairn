@@ -178,7 +178,31 @@ For each verification method found in Step 1, classify its current execution tie
 
 Flag checks that run only at T3-T4 but could run at T1-T2 (e.g., type checking only in CI, no pre-commit hooks, no focused test mode).
 
-### Step 11: Write the report
+### Step 11: Assess AgentOps telemetry
+
+Evaluate whether verification outputs are observable and measurable at the operational level.
+
+Load `references/agentops-telemetry.md` for telemetry streams and assessment criteria.
+
+Search for indicators of operational visibility into verification:
+
+- **Trajectory telemetry**: Agent trace/logging configs, tool call tracking, session metadata
+- **Cost telemetry**: CI timing visibility, token usage tracking, billing alerts or budget configs
+- **Quality telemetry**: Coverage trend tracking, flake dashboards, defect rate monitoring, mutation testing reports
+- **Autonomy compliance telemetry**: Audit logs, override tracking, escalation frequency logging
+
+For each telemetry stream, classify the current level (0-3):
+
+| Stream | Current level | Key gaps | Impact on verification improvement |
+|--------|--------------|----------|-------------------------------------|
+| Trajectory | ... | ... | ... |
+| Cost | ... | ... | ... |
+| Quality | ... | ... | ... |
+| Autonomy compliance | ... | ... | ... |
+
+Flag critical gaps: verification that cannot be improved because there is no measurement of its effectiveness.
+
+### Step 12: Write the report
 
 Write `verification-report.md`:
 
@@ -243,4 +267,17 @@ Write `verification-report.md`:
 | ... | ... | ... | ... | ... |
 
 **Checks running too late**: ...
+
+## AgentOps Telemetry
+
+**Overall observability level**: X/3
+
+| Stream | Level | Key gaps | Recommendation |
+|--------|-------|----------|----------------|
+| Trajectory | 0-3 | ... | ... |
+| Cost | 0-3 | ... | ... |
+| Quality | 0-3 | ... | ... |
+| Autonomy compliance | 0-3 | ... | ... |
+
+**Critical blind spots**: ...
 ```

@@ -40,8 +40,10 @@ Requirements for advancing from one autonomy level to the next.
 - Deterministic environment and deployment (reproducible environment, infrastructure as code)
 - Architecture decisions are documented
 - CI is the authority for merge decisions
+- Strong feedforward surfaces: instruction file with >10 rules, module boundary enforcement, pre-commit hooks
+- Compound engineering in practice: corrections feed back into durable surfaces
 
-**Gating categories:** Machine-readable intent, Testable boundaries, Deterministic environment and deployment, Progressive context disclosure
+**Gating categories:** Machine-readable intent, Testable boundaries, Deterministic environment and deployment, Progressive context disclosure, Feedforward surfaces
 
 ## L4 to L5: Verified autonomy -> End-to-end autonomous
 
@@ -55,5 +57,8 @@ Requirements for advancing from one autonomy level to the next.
 - Consistent naming and patterns across entire repository
 - Structured errors with actionable messages everywhere
 - Regenerative components: key modules rebuildable from specs/tests without knowledge loss
+- Comprehensive feedforward: computational and document-based controls prevent most errors proactively
+- Mature compound engineering: feedback flywheel operational, first-pass acceptance high
+- Excellent context friendliness: files sized for agent windows, layered docs, retrieval-optimized naming
 
-**Gating categories:** Machine-readable intent (must be 90+), all other categories 75+
+**Gating categories:** Machine-readable intent (must be 90+), Feedforward surfaces (must be 85+), all other categories 75+

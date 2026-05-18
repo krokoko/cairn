@@ -4,18 +4,21 @@
 
 | Category | Weight | Rationale |
 |----------|--------|-----------|
-| Structure and modularity | 0.12 | Agents need clear boundaries to scope changes |
-| Documentation | 0.08 | Context for understanding intent |
-| Testable boundaries | 0.15 | Tests are the primary verification mechanism |
-| CI reliability | 0.12 | Unreliable CI blocks autonomous iteration |
-| Typing strength | 0.08 | Types prevent entire bug classes cheaply |
-| Deterministic environment and deployment | 0.08 | Agents need reproducible environments and codified deployment |
-| Architecture decisions | 0.05 | Helps agents understand constraints |
-| Machine-readable intent | 0.12 | Enables automated verification of correctness |
-| Progressive context disclosure | 0.05 | Agents discover context through layered docs |
-| Hidden state and magic | 0.05 | Implicit state causes agent failures |
-| Repository-scale reasoning | 0.05 | Consistent naming enables retrieval and reasoning |
-| Failure mode legibility | 0.05 | Legible errors enable agent self-correction |
+| Structure and modularity | 0.10 | Agents need clear boundaries to scope changes |
+| Documentation | 0.06 | Context for understanding intent |
+| Testable boundaries | 0.13 | Tests are the primary verification mechanism |
+| CI reliability | 0.10 | Unreliable CI blocks autonomous iteration |
+| Typing strength | 0.07 | Types prevent entire bug classes cheaply |
+| Deterministic environment and deployment | 0.07 | Agents need reproducible environments and codified deployment |
+| Architecture decisions | 0.04 | Helps agents understand constraints |
+| Machine-readable intent | 0.10 | Enables automated verification of correctness |
+| Progressive context disclosure | 0.04 | Agents discover context through layered docs |
+| Hidden state and magic | 0.04 | Implicit state causes agent failures |
+| Repository-scale reasoning | 0.04 | Consistent naming enables retrieval and reasoning |
+| Failure mode legibility | 0.04 | Legible errors enable agent self-correction |
+| Feedforward surfaces | 0.09 | Prevents errors proactively; reduces agent iteration count |
+| Compound engineering readiness | 0.04 | Enables knowledge accumulation across sessions |
+| Context engineering friendliness | 0.04 | Codebase structure supports effective context management |
 
 ## Scoring tiers
 

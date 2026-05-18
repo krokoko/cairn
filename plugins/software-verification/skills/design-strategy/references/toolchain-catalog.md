@@ -96,3 +96,26 @@ Tools organized by language ecosystem and verification category.
 | Agentic QA | Playwright + agent charters, CDP, Cypress + AI drivers |
 | LLM-as-Judge | OpenAI Evals, Braintrust, custom rubric evaluators |
 | Statistical model checking | PRISM, UPPAAL, Monte Carlo methods |
+
+## Architecture Fitness Functions
+
+| Category | Tools |
+|----------|-------|
+| Dependency constraints (JS/TS) | eslint-plugin-boundaries, madge (circular deps), dependency-cruiser |
+| Dependency constraints (Python) | deptry, import-linter, pydeps |
+| Dependency constraints (Java) | ArchUnit, jdepend |
+| Dependency constraints (Go) | go-arch-lint, depguard |
+| API surface stability | openapi-diff, buf breaking (protobuf), api-extractor (TS), cargo-public-api |
+| Performance budgets | bundlesize, size-limit (bundle), Lighthouse CI (web), k6 (load) |
+| Structural rules | Custom scripts, ast-grep rules, Semgrep structural patterns |
+| Security invariants | gitleaks, detect-secrets (secrets), govulncheck/Snyk (deps), Semgrep (patterns) |
+
+## Eval Frameworks
+
+| Category | Tools |
+|----------|-------|
+| Agent eval platforms | Braintrust, Humanloop, Langfuse |
+| Coding benchmarks | SWE-bench, Terminal Bench, Aider polyglot bench |
+| Custom eval runners | Custom scripts (run agent → check git diff → run tests) |
+| LLM evaluation | OpenAI Evals framework, promptfoo, RAGAS |
+| Trace and observability | Langfuse, Langsmith, Braintrust traces, OpenTelemetry |

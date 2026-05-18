@@ -67,7 +67,26 @@ For each recommendation, specify:
 - What properties or relations to check
 - How to handle cases where no oracle exists yet
 
-### Step 5: Design evidence pipeline
+### Step 5: Design architecture fitness functions
+
+Load `references/fitness-functions.md` for types, tools, and maturity levels.
+
+For each target component, identify architectural invariants that should be automated:
+
+1. **Dependency constraints**: Which module boundaries must be enforced? What unauthorized imports would indicate drift?
+2. **API surface checks**: Are there public interfaces that must remain backward-compatible?
+3. **Performance budgets**: Are there latency, size, or resource thresholds that must hold?
+4. **Structural rules**: Are there organizational invariants (file-to-test mapping, naming, export limits)?
+5. **Security invariants**: Are there security properties that must always hold (auth, input validation, no secrets)?
+
+For each recommended fitness function, specify:
+- The property being protected
+- The tool to implement it
+- Where it runs (pre-commit, local verification command, CI, or all)
+- The error message format (actionable for agents)
+- Current maturity level and target level
+
+### Step 6: Design evidence pipeline
 
 Load `references/harness-architecture.md` for the five-lane model, interface schemas, and harness metrics.
 
@@ -85,7 +104,7 @@ Recommend how verification evidence should flow through CI/CD:
 - When to require human approval
 - Rollback triggers and thresholds
 
-### Step 6: Design feedback loop improvements
+### Step 7: Design feedback loop improvements
 
 Load `../assess-verification/references/feedback-loop-model.md` for feedback loop maturity levels and assessment criteria.
 
@@ -105,7 +124,7 @@ For each verification method at Level 0-1, recommend how to close the loop:
 
 For each recommendation, specify the concrete config change or tool addition needed.
 
-### Step 7: Design shift-left repositioning
+### Step 8: Design shift-left repositioning
 
 Load `../assess-verification/references/shift-left-model.md` for the tier model.
 
@@ -125,7 +144,7 @@ For each check running later than its ideal tier, recommend how to shift it earl
 
 For each recommendation, specify the concrete tool and config to add.
 
-### Step 8: Design workflow gate optimization
+### Step 9: Design workflow gate optimization
 
 Load `references/gate-design-patterns.md`.
 
@@ -148,17 +167,56 @@ For each recommendation:
 - What risk class it serves
 - Whether the change increases or decreases agent throughput
 
-### Step 9: Produce implementation roadmap
+### Step 10: Design eval framework
+
+Load `references/eval-framework.md` for eval components, measurement dimensions, and building strategy.
+
+Recommend an eval framework appropriate for the codebase:
+
+1. **Identify 5-10 seed tasks** drawn from recent project history (bug fixes, features, refactors, config changes)
+2. **Calibrate difficulty** — annotate each with estimated human-expert time
+3. **Define success criteria** — for each task, what must pass (tests, types, lint, behavior)
+4. **Recommend automation** — how to run evals (scripts, CI workflow, scheduled job)
+5. **Map to verification gaps** — low eval scores indicate weak oracles, poor feedforward, or exceeded horizons
+
+For each recommended eval task:
+- Source (issue, PR, or synthetic scenario)
+- Difficulty tier (trivial/easy/medium/hard)
+- Files that should change
+- Success criteria (which checks must pass)
+- Measurement dimensions (correctness, convention, efficiency)
+
+### Step 11: Design generator-evaluator strategy
+
+Load `references/generator-evaluator.md` for pattern variants and application guidance.
+
+For high-criticality components, recommend whether generator-evaluator patterns apply:
+
+| Variant | Apply when | Cost |
+|---------|-----------|------|
+| Generator + Test-Writer | New features with clear specs | 2x |
+| Generator + Critic | Security-sensitive or complex changes | 1.5x |
+| Generator + Mutant | Assessing test adequacy | 2-3x |
+| N-of-M Consensus | Critical, well-specified components | Nx |
+
+For each recommended application:
+- Which component/change type it applies to
+- Which variant to use
+- How to separate generator and evaluator perspectives
+- How to integrate into existing CI (independent tests merge, disagreements escalate)
+- Cost-management strategy (when to use, when to skip)
+
+### Step 12: Produce implementation roadmap
 
 Order recommendations by priority:
 
-1. **Quick wins** (small effort, high impact): Add pre-commit hooks, shift type checking/linting to per-file, add structured CI reporters
-2. **Foundation** (medium effort, enables future): Add property tests, set up contract testing, close feedback loops, add focused test scripts
-3. **Deep investment** (large effort, high assurance): Formal specifications, model checking, shadow testing infrastructure, gate redesign
+1. **Quick wins** (small effort, high impact): Add pre-commit hooks, shift type checking/linting to per-file, add structured CI reporters, add first fitness function
+2. **Foundation** (medium effort, enables future): Add property tests, set up contract testing, close feedback loops, add focused test scripts, seed eval suite
+3. **Deep investment** (large effort, high assurance): Formal specifications, model checking, shadow testing infrastructure, gate redesign, generator-evaluator for critical paths
 
 For each item specify: action, component, effort, dependencies, tools to install.
 
-### Step 10: Write the strategy
+### Step 13: Write the strategy
 
 Write `verification-strategy.md`:
 
@@ -221,6 +279,34 @@ Write `verification-strategy.md`:
 | Gate | Current state | Recommendation | Risk class | Impact on agent throughput |
 |------|--------------|----------------|-----------|---------------------------|
 | ... | ... | ... | ... | ... |
+
+## Architecture Fitness Functions
+
+| Property | Type | Tool | Runs at | Maturity |
+|----------|------|------|---------|----------|
+| ... | Dependency/API/Performance/Structural/Security | ... | Pre-commit/Local/CI | 0-4 |
+
+## Eval Framework
+
+### Seed tasks
+
+| Task | Source | Difficulty | Files | Success criteria |
+|------|--------|-----------|-------|------------------|
+| ... | ... | ... | ... | ... |
+
+### Measurement plan
+
+| Dimension | How to measure | Target |
+|-----------|---------------|--------|
+| Correctness | Tests pass rate across eval runs | >90% |
+| Convention | Lint/instruction violations per task | <2 |
+| Efficiency | Average iterations per task | <5 |
+
+## Generator-Evaluator Recommendations
+
+| Component | Variant | When to apply | Cost management |
+|-----------|---------|--------------|-----------------|
+| ... | ... | ... | ... |
 
 ## Implementation Roadmap
 
