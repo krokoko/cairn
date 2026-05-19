@@ -1,5 +1,7 @@
 # Architecture Fitness Functions
 
+Load `fitness-functions-implementation.md` for structural/security rules, principles, and maturity levels.
+
 ## Definition
 
 An architecture fitness function is an automated check that verifies a system continues
@@ -13,9 +15,6 @@ Architectural decisions erode silently under deadline pressure. When agents writ
 they respond reliably to *automated signals* rather than documentation alone. Fitness
 functions provide those signals: when an agent violates an architectural constraint,
 the function fails, and the agent self-corrects within its steering loop.
-
-Without fitness functions, architectural rules live only in documentation or human
-memory. Agents cannot enforce what they cannot check.
 
 ## Types of fitness functions
 
@@ -61,71 +60,3 @@ Measurable thresholds that prevent quality erosion.
 | Test execution | CI timing assertions | < 3 minutes for unit suite |
 
 Example rule: "Bundle size must not increase by more than 5% without reviewer approval"
-
-### 4. Structural rules
-
-Organization checks that enforce codebase consistency.
-
-| Rule type | Implementation | Example |
-|-----------|---------------|---------|
-| File-to-test mapping | Custom script or CI check | Every file in `src/` has corresponding test |
-| Naming conventions | Custom linter rule | All repository service files end in `.repository.ts` |
-| Layer compliance | ArchUnit, custom lint | Domain models have no framework imports |
-| Single responsibility | File length + export count checks | No file exports more than 5 public symbols |
-| Documentation coverage | Custom check | Every exported function has JSDoc/docstring |
-
-### 5. Security invariants
-
-Automated checks for security-critical properties.
-
-| Invariant | Tool | Example |
-|-----------|------|---------|
-| No secrets in code | gitleaks, detect-secrets | Pre-commit and CI check |
-| Dependency vulnerabilities | Dependabot, Snyk, govulncheck | Block merge on high/critical CVEs |
-| Input validation | Semgrep rules, CodeQL | All external inputs validated at boundary |
-| Auth checks present | Custom Semgrep rules | Every API endpoint has auth middleware |
-
-## Implementation principles
-
-### 1. Express rules as executable assertions
-
-Fitness functions belong in the build pipeline alongside tests and linters.
-They must be automated, deterministic, and fast enough to run on every commit.
-
-### 2. One property per function
-
-Each check verifies one architectural property with a clear, specific error message.
-Agents need to know exactly what failed and what to fix.
-
-### 3. Include in agent verification commands
-
-For agents to self-correct, fitness functions must be runnable locally with the same
-command agents use for verification. If the check only runs in CI, agents cannot
-iterate against it.
-
-### 4. Fail with actionable messages
-
-Bad: "Architecture violation detected"
-Good: "File src/api/handler.ts imports from src/infrastructure/db.ts — domain layer
-      cannot depend on infrastructure. Move the dependency through a port interface."
-
-## Fitness function maturity levels
-
-| Level | Description | Agent impact |
-|-------|-------------|-------------|
-| 0 | No fitness functions | Agents freely violate architecture |
-| 1 | Manual enforcement (code review) | Agents unaware of constraints |
-| 2 | CI-only checks | Agents discover violations after push |
-| 3 | Local + CI checks, actionable messages | Agents self-correct within iteration loop |
-| 4 | Pre-commit + agent hooks, comprehensive | Violations caught per-file; near-zero drift |
-
-## Recommendations by archetype
-
-| Component archetype | Priority fitness functions |
-|--------------------|---------------------------|
-| Deterministic library | API surface stability, dependency constraints, performance budget |
-| CRUD/API service | Schema compatibility, layer compliance, auth invariants |
-| Distributed/stateful | Dependency constraints, protocol compatibility, timeout budgets |
-| Safety/security kernel | All security invariants, dependency isolation, no-magic rules |
-| ML-backed | Performance envelope, API surface, model version pinning |
-| Agent-written | Structural rules, naming conventions, test-to-source ratio |

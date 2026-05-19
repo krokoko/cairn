@@ -1,17 +1,53 @@
 min_version = "2026.2.6"
 
 [tools]
+node = "24"
+"npm:markdownlint-cli2" = "0.17"
+"npm:ajv-cli" = "5"
 "pipx:check-jsonschema" = "latest"
-"npm:markdownlint-cli2" = "latest"
+"pipx:pre-commit" = "4"
+
+[tasks."lint:md"]
+description = "Lint Markdown (SKILL.md, references, docs)"
+run = "markdownlint-cli2"
+
+[tasks."lint:manifests"]
+description = "Validate JSON manifests against schemas"
+run = [
+  "ajv validate -s schemas/marketplace.schema.json -d .claude-plugin/marketplace.json --all-errors --errors=text",
+  "ajv validate -s schemas/codex-marketplace.schema.json -d .agents/plugins/marketplace.json --all-errors --errors=text",
+  "ajv validate -s schemas/plugin.schema.json -d 'plugins/**/.claude-plugin/plugin.json' --all-errors --errors=text",
+  "ajv validate -s schemas/codex-plugin.schema.json -d 'plugins/**/.codex-plugin/plugin.json' --all-errors --errors=text",
+]
+
+[tasks."lint:cross-refs"]
+description = "Validate marketplace and plugin cross-references"
+run = "node tools/validate-cross-refs.cjs"
+
+[tasks."lint:json"]
+description = "Validate all JSON files parse correctly"
+run = "bash scripts/lint-json.sh"
 
 [tasks.lint]
-description = "Lint all plugin manifests, skill files, and markdown"
-run = "bash scripts/lint.sh"
+description = "Run all linters"
+depends = ["lint:md", "lint:manifests", "lint:cross-refs", "lint:json"]
+
+[tasks."validate:refs"]
+description = "Detect broken links and orphaned reference files"
+run = "python3 tools/validate-references.py"
 
 [tasks.validate]
-description = "Validate all JSON files against schemas"
-run = "bash scripts/validate-schemas.sh"
+description = "Run validation checks"
+depends = ["validate:refs"]
+
+[tasks.build]
+description = "Lint and validate (CI entrypoint)"
+depends = ["lint", "validate"]
 
 [tasks.check]
-description = "Run all checks (lint + validate)"
-depends = ["lint", "validate"]
+description = "Alias for build"
+depends = ["build"]
+
+[tasks."pre-commit"]
+description = "Run pre-commit on all files"
+run = "pre-commit run --all-files"

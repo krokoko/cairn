@@ -1,5 +1,5 @@
 {
-  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "https://autonomy-rails/schemas/plugin.schema.json",
   "title": "Plugin Manifest",
   "description": "Schema for autonomy-rails plugin.json manifests",
@@ -48,6 +48,14 @@
     "license": {
       "type": "string",
       "description": "SPDX license identifier"
+    },
+    "homepage": {
+      "type": "string",
+      "description": "Plugin homepage URL"
+    },
+    "repository": {
+      "type": "string",
+      "description": "Source repository URL"
     }
   }
 }

@@ -211,7 +211,7 @@ Flag Level 0-1 as a risk: stale docs become a fabrication vector for agents rely
 
 Evaluate whether verification outputs are observable and measurable at the operational level.
 
-Load `references/agentops-telemetry.md` for telemetry streams and assessment criteria.
+Load `references/agentops-telemetry.md` and `references/agentops-telemetry-assessment.md` for telemetry streams and assessment criteria.
 
 Search for indicators of operational visibility into verification:
 

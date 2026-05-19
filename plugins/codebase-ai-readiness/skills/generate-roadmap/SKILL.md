@@ -34,7 +34,7 @@ If no report exists, inform the user: "No readiness report found. Run `/assess-r
 
 ### Step 3: Identify gaps
 
-For each category, compare the current score to what is needed for the target level. Load `references/improvement-actions.md` for common actions. Load `references/implementation-phases.md` for the strategic phasing model and prioritization principles.
+For each category, compare the current score to what is needed for the target level. Load `references/improvement-actions.md` and `references/improvement-actions-agent.md` for common actions. Load `references/implementation-phases.md` for the strategic phasing model and prioritization principles.
 
 Focus on:
 - Categories that are below the threshold for the target level

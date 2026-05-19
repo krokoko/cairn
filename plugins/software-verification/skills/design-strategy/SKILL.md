@@ -33,7 +33,7 @@ If no report exists, perform a lightweight discovery:
 ### Step 3: Apply decision framework
 
 Load `references/hybrid-strategies.md` for archetype-to-stack mappings.
-Load `references/toolchain-catalog.md` for ecosystem-specific tool recommendations.
+Load `references/toolchain-catalog.md` and `references/toolchain-catalog-ecosystems.md` for ecosystem-specific tool recommendations.
 
 For each target component:
 
@@ -69,7 +69,7 @@ For each recommendation, specify:
 
 ### Step 5: Design architecture fitness functions
 
-Load `references/fitness-functions.md` for types, tools, and maturity levels.
+Load `references/fitness-functions.md` and `references/fitness-functions-implementation.md` for types, tools, and maturity levels.
 
 For each target component, identify architectural invariants that should be automated:
 
@@ -169,7 +169,7 @@ For each recommendation:
 
 ### Step 10: Design eval framework
 
-Load `references/eval-framework.md` for eval components, measurement dimensions, and building strategy.
+Load `references/eval-framework.md` and `references/eval-framework-operations.md` for eval components, measurement dimensions, and building strategy.
 
 Recommend an eval framework appropriate for the codebase:
 

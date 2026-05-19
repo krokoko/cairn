@@ -1,5 +1,5 @@
 {
-  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "https://autonomy-rails/schemas/skill-frontmatter.schema.json",
   "title": "Skill Frontmatter",
   "description": "Schema for SKILL.md YAML frontmatter in autonomy-rails plugins",

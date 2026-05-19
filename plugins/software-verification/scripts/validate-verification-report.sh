@@ -20,7 +20,7 @@ fi
 FILENAME=$(basename "$FILE_PATH")
 
 # Only validate known report files
-if [[ "$FILENAME" != "verification-report.md" ]] && [[ "$FILENAME" != "verification-strategy.md" ]]; then
+if [[ "$FILENAME" != "verification-report.md" ]] && [[ "$FILENAME" != "verification-strategy.md" ]] && [[ "$FILENAME" != "ai-smells-gates-report.md" ]]; then
   exit 0
 fi
 
@@ -42,6 +42,15 @@ fi
 # Check for verification-strategy.md sections
 if [[ "$FILENAME" == "verification-strategy.md" ]]; then
   for section in "Component Strategies" "Oracle Strategy" "Evidence Pipeline" "Shift-Left Recommendations" "Feedback Loop Improvements" "Workflow Gate Optimization" "Implementation Roadmap"; do
+    if ! grep -q "## $section" "$FILE_PATH"; then
+      ERRORS="${ERRORS}Missing required section: '## ${section}'. "
+    fi
+  done
+fi
+
+# Check for ai-smells-gates-report.md sections
+if [[ "$FILENAME" == "ai-smells-gates-report.md" ]]; then
+  for section in "Gate Coverage Summary" "Coverage Matrix" "Git History Hygiene" "Gap Analysis" "Recommendations" "Human Review Heuristics"; do
     if ! grep -q "## $section" "$FILE_PATH"; then
       ERRORS="${ERRORS}Missing required section: '## ${section}'. "
     fi

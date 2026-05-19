@@ -83,7 +83,7 @@ Search for mechanisms that would catch AI smells:
 
 ### Step 3: Map gates to smell categories
 
-Load `references/detection-patterns.md` for what patterns each gate should catch.
+Load `references/detection-patterns.md` and `references/detection-patterns-gates.md` for what patterns each gate should catch.
 
 For each of the 8 AI smells, determine which existing gates provide coverage:
 
@@ -144,82 +144,4 @@ If no human review heuristics exist, the report should recommend establishing th
 
 ### Step 7: Write the report
 
-Write `ai-smells-gates-report.md`:
-
-```markdown
-# AI Smell Detection Gates Report
-
-## Gate Coverage Summary
-
-**Overall coverage**: X/8 smell categories with at least partial automated detection
-**Enforcement level**: [Blocking / Warning / None] for detected smells
-
-## Coverage Matrix
-
-| Smell | Gate exists? | Tool/mechanism | Enforcement | Feedback quality |
-|-------|-------------|----------------|-------------|------------------|
-| AI001: Plausible Fabrication | ... | ... | ... | ... |
-| AI002: Cargo-Cult Patterns | ... | ... | ... | ... |
-| AI003: Architecture Astronaut | ... | ... | ... | ... |
-| AI004: Shallow Error Handling | ... | ... | ... | ... |
-| AI005: Tests Mirroring Implementation | ... | ... | ... | ... |
-| AI006: Symmetry Without Substance | ... | ... | ... | ... |
-| AI007: Local Reasoning Violations | ... | ... | ... | ... |
-| AI008: Implicit Drift | ... | ... | ... | ... |
-
-## Git History Hygiene
-
-| Signal | Gate exists? | Mechanism | Enforcement |
-|--------|-------------|-----------|-------------|
-| Commit message quality | ... | ... | ... |
-| PR descriptions | ... | ... | ... |
-| PR-to-issue linking | ... | ... | ... |
-| Test coverage with changes | ... | ... | ... |
-| PR size awareness | ... | ... | ... |
-
-## Gap Analysis
-
-### Unprotected smell categories
-- [List smells with no coverage and their risk]
-
-### Weak enforcement
-- [List gates that exist but only as warnings or reports]
-
-### Missing fitness functions
-- [List where trend tracking would help]
-
-## Recommendations
-
-### Quick wins (add to existing CI)
-1. ...
-
-### New gates to introduce
-1. ...
-
-### Strengthen existing gates
-1. ...
-
-## Human Review Heuristics
-
-These quality signals require human judgment and cannot be fully automated. Recommend reviewers ask:
-
-### Proportionality
-- Does this solution's complexity match the problem's complexity?
-- Could this be simpler without losing correctness?
-- Are there abstraction layers that serve no current consumer?
-
-### Coherence
-- Does this code feel like it belongs in this codebase?
-- Are naming conventions consistent with surrounding code?
-- Does the error handling strategy match the project's established patterns?
-
-### Clarity
-- Do names communicate intent or just describe structure?
-- Would a new team member understand why this code exists (not just what it does)?
-- Are there "vocabulary inflation" patterns (Platform, Engine, Manager) in small-scope contexts?
-
-### Appropriateness
-- Is this the right solution for this team's skill level and maintenance capacity?
-- Does the approach fit the project's timeline and constraints?
-- Would this code be reviewable in a single PR review session?
-```
+Load `references/ai-smells-gates-report-template.md` and write `ai-smells-gates-report.md` following that structure. Populate all sections with findings from Steps 1–6.

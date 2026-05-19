@@ -24,6 +24,10 @@ Performs a full assessment of existing verification infrastructure. Inventories 
 
 Takes an existing verification report (or performs lightweight discovery) and designs per-component verification strategies. Recommends tools, oracle patterns, evidence pipeline design, and an implementation roadmap. Outputs `verification-strategy.md`.
 
+### `/detect-ai-smells`
+
+Assesses whether the codebase has automated gates to catch AI-generated code smells (plausible fabrication, shallow error handling, tests mirroring implementation, implicit drift, and more). Outputs `ai-smells-gates-report.md`.
+
 ## Verification methods covered
 
 | Category | Methods |

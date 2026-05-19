@@ -10,7 +10,7 @@ A plugin packages **domain expertise** into a form that AI agents can consume. T
 
 ## Anatomy of a plugin
 
-```
+```text
 plugins/<plugin-name>/
   .claude-plugin/
     plugin.json               # Manifest: name, version, description, author, keywords, license
@@ -31,7 +31,7 @@ plugins/<plugin-name>/
 - `name`: Required. Kebab-case identifier (`^[a-z][a-z0-9-]*$`), max 64 characters.
 - `version`: Semantic version (e.g., `0.1.0`).
 - `description`: Max 500 characters. Explain what the plugin does in one sentence.
-- `author`: Name of the author.
+- `author`: Object with required `name` (and optional `email`).
 - `keywords`: Array of search terms.
 - `license`: SPDX identifier (e.g., `Apache-2.0`).
 

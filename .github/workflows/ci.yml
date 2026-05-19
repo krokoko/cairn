@@ -1,0 +1,22 @@
+name: Build
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: jdx/mise-action@v4
+        with:
+          cache: true
+
+      - name: Install tools
+        run: mise install
+
+      - name: Build
+        run: mise run build

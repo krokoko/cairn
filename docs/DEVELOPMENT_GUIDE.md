@@ -5,14 +5,35 @@ This guide explains how to create, validate, and test plugins for the autonomy-r
 ## Prerequisites
 
 - [mise](https://mise.jdx.dev/) for task running and tool management
-- Python 3.10+ with `jsonschema` package (for validation scripts): `pip install jsonschema`
-- Bash (for hook scripts and linting)
+- Node.js 24+ (via mise) for markdownlint and ajv
+- Python 3.10+ for reference integrity checks
+- Bash for hook scripts
 
-Install mise-managed tools:
+Install tools:
 
 ```bash
 mise install
 ```
+
+## Repository tooling
+
+Aligned with [awslabs/agent-plugins](https://github.com/awslabs/agent-plugins):
+
+| Task | Command | What it checks |
+|------|---------|----------------|
+| Full CI build | `mise run build` | Lint + validate |
+| Alias | `mise run check` | Same as build |
+| Markdown | `mise run lint:md` | All `**/*.md` + custom SKILL/reference rules |
+| Manifests | `mise run lint:manifests` | JSON Schema via ajv |
+| Cross-refs | `mise run lint:cross-refs` | Claude + Codex marketplaces vs plugin dirs |
+| References | `mise run validate:refs` | Broken links and orphan reference files |
+| Pre-commit | `mise run pre-commit` | Optional local hook bundle |
+
+Custom markdownlint rules in `tools/`:
+
+- `markdownlint-skill-length.cjs` — SKILL.md max 300 lines
+- `markdownlint-reference-length.cjs` — references max 100 lines
+- `markdownlint-frontmatter.cjs` — SKILL frontmatter vs schema
 
 ## Creating a new plugin
 
@@ -20,84 +41,42 @@ mise install
 
 ```bash
 mkdir -p plugins/my-plugin/.claude-plugin
+mkdir -p plugins/my-plugin/.codex-plugin
 mkdir -p plugins/my-plugin/hooks
 mkdir -p plugins/my-plugin/scripts
 mkdir -p plugins/my-plugin/skills/my-skill/references
 ```
 
-### 2. Write the plugin manifest
+### 2. Write manifests
 
-Create `plugins/my-plugin/.claude-plugin/plugin.json`:
-
-```json
-{
-  "$schema": "../../../schemas/plugin.schema.json",
-  "name": "my-plugin",
-  "version": "0.1.0",
-  "description": "What this plugin does in one sentence",
-  "author": "Your Name",
-  "keywords": ["keyword1", "keyword2"],
-  "license": "Apache-2.0"
-}
-```
+Create `plugins/my-plugin/.claude-plugin/plugin.json` and `plugins/my-plugin/.codex-plugin/plugin.json`. See existing plugins for Codex `interface` fields. Use `schemas/plugin.schema.json` and `schemas/codex-plugin.schema.json`.
 
 ### 3. Write your first skill
 
-Create `plugins/my-plugin/skills/my-skill/SKILL.md` with YAML frontmatter and a step-by-step workflow. See `docs/DESIGN_GUIDELINES.md` for authoring rules.
+Create `plugins/my-plugin/skills/my-skill/SKILL.md` with YAML frontmatter and a step-by-step workflow. See `docs/DESIGN_GUIDELINES.md`.
 
 ### 4. Add reference documents
 
-Create `plugins/my-plugin/skills/my-skill/references/*.md` for domain knowledge. Keep each file under 100 lines.
+Create `plugins/my-plugin/skills/my-skill/references/*.md`. Keep each file under 100 lines. Link them from `SKILL.md` so `tools/validate-references.py` can reach them.
 
 ### 5. Add hooks (optional)
 
-If your skill produces a structured output file, add a PostToolUse hook to validate it. See `docs/DESIGN_GUIDELINES.md` for hook format.
+If your skill produces a structured output file, add a PostToolUse hook. See `docs/DESIGN_GUIDELINES.md`.
 
-### 6. Register in the marketplace
+### 6. Register in both marketplaces
 
-Add your plugin to `.claude-plugin/marketplace.json`:
+Add entries to `.claude-plugin/marketplace.json` and `.agents/plugins/marketplace.json`. See existing plugins for the Codex entry shape. Keep `version` in sync across marketplaces and both manifest files.
 
-```json
-{
-  "name": "my-plugin",
-  "path": "plugins/my-plugin",
-  "version": "0.1.0",
-  "description": "What this plugin does",
-  "keywords": ["keyword1", "keyword2"]
-}
-```
+## Testing a plugin
 
-## Running validation locally
+**Claude Code:** `/plugin marketplace add krokoko/autonomy-rails` then install the plugin.
 
-Run all checks:
+**Codex:** Open this repo; install from the Autonomy Rails marketplace in the plugin UI.
 
-```bash
-mise run check
-```
-
-This runs:
-- **lint**: JSON validity, kebab-case names, SKILL.md frontmatter, line limits, marketplace consistency
-- **validate**: JSON Schema validation of all manifests
-
-Run checks individually:
-
-```bash
-mise run lint
-mise run validate
-```
-
-## Testing a plugin with Claude Code
-
-1. Install the plugin in Claude Code using the plugin marketplace
-2. Invoke each skill using its trigger phrases
-3. Verify that:
-   - The agent follows the workflow steps in order
-   - Reference documents are loaded when needed
-   - The output matches the specified format
-   - Hooks fire and validate the output correctly
+Verify each skill follows its workflow, loads references, produces the expected report format, and hooks validate output when applicable.
 
 ## Code style
 
 - JSON: 2-space indentation
-- Markdown: ATX headings, one sentence per line in prose
-- Shell scripts: `set -euo pipefail`, quote variables, use `$()` over backticks
+- Markdown: ATX headings; run `mise run lint:md` before committing
+- Shell scripts: `set -euo pipefail`, quote variables

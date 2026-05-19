@@ -1,0 +1,36 @@
+{
+  "name": "software-verification",
+  "version": "0.1.0",
+  "description": "Design verification strategies that unlock higher levels of autonomous software development.",
+  "author": {
+    "name": "Autonomy Rails",
+    "url": "https://github.com/krokoko/autonomy-rails"
+  },
+  "homepage": "https://github.com/krokoko/autonomy-rails",
+  "repository": "https://github.com/krokoko/autonomy-rails",
+  "license": "Apache-2.0",
+  "keywords": [
+    "verification",
+    "testing",
+    "formal-methods",
+    "oracles",
+    "strategy"
+  ],
+  "skills": "./skills/",
+  "hooks": "./hooks/hooks.json",
+  "interface": {
+    "displayName": "Software Verification",
+    "shortDescription": "Assess verification maturity and design per-component verification strategies.",
+    "longDescription": "Inventory oracles, classify components, detect AI smell gates, and produce verification reports and implementation roadmaps.",
+    "developerName": "Autonomy Rails",
+    "category": "Verification",
+    "capabilities": ["Read", "Bash", "Grep", "Glob"],
+    "websiteURL": "https://github.com/krokoko/autonomy-rails",
+    "defaultPrompt": [
+      "What verification do I need for more autonomy?",
+      "Assess verification maturity for this codebase.",
+      "Design a verification strategy for this module."
+    ],
+    "brandColor": "#0D9488"
+  }
+}

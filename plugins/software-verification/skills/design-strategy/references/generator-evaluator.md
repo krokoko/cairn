@@ -90,16 +90,8 @@ Reserve for cases where the cost of a missed bug exceeds the cost of dual genera
 
 ### Integration with CI
 
-Generator-evaluator can feed into standard CI:
-1. Generator produces code
-2. Evaluator produces independent tests or critique
-3. Both merge into PR
-4. Standard CI validates the combination
-5. Disagreements flagged for human review
+Generator produces code; evaluator produces tests or critique; both merge into PR; standard CI validates; disagreements go to human review.
 
-## Relationship to other verification patterns
+## Related patterns
 
-- **Strengthens**: Verification Loop (adds independent check within the loop)
-- **Uses**: Test Oracle (evaluator needs oracle to judge against)
-- **Enables**: Higher confidence in Bounded Autonomy tier assignment
-- **Cost-managed by**: Model Routing (use cheaper model for generator, expensive for evaluator)
+Strengthens Verification Loop; uses Test Oracle; enables Bounded Autonomy tier assignment; cost-managed via Model Routing (cheaper generator, expensive evaluator).

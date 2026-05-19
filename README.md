@@ -1,5 +1,5 @@
 <div align="center">
-  <img alt="urql" width="250" src="docs/imgs/autonomyrails.png" />
+  <img alt="Autonomy Rails" width="250" src="docs/imgs/autonomyrails.png" />
 
   <br />
   <br />
@@ -25,28 +25,54 @@ Install the plugins in your AI agent:
 **Claude Code:**
 
 Add the marketplace
+
 ```bash
 /plugin marketplace add krokoko/autonomy-rails
 ```
 
 Add the plugins
+
 ```bash
 /plugin install codebase-ai-readiness@autonomy-rails
 /plugin install software-verification@autonomy-rails
 ```
 
+**Codex:**
+
+1. Clone this repository locally.
+2. Open the repo in Codex so it discovers `.agents/plugins/marketplace.json`.
+3. Restart Codex, open the plugin directory, choose the **Autonomy Rails** marketplace, and install a plugin.
+
+Claude-specific PostToolUse hooks are not wired into Codex manifests; skills and references work the same.
+
+**Cursor:**
+
+Install plugins from a marketplace that indexes this repo, or copy skills into your project's agent configuration per Cursor's plugin documentation.
+
 ### Usage
 
 Once installed, use the skills via slash commands in your AI agent:
 
-```
+```text
 /assess-readiness              # Assess codebase AI readiness
 /generate-roadmap              # Generate improvement roadmap
 /assess-verification           # Assess verification maturity
 /design-strategy               # Design verification strategy
+/detect-ai-smells              # Assess AI smell detection gates
 ```
 
+### Recommended workflow
+
+For a full autonomy readiness pass on a codebase:
+
+1. `/assess-readiness` → `readiness-report.md`
+2. `/generate-roadmap` → `readiness-roadmap.md`
+3. `/assess-verification` → `verification-report.md`
+4. `/design-strategy` → `verification-strategy.md`
+5. `/detect-ai-smells` → `ai-smells-gates-report.md`
+
 Or use natural language triggers:
+
 - "How AI-friendly is this codebase?"
 - "What should I improve for AI readiness?"
 - "What verification do I need?"
@@ -58,7 +84,7 @@ We consider the following levels of autonomy:
 
 | Level | Meaning |
 | ----- | ------- |
-| L0 | **Human only.** Humans own design and implementation; AI suggests or drafts fragments. Changes are verified mainly by the author; little machine-readable intent or agent-safe structure. |
+| L0 | **Human only.** AI can explain code but should not modify it. |
 | L1 | **Assisted.** Humans own design and implementation; AI suggests or drafts fragments. Changes are verified mainly by the author; little machine-readable intent or agent-safe structure. |
 | L2 | **Reviewed.** Agents may touch the codebase in limited ways, but meaningful changes expect explicit human review before merge. CI exists but may be flaky or incomplete relative to risk. |
 | L3 | **Bounded iteration.** Agents can iterate inside clear guardrails (e.g. scoped tasks, green tests, typed boundaries) with selective human review on higher-risk surfaces. Verification is stronger but not exhaustive. |
@@ -96,6 +122,7 @@ A codebase can be technically ready for autonomy (L4) while the team around it r
 It will help answer: "Is my team structured to absorb the output of autonomous agents, or will increased agent throughput just pile up in review queues?"
 
 Assessment dimensions will include:
+
 - **Review gate design** — where humans are in the loop today, and whether those gates are positioned for high-value judgment vs. rubber-stamping
 - **Knowledge accessibility** — whether decisions, specs, and context are machine-readable and travel with the work (vs. trapped in Slack/meetings)
 - **Feedback routing** — whether CI/verification results flow back into agent re-execution or terminate in human-only dashboards
@@ -105,7 +132,7 @@ Assessment dimensions will include:
 
 Big shout out to our awesome contributors! Thank you for making this project better!
 
-Contributions of all kinds are welcome! Check out our contributor guide for more information.
+Contributions of all kinds are welcome! See [CONTRIBUTING.md](./CONTRIBUTING.md).
 
 ## Developer guide
 

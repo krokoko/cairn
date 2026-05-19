@@ -95,9 +95,4 @@ be optimized for these access patterns.
 
 ## Key principle
 
-> The cheapest optimization for agent performance is reducing what the agent must
-> process to accomplish its task.
-
-Context engineering friendliness is about codebase *affordances* — structural properties
-that make it easy for agents to select the right slice of information without human
-guidance.
+> Reduce what the agent must process. Context engineering friendliness is codebase *affordances* for targeted information selection.

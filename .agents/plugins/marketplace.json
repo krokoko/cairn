@@ -1,0 +1,32 @@
+{
+  "name": "autonomy-rails",
+  "interface": {
+    "displayName": "Autonomy Rails"
+  },
+  "plugins": [
+    {
+      "name": "codebase-ai-readiness",
+      "source": {
+        "source": "local",
+        "path": "./plugins/codebase-ai-readiness"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Assessment"
+    },
+    {
+      "name": "software-verification",
+      "source": {
+        "source": "local",
+        "path": "./plugins/software-verification"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Verification"
+    }
+  ]
+}

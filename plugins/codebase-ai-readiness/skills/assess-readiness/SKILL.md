@@ -41,7 +41,7 @@ Use Glob and Grep to understand the project:
 
 ### Step 2: Assess each category
 
-Evaluate 15 categories. Load `references/category-definitions.md` for detailed signals. Also load `references/agent-contributor-model.md` for the framing principles.
+Evaluate 15 categories. Load `references/category-definitions.md` and `references/category-definitions-agent.md` for detailed signals. Also load `references/agent-contributor-model.md` for the framing principles.
 
 **2.1 Structure and modularity**
 - Directory organization clarity
