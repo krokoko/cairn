@@ -39,6 +39,7 @@ For each verification method found in the codebase, classify its current tier:
 | Editor-time checks | IDE config running tsc/eslint on save, LSP config |
 | Post-tool-use hooks | Agent hooks running checks after each file write |
 | Focused test run scripts | Scripts to run only tests related to changed files |
+| Test impact analysis | pytest-testmon, Jest `--onlyChanged`, Drill4J, Launchable — run only tests affected by a change |
 | Watch mode configs | `jest --watch`, `vitest`, `cargo-watch`, `pytest-watch` |
 
 ## Indicators of late-only checks
@@ -50,3 +51,15 @@ For each verification method found in the codebase, classify its current tier:
 | No pre-commit hooks | Nothing catches issues before commit |
 | Full test suite only (no focused mode) | Seconds-fast feedback unavailable; must wait minutes |
 | Secret scanning only at deploy | Secrets may be committed and pushed before detection |
+
+## Test-selection soundness caveat
+
+Two different mechanisms hide behind "run only affected tests", with different correctness guarantees:
+
+- **Git-diff selection** (Jest `--onlyChanged`, `--changedSince`): runs tests in/importing changed
+  files. Fast but **unsound** — a test in an unchanged file that exercises the changed code is skipped.
+- **Coverage/dependency-graph TIA** (pytest-testmon, Drill4J, Launchable): maps each test to the code
+  it covers and selects by that graph. More accurate, but only as current as its coverage map.
+
+Use affected-only selection for the fast inner loop (T1-T2), but keep a **full suite at the PR/CI gate
+(T3)** as the authoritative check. Do not recommend git-diff selection as the sole merge gate.

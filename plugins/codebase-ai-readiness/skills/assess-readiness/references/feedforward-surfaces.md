@@ -34,6 +34,7 @@ deterministically and cheaply before they compound.
 | Formatters | Layout inconsistencies | Prettier, Black, rustfmt, gofmt |
 | Security scanners | Known vulnerability patterns | Semgrep, CodeQL, Snyk, bandit |
 | Pre-commit hooks | All of the above, on every change | `.pre-commit-config.yaml`, `.husky/`, `lefthook.yml` |
+| Bypass guards | Agents skipping hooks (`git commit --no-verify`) | Agent config denying bypass commands; server-side branch protection + required checks |
 
 ## Scoring signals
 
@@ -42,6 +43,7 @@ deterministically and cheaply before they compound.
 - Strict type checking with <5% escape hatches
 - Module boundary enforcement via linter or structural tests
 - Pre-commit hooks run type checker + linter + formatter on every change
+- Hooks are non-bypassable: agent config denies skip commands, CI enforces server-side
 - Templates exist for common file types (components, services, tests)
 - Architecture docs specify which module depends on what
 

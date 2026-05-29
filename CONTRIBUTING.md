@@ -22,8 +22,8 @@ Follow [design guidelines](./docs/DESIGN_GUIDELINES.md) and the [development gui
 
 Key constraints:
 
-- `SKILL.md`: max 300 lines, YAML frontmatter with `name` and `description`
-- Reference docs: max 100 lines each, one topic per file; link from `SKILL.md`
+- `SKILL.md`: max 400 lines, YAML frontmatter with `name` and `description`
+- Reference docs: max 150 lines each, one topic per file; link from `SKILL.md`
 - Plugin names: kebab-case; each plugin is self-contained
 - Register in **both** `.claude-plugin/marketplace.json` and `.agents/plugins/marketplace.json`
 

@@ -18,11 +18,11 @@ This plugin analyzes a codebase's current verification posture and designs a tai
 
 ### `/assess-verification`
 
-Performs a full assessment of existing verification infrastructure. Inventories tests, linters, type checkers, contracts, schemas, formal specs, CI, and operational validation. Classifies components and scores maturity. Outputs `verification-report.md`.
+Performs a full assessment of existing verification infrastructure. Inventories tests, linters, type checkers, contracts, schemas, formal specs, CI, test impact analysis, and operational validation. Classifies components and scores maturity, including requirement traceability (does intent trace to tests and code?). Outputs `verification-report.md`.
 
 ### `/design-strategy`
 
-Takes an existing verification report (or performs lightweight discovery) and designs per-component verification strategies. Recommends tools, oracle patterns, evidence pipeline design, and an implementation roadmap. Outputs `verification-strategy.md`.
+Takes an existing verification report (or performs lightweight discovery) and designs per-component verification strategies. Recommends tools, oracle patterns, evidence pipeline design, a pipeline-enforced requirement traceability check, and an implementation roadmap. Outputs `verification-strategy.md`.
 
 ### `/detect-ai-smells`
 
@@ -32,7 +32,8 @@ Assesses whether the codebase has automated gates to catch AI-generated code sme
 
 | Category | Methods |
 |----------|---------|
-| Testing | Unit, integration, property-based, fuzzing, regression replay |
+| Testing | Unit, integration, property-based, BDD/executable specs, fuzzing, regression replay |
+| Traceability | Requirement → criterion → test → code mapping (RTM), intent-drift detection |
 | Static analysis | Linters, type checkers, SAST, abstract interpretation |
 | Contracts | Pre/postconditions, invariants, schemas, Design by Contract |
 | Formal methods | Specifications, model checking, SMT, deductive verification, theorem proving |

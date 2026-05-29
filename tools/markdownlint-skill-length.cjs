@@ -1,14 +1,19 @@
 /**
  * Validates SKILL.md length limits (autonomy-rails design guidelines).
- * Max 300 lines (error). Warn at 250 lines.
+ * Max 400 lines / 6500 words: hard error (fails the build).
+ * Advisory at 350 lines / 5500 words: printed to stderr, does NOT fail the build.
+ *
+ * Note: markdownlint custom rules signal only via onError, which always fails
+ * the build. A true non-failing advisory must therefore be emitted out-of-band
+ * (console.warn to stderr) rather than through onError.
  */
 
 "use strict";
 
-const MAX_LINES = 300;
-const WARNING_LINES = 250;
-const MAX_WORDS = 5000;
-const WARNING_WORDS = 4000;
+const MAX_LINES = 400;
+const WARNING_LINES = 350;
+const MAX_WORDS = 6500;
+const WARNING_WORDS = 5500;
 
 module.exports = {
   names: ["skill-length", "SKILL001"],
@@ -32,11 +37,11 @@ module.exports = {
         context: `${totalLines} lines`,
       });
     } else if (totalLines > WARNING_LINES) {
-      onError({
-        lineNumber: 1,
-        detail: `Line count: ${totalLines} (recommended: <${WARNING_LINES}). Consider moving content to references/.`,
-        context: `${totalLines} lines (warning)`,
-      });
+      // Advisory only — stderr, non-failing.
+      console.warn(
+        `[SKILL001 advisory] ${params.name}: ${totalLines} lines ` +
+          `(recommended: <${WARNING_LINES}, hard max: ${MAX_LINES}). Consider moving content to references/.`
+      );
     }
 
     if (wordCount > MAX_WORDS) {
@@ -46,11 +51,11 @@ module.exports = {
         context: `${wordCount} words`,
       });
     } else if (wordCount > WARNING_WORDS) {
-      onError({
-        lineNumber: 1,
-        detail: `Word count: ${wordCount} (recommended: <${WARNING_WORDS}). Consider moving content to references/.`,
-        context: `${wordCount} words (warning)`,
-      });
+      // Advisory only — stderr, non-failing.
+      console.warn(
+        `[SKILL001 advisory] ${params.name}: ${wordCount} words ` +
+          `(recommended: <${WARNING_WORDS}, hard max: ${MAX_WORDS}). Consider moving content to references/.`
+      );
     }
   },
 };

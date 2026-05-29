@@ -12,7 +12,7 @@ user-invocable: true
 
 # Codebase AI Readiness Assessment
 
-Produce an autonomy maturity map for the target codebase. The output is a `readiness-report.md` file containing a numeric score, category breakdown, recommended autonomy level, blockers, and a prioritized roadmap.
+Produce an autonomy maturity map for the target codebase. The output is a `readiness-report.md` file containing a numeric score, category breakdown, workflow artifact summary, collaboration effectiveness assessment, recommended autonomy level, blockers, and a prioritized roadmap.
 
 ## Workflow
 
@@ -31,13 +31,14 @@ Use Glob and Grep to understand the project:
 - Find schemas and contracts (`*.proto`, `openapi.*`, `*.schema.json`, `swagger.*`)
 - Find agent context files (`AGENTS.md`, `CLAUDE.md`, `.cursorrules`, `.cursor/rules/`)
 - Find execution plans (`docs/plans/`, `docs/exec-plans/`, `PLANS.md`)
+- Find workflow artifacts: requirements/specs (`docs/requirements/`, `docs/specs/`, `requirements/`), design (`docs/design/`, `design/`), review learnings (`docs/reviews/`, `docs/learnings/`) — load `references/workflow-artifacts.md`
 - Find config documentation (`.env.example`, `config.schema.json`)
 - Find ownership files (`CODEOWNERS`, `OWNERS`)
 - Find module boundary enforcement (`eslint-plugin-boundaries` in config, `deptry`, `madge`, ArchUnit, structural tests)
 - Find templates and generators (`plop`, `hygen`, cookiecutter, `.template` files)
 - Find agent skills and workflows (`.claude/skills/`, agent skill directories)
 - Find agent hooks (agent hook configs, `hooks.json`, post-tool-use automation)
-- Measure file size distribution (sample files, count lines, identify outliers >500 lines)
+- Measure file size distribution: count lines across source files deterministically (glob source files + `wc -l`, excluding vendored/generated/build dirs), not by eyeballing a few. Report the share of files under 300 lines (the "good" target in category 2.15) and flag outliers over 500 lines. The two thresholds are distinct: 300 is the per-file comprehension target; 500 marks a file large enough to warrant splitting.
 
 ### Step 2: Assess each category
 
@@ -72,6 +73,7 @@ Evaluate 15 categories. Load `references/category-definitions.md` and `reference
 - Required/protected branch checks
 - Evidence of flakiness (retry configs, `flaky` labels)
 - Shift-left checks present (pre-commit hooks, focused test scripts, watch mode configs)
+- Test impact analysis (run only affected tests: pytest-testmon, Jest `--onlyChanged`, Launchable) — keeps feedback fast as agent-generated test volume grows
 
 **2.5 Typing strength**
 - Type annotations coverage
@@ -98,6 +100,8 @@ Evaluate 15 categories. Load `references/category-definitions.md` and `reference
 - Property-based tests
 - Formal specifications (TLA+, Alloy)
 - Configuration schemas with validation
+- Executable acceptance criteria (EARS-style requirements turned into Gherkin/BDD scenarios)
+- Requirement traceability — guards against intent drift. File-based signals (requirement dirs, tests tagging requirement IDs, a requirement-coverage report) are found with Glob/Grep; the PR→issue link signal lives in git history, so check it with `git log` (closing keywords like `Closes #123`, bare `#123`, or tracker keys). If git history is unavailable, mark the PR-link signal "not inspectable" rather than scoring it absent.
 - Regenerative readiness (components definable by specs/tests, rebuildable without loss)
 
 **2.9 Progressive context disclosure**
@@ -134,15 +138,17 @@ Load `references/feedforward-surfaces.md` for detailed scoring signals.
 - Strict type checking with few escape hatches
 - Module boundary enforcement via linter or structural tests
 - Pre-commit hooks running type checker + linter + formatter per-file
+- Non-bypassable hooks (agent config denies `--no-verify`; branch protection enforces checks server-side)
 - Templates and generators for common file patterns
 - Security scanners in pre-commit or per-file hooks
 
 **2.14 Compound engineering readiness**
 
-Load `references/compound-engineering.md` for detailed scoring signals.
+Load `references/compound-engineering.md` and `references/workflow-artifacts.md` for detailed scoring signals.
 
 - Instruction file with evidence of iterative growth (>10 rules, recently updated)
 - Custom skills or packaged workflows for repeated tasks
+- Workflow artifact directories (plans, specs, design, review notes) with recent, feature-scoped content
 - Hooks that enforce conventions discovered through past mistakes
 - Tests encoding past bugs as regression checks
 - Evidence of maintenance (recent updates, hooks matching current tooling)
@@ -180,7 +186,14 @@ Load `references/autonomy-levels.md` and map the overall score to L0-L5.
 
 For the current autonomy level, identify what specifically prevents moving to the next level. Be concrete: name missing files, missing configurations, weak categories.
 
-### Step 7: Generate roadmap
+### Step 7: Assess collaboration effectiveness
+
+Load `references/collaboration-metrics.md`. Estimate or mark "not measured" for first-pass
+acceptance, iteration cycles per task, and post-merge rework. Note infrastructure enablers
+(PR templates, labels, review rubrics, learning docs). Produce 2-4 recommendations to start
+or improve tracking aligned with the recommended autonomy level.
+
+### Step 8: Generate roadmap
 
 Produce a prioritized list of 5-10 recommended actions. For each action:
 - What to do (specific and actionable)
@@ -188,48 +201,7 @@ Produce a prioritized list of 5-10 recommended actions. For each action:
 - Estimated effort (small/medium/large)
 - Expected score impact
 
-### Step 8: Write the report
+### Step 9: Write the report
 
-Write the file `readiness-report.md` in the codebase root with this structure:
-
-```markdown
-# AI Readiness Report
-
-## Overall Score
-
-**Score: XX/100**
-
-## Recommended Autonomy Level
-
-**Level: LX — [Level Name]**
-
-## Category Breakdown
-
-| Category | Score | Notes |
-|----------|-------|-------|
-| Structure and modularity | XX | ... |
-| Documentation | XX | ... |
-| Testable boundaries | XX | ... |
-| CI reliability | XX | ... |
-| Typing strength | XX | ... |
-| Deterministic environment and deployment | XX | ... |
-| Architecture decisions | XX | ... |
-| Machine-readable intent | XX | ... |
-| Progressive context disclosure | XX | ... |
-| Hidden state and magic | XX | ... |
-| Repository-scale reasoning | XX | ... |
-| Failure mode legibility | XX | ... |
-| Feedforward surfaces | XX | ... |
-| Compound engineering readiness | XX | ... |
-| Context engineering friendliness | XX | ... |
-
-## Blockers
-
-[List of specific blockers preventing advancement to next level]
-
-## Roadmap
-
-| Priority | Action | Category | Effort | Impact |
-|----------|--------|----------|--------|--------|
-| 1 | ... | ... | ... | ... |
-```
+Write `readiness-report.md` in the codebase root. Load `references/report-template.md` for the
+required sections and tables.

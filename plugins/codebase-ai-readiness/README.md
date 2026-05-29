@@ -4,7 +4,7 @@ Assess how AI-friendly a codebase is and produce an autonomy maturity map.
 
 ## What it does
 
-This plugin reviews an existing codebase and evaluates it across 12 categories that determine how safely and effectively AI agents can operate. It produces:
+This plugin reviews an existing codebase and evaluates it across 15 categories that determine how safely and effectively AI agents can operate. It produces:
 
 - **Overall score** (0-100)
 - **Category breakdown** with per-category scores
@@ -16,7 +16,7 @@ This plugin reviews an existing codebase and evaluates it across 12 categories t
 
 ### `/assess-readiness`
 
-Performs a full assessment of the codebase. Examines structure, documentation, tests, CI, typing, setup, architecture decisions, machine-readable intent, progressive context disclosure, hidden state, repository-scale reasoning, and failure mode legibility. Outputs `readiness-report.md`.
+Performs a full assessment of the codebase. Examines structure, documentation, tests, CI (including test impact analysis), typing, setup, architecture decisions, machine-readable intent (schemas, contracts, executable acceptance criteria, requirement traceability), progressive context disclosure, workflow artifacts, collaboration effectiveness metrics, hidden state, repository-scale reasoning, failure mode legibility, and feedforward surfaces (including non-bypassable hooks). Outputs `readiness-report.md`.
 
 ### `/generate-roadmap`
 
@@ -38,6 +38,9 @@ Takes an existing readiness report and generates a detailed improvement plan to 
 | Hidden state and magic | Env var docs, config schemas, explicit defaults |
 | Repository-scale reasoning | Naming consistency, predictable patterns |
 | Failure mode legibility | Error handling, structured errors, fail-fast |
+| Feedforward surfaces | Instruction files, strict types, boundary linters, non-bypassable pre-commit hooks |
+| Compound engineering readiness | Iterative instruction growth, custom skills, workflow artifacts, regression-from-bugs |
+| Context engineering friendliness | File size distribution, layered docs, retrieval-friendly naming |
 
 ## Installation
 

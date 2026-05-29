@@ -20,6 +20,14 @@ sessions.
 | Subagent configs | Specialized review lenses for recurring concerns | Agent team configs, specialized reviewer configs |
 | Tests and evals | Executable contracts that fail if critical behaviors regress | Test suites, eval directories, benchmark configs |
 
+## Workflow artifacts (feature-scoped context)
+
+Durable surfaces encode repo-wide lessons; **workflow artifacts** anchor active work across
+sessions (requirements, design notes, plans, review learnings). Load
+`workflow-artifacts.md` for discovery paths and scoring signals. Strong compound readiness
+includes both: surfaces that compound over time *and* versioned dirs where feature decisions
+live in-repo—not only in chat or issue comments.
+
 ## Scoring signals
 
 ### Strong compound readiness (score 76-100)
@@ -28,7 +36,8 @@ sessions.
 - Hooks enforce conventions discovered through past mistakes
 - Tests encode past bugs as regression checks
 - Evidence of recent updates to instruction files (growing, not stale)
-- First-pass acceptance rate tracked or improvable
+- Workflow artifact dirs present with recent feature-scoped docs (see `workflow-artifacts.md`)
+- First-pass acceptance rate tracked or improvable (see `collaboration-metrics.md`)
 
 ### Moderate compound readiness (score 51-75)
 - Instruction file exists with some useful rules but gaps visible
@@ -41,6 +50,7 @@ sessions.
 - Minimal instruction file (generic or copied from template)
 - No custom skills or packaged workflows
 - Pre-commit hooks present but minimal
+- No versioned plans, specs, or design docs for in-flight work
 - Knowledge lives in PR comments, Slack, or developer memory
 - New agents start from scratch each session
 

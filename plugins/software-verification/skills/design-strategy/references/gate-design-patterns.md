@@ -19,6 +19,23 @@ Consolidate human review to three high-value gates instead of many low-value int
 | Duplicate gate | Same check done by CI and human reviewer | Remove human check where CI is authoritative |
 | Late-stage gate | Issues caught at deploy that could be caught at PR | Shift check earlier (fail fast) |
 | Missing gate | High-risk changes ship with no human review | Add targeted approval for risk class |
+| Bypassable gate | Agent routes around a hook (`git commit --no-verify`, skipping CI) | Deny bypass commands in agent config; make CI the non-negotiable server-side gate |
+
+## Enforcement integrity (agents route around blockers)
+
+Agents are task-oriented: when a local hook blocks them too hard, they tend to bypass it
+(e.g. `git commit --no-verify`, `--no-gpg-sign`, force-push). A guardrail an agent can skip is
+not a guardrail. Harden enforcement in layers:
+
+| Layer | Mechanism | Bypass risk |
+|-------|-----------|-------------|
+| Agent hooks (post-write) | Run tools after each edit; feed output back | High — agent controls its own loop |
+| Pre-commit hooks | Block commit until tools pass | Medium — `--no-verify` skips them |
+| Deny bypass commands | Agent tool config denies `.*git.*--no-verify.*` and similar | Low — agent cannot issue the command |
+| CI/CD + branch protection | Server-side checks; no merge unless all pass | Lowest — outside the agent's environment |
+
+The non-negotiable gate lives server-side (branch protection + required checks). Local hooks are
+for fast feedback; deny-listing bypass commands keeps the agent honest in between.
 
 ## Gate positioning by risk class
 

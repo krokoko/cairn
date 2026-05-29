@@ -36,6 +36,7 @@ Load `improvement-actions-agent.md` for feedforward, compound engineering, and c
 | Add coverage reporting + required checks | Small | +10-15 | Codecov; branch protection rules |
 | Add linting to CI | Small | +5-10 | ESLint, ruff, clippy, golangci-lint |
 | Add pre-commit hooks for type checking and linting | Small | +10-15 | Shift checks left; agents catch errors per-file, not per-PR |
+| Add test impact analysis to run only affected tests | Medium | +5-15 | pytest-testmon, Jest `--onlyChanged`, Launchable; keeps feedback fast as agents add tests |
 
 ## Typing strength
 
@@ -68,6 +69,8 @@ Load `improvement-actions-agent.md` for feedforward, compound engineering, and c
 | Add OpenAPI or protobuf for APIs | Medium | +15-25 | Machine-checkable API contracts |
 | Add JSON Schema for config files | Small | +10-15 | Validates configuration |
 | Add property-based tests + assertion contracts | Medium | +15-20 | Machine-checkable invariants and pre/postconditions |
+| Write acceptance criteria as Gherkin/BDD scenarios | Medium | +10-20 | EARS → executable specs; Cucumber/Behave run them as tests |
+| Add requirement-coverage check linking criteria to tests | Medium | +10-20 | Catches intent drift; tag tests with requirement IDs, fail on uncovered criterion |
 | Make key modules regenerative (specs+tests define behavior fully) | Large | +10-20 | Components rebuildable from contracts alone; L5 enabler |
 
 ## Progressive context disclosure

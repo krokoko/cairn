@@ -27,12 +27,13 @@ Aligned with [awslabs/agent-plugins](https://github.com/awslabs/agent-plugins):
 | Manifests | `mise run lint:manifests` | JSON Schema via ajv |
 | Cross-refs | `mise run lint:cross-refs` | Claude + Codex marketplaces vs plugin dirs |
 | References | `mise run validate:refs` | Broken links and orphan reference files |
+| Validators | `mise run test:validators` | Report-validator hook scripts + template-drift guard |
 | Pre-commit | `mise run pre-commit` | Optional local hook bundle |
 
 Custom markdownlint rules in `tools/`:
 
-- `markdownlint-skill-length.cjs` — SKILL.md max 300 lines
-- `markdownlint-reference-length.cjs` — references max 100 lines
+- `markdownlint-skill-length.cjs` — SKILL.md hard max 400 lines (fails build); 350-line advisory printed to stderr without failing
+- `markdownlint-reference-length.cjs` — references max 150 lines
 - `markdownlint-frontmatter.cjs` — SKILL frontmatter vs schema
 
 ## Creating a new plugin
@@ -57,7 +58,7 @@ Create `plugins/my-plugin/skills/my-skill/SKILL.md` with YAML frontmatter and a 
 
 ### 4. Add reference documents
 
-Create `plugins/my-plugin/skills/my-skill/references/*.md`. Keep each file under 100 lines. Link them from `SKILL.md` so `tools/validate-references.py` can reach them.
+Create `plugins/my-plugin/skills/my-skill/references/*.md`. Keep each file under 150 lines. Link them from `SKILL.md` so `tools/validate-references.py` can reach them.
 
 ### 5. Add hooks (optional)
 

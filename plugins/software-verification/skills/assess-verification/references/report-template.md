@@ -91,4 +91,18 @@ Write `verification-report.md` with the following structure:
 | Autonomy compliance | 0-3 | ... | ... |
 
 **Critical blind spots**: ...
+
+## Requirement Traceability
+
+**Overall level**: X/3
+
+| Property | State | Failure it allows |
+|----------|-------|-------------------|
+| Scope verification | ... | Unrequested logic / missed requirement |
+| Impact analysis | ... | Unknown affected tests/files on change |
+| Test sufficiency | ... | Requirement with no dedicated test |
+
+**Untraced changes** (code with no upstream requirement): ...
+**Uncovered requirements** (requirement with no test): ...
+**Intent-drift risk**: ...
 ```

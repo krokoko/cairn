@@ -9,6 +9,7 @@ Ratings: VH=Very High, H=High, M=Medium, L=Low. Columns: Assurance / Cost / Auto
 | Method | Key tools | Ratings (A/C/Au/S/E) | When to use |
 |--------|-----------|----------------------|-------------|
 | Unit testing | pytest, Jest, go test | M / L / H / H / L | Per-PR baseline; deterministic, scoped logic |
+| BDD / executable specs | Cucumber, Behave, godog | M / M / H / M / M | Acceptance criteria as runnable Gherkin; links intent to tests |
 | Integration testing | testcontainers, supertest | M / M / H / M / M | Cross-boundary interactions (DB, APIs, queues) |
 | System testing | End-to-end frameworks | M-H / H / M / L-M / M | Release gates, customer-visible workflows |
 | Property-based testing | Hypothesis, fast-check, proptest | H / M / H / H / M | Clear invariants: round-trips, ordering, idempotence |

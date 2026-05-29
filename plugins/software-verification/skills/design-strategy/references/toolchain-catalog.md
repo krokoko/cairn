@@ -10,7 +10,9 @@ Tools organized by language ecosystem and verification category. Load `toolchain
 | Linting | ruff, pylint, flake8 |
 | Testing | pytest, unittest |
 | Property testing | Hypothesis |
+| BDD / executable specs | behave, pytest-bdd, radish |
 | Mutation testing | mutmut, cosmic-ray |
+| Test impact analysis | pytest-testmon |
 | Fuzzing | Atheris (libFuzzer wrapper), python-afl |
 | Sanitizers | ASan/UBSan via C extensions, valgrind |
 | Profiling | py-spy, cProfile, scalene, memray |
@@ -26,7 +28,9 @@ Tools organized by language ecosystem and verification category. Load `toolchain
 | Linting | ESLint, biome |
 | Testing | Jest, Vitest, Mocha |
 | Property testing | fast-check |
+| BDD / executable specs | Cucumber.js, Jest-Cucumber, CodeceptJS |
 | Mutation testing | Stryker |
+| Test impact analysis | Jest `--onlyChanged` / `--changedSince`, Vitest `--changed` |
 | Contracts | ts-contract, zod (runtime validation) |
 | Profiling | Node.js --prof, clinic.js, 0x |
 | Coverage | c8, istanbul |
@@ -40,7 +44,9 @@ Tools organized by language ecosystem and verification category. Load `toolchain
 | Linting | golangci-lint, staticcheck, go vet |
 | Testing | go test, testify |
 | Property testing | rapid, gopter |
+| BDD / executable specs | godog, ginkgo |
 | Mutation testing | go-mutesting, gremlins |
+| Test impact analysis | go test (package-level via `go list` + dependency graph) |
 | Fuzzing | go test -fuzz (native), go-fuzz |
 | Sanitizers | -race flag (ThreadSanitizer), -asan flag (Go 1.23+) |
 | Profiling | pprof (CPU, memory, goroutine), trace |
@@ -55,7 +61,9 @@ Tools organized by language ecosystem and verification category. Load `toolchain
 | Linting | clippy, cargo-deny |
 | Testing | cargo test, #[test] |
 | Property testing | proptest, quickcheck |
+| BDD / executable specs | cucumber-rs |
 | Mutation testing | cargo-mutants |
+| Test impact analysis | cargo-nextest (partition/filter), rust-test-impact (experimental) |
 | Fuzzing | cargo-fuzz (libFuzzer), afl.rs |
 | Formal verification | Kani (bounded model checking), Verus |
 | Sanitizers | ASan, MSan, TSan, UBSan via RUSTFLAGS |

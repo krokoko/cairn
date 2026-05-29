@@ -33,7 +33,7 @@ ERRORS=""
 
 if [[ "$FILENAME" == "readiness-report.md" ]]; then
   # Check required sections
-  for section in "Overall Score" "Category Breakdown" "Recommended Autonomy Level" "Blockers" "Roadmap"; do
+  for section in "Overall Score" "Category Breakdown" "Recommended Autonomy Level" "Workflow artifacts" "Collaboration effectiveness" "Blockers" "Roadmap"; do
     if ! grep -q "## $section" "$FILE_PATH"; then
       ERRORS="${ERRORS}Missing required section: '## ${section}'. "
     fi

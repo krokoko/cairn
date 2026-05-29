@@ -36,9 +36,13 @@ depends = ["lint:md", "lint:manifests", "lint:cross-refs", "lint:json"]
 description = "Detect broken links and orphaned reference files"
 run = "python3 tools/validate-references.py"
 
+[tasks."test:validators"]
+description = "Test the report-validator hook scripts"
+run = "bash tests/validators/run.sh"
+
 [tasks.validate]
 description = "Run validation checks"
-depends = ["validate:refs"]
+depends = ["validate:refs", "test:validators"]
 
 [tasks.build]
 description = "Lint and validate (CI entrypoint)"

@@ -10,7 +10,9 @@ Continues `toolchain-catalog.md`. Java/Kotlin ecosystems and cross-language infr
 | Linting | SpotBugs, Error Prone, ktlint |
 | Testing | JUnit, TestNG, Kotest |
 | Property testing | jqwik, kotlin-quickcheck |
+| BDD / executable specs | Cucumber-JVM, JBehave, Serenity BDD |
 | Mutation testing | PIT (pitest) |
+| Test impact analysis | Drill4J, JUnit5 + affected-test plugins, Parasoft Jtest |
 | Fuzzing | Jazzer (libFuzzer for JVM) |
 | Sanitizers | JVM built-in (bounds checking); native via JNI: ASan |
 | Profiling | JFR (Flight Recorder), async-profiler, VisualVM |
@@ -23,6 +25,8 @@ Continues `toolchain-catalog.md`. Java/Kotlin ecosystems and cross-language infr
 | Category | Tools |
 |----------|-------|
 | Consumer-driven contracts | Pact (any language), Spring Cloud Contract (JVM), Specmatic |
+| BDD / executable specs | Gherkin (Cucumber, Behave, SpecFlow, godog), Reqnroll |
+| Test impact analysis | Launchable, Datadog Test Visibility, Parasoft (multi-language, coverage-graph based) |
 | Formal specification | TLA+ (TLC, Apalache), Alloy, Stateright (Rust) |
 | SMT solving | Z3, CVC5 |
 | Deductive verification | Dafny, Why3, Frama-C/WP, SPARK |

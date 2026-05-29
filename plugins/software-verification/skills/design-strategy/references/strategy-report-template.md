@@ -72,6 +72,16 @@ Measurement: Correctness (>90% pass), Convention (<2 violations), Efficiency (<5
 | Schema-doc sync | ... | ... | ... |
 | Freshness enforcement | ... | ... | ... |
 
+## Requirement Traceability
+
+**Current level**: X/3 → **Target level**: Y/3
+
+| Linking convention | Current | Recommendation / mechanism | Gate (block vs warn by risk class) |
+|--------------------|---------|----------------------------|-------------------------------------|
+| Requirement IDs | ... | ... | ... |
+| Criterion → test | ... | ... | ... |
+| Code → requirement | ... | ... | ... |
+
 ## Implementation Roadmap
 
 ### Phase 1: Quick wins (week 1)

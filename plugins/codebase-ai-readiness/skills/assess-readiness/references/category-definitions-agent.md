@@ -18,6 +18,7 @@ Continues `category-definitions.md`. Agent workflow and failure-legibility categ
 | Strict type checking | `tsconfig.json` strict, `mypy.ini` strict — escape hatch count |
 | Module boundary enforcement | eslint-plugin-boundaries, deptry, madge, ArchUnit, structural tests |
 | Pre-commit hooks per-file | `.pre-commit-config.yaml`, `.husky/`, `lefthook.yml` — what they run |
+| Non-bypassable hooks | Agent config denies `git commit --no-verify` etc.; branch protection requires checks server-side |
 | Templates and generators | `plop`, `hygen`, cookiecutter, file templates for common patterns |
 | Security scanners pre-commit | Semgrep, bandit, gitleaks, detect-secrets in pre-commit config |
 
@@ -27,9 +28,11 @@ Continues `category-definitions.md`. Agent workflow and failure-legibility categ
 |--------|----------------|
 | Instruction file with iterative growth | `CLAUDE.md`, `AGENTS.md` — rule count, last modified date |
 | Custom skills or workflows | `.claude/skills/`, agent skill directories, workflow configs |
+| Workflow artifacts (feature context) | `docs/requirements/`, `docs/specs/`, `docs/design/`, `docs/plans/`, `docs/exec-plans/`, `docs/reviews/`, `docs/learnings/` — file count and recency |
 | Hooks enforce past corrections | Pre-commit/post-tool hooks beyond basic formatting |
 | Regression tests from past bugs | Test commit messages referencing issues; bug-driven test patterns |
 | Evidence of maintenance | Recent instruction file updates; hook configs matching current tooling |
+| Collaboration measurement enablers | PR templates, agent labels, documented review rubric — see `collaboration-metrics.md` |
 
 ### Context engineering friendliness
 

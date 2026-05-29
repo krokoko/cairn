@@ -55,6 +55,7 @@ For each component, recommend the best oracle type:
 | Component type | Recommended oracle approach |
 |---------------|----------------------------|
 | Pure functions | Exact expected output + property-based |
+| User-facing behavior | Executable acceptance criteria (Gherkin/BDD) linked to requirements |
 | API endpoints | Schema validation + contract tests |
 | Data pipelines | Metamorphic relations + replay |
 | ML models | Differential + statistical + human |
@@ -128,10 +129,10 @@ For each recommendation, specify the concrete config change or tool addition nee
 
 Load `../assess-verification/references/shift-left-model.md` for the tier model.
 
-If `verification-report.md` exists, read the Shift-Left Assessment section. Otherwise, check:
-- Whether type checking / linting runs only in CI (should be per-file via pre-commit or hooks)
-- Whether pre-commit hooks exist (`.pre-commit-config.yaml`, `.husky/`, `lefthook.yml`)
-- Whether focused test runs are available (run only tests for changed modules)
+If `verification-report.md` exists, read the Shift-Left Assessment section. Otherwise, check whether
+type checking / linting run only in CI (should be per-file via pre-commit or hooks), whether pre-commit
+hooks exist (`.pre-commit-config.yaml`, `.husky/`, `lefthook.yml`), and whether focused/affected-only
+test runs are available.
 
 For each check running later than its ideal tier, recommend how to shift it earlier:
 
@@ -140,7 +141,7 @@ For each check running later than its ideal tier, recommend how to shift it earl
 | Type checking | T3 (CI only) | T1 (per-file) | Add pre-commit hook or agent post-write hook running `tsc --noEmit` |
 | Linting | T3 (CI only) | T1 (per-file) | Add pre-commit hook; configure agent to run linter after each write |
 | Secret scanning | T3 (CI) | T1 (pre-commit) | Add `detect-secrets` or `gitleaks` pre-commit hook |
-| Focused unit tests | T3 (full suite) | T2 (per-module) | Add script to run tests for changed files only |
+| Focused / affected tests | T3 (full suite) | T2 (per-module) | Run changed-files tests only; add TIA (`pytest-testmon`, Jest `--onlyChanged`, Launchable) |
 
 For each recommendation, specify the concrete tool and config to add.
 
@@ -229,14 +230,26 @@ For each recommendation, specify the concrete tool and config needed. Priority: 
 
 Order recommendations by priority:
 
-1. **Quick wins** (small effort, high impact): Add pre-commit hooks, shift type checking/linting to per-file, add structured CI reporters, add first fitness function, add doc link checking
-2. **Foundation** (medium effort, enables future): Add property tests, set up contract testing, close feedback loops, add focused test scripts, seed eval suite, add schema-doc sync validation
-3. **Deep investment** (large effort, high assurance): Formal specifications, model checking, shadow testing infrastructure, gate redesign, generator-evaluator for critical paths, behavioral twins for third-party integrations
+1. **Quick wins** (small effort, high impact): pre-commit hooks, shift type checking/linting per-file, structured CI reporters, first fitness function, doc link checking, TIA for affected tests
+2. **Foundation** (medium effort, enables future): property tests, contract testing, close feedback loops, focused test scripts, seed eval suite, schema-doc sync, requirement-coverage check
+3. **Deep investment** (large effort, high assurance): formal specs, model checking, shadow testing, gate redesign, generator-evaluator for critical paths, behavioral twins, pipeline-enforced RTM
 
 For each item specify: action, component, effort, dependencies, tools to install.
 
-### Step 14: Write the strategy
+### Step 14: Design requirement traceability
 
-Load `references/strategy-report-template.md` for the output structure.
+Load `references/traceability-design.md`. Read the report's Requirement Traceability section if present;
+otherwise check for stable requirement IDs, executable acceptance criteria (Gherkin/BDD), PR→issue links,
+and a requirement-coverage report. Recommend the next maturity step plus three explicit deliverables:
 
-Write `verification-strategy.md` following the template. Include all sections designed in Steps 1-13: component strategies, oracle strategy, evidence pipeline, shift-left, feedback loops, workflow gates, fitness functions, eval framework, generator-evaluator, documentation verification, and implementation roadmap.
+1. **Linking conventions**: stable requirement IDs, criterion→test tags, and code→requirement commit trailers.
+2. **The gate**: a CI step that reports uncovered requirements and untraced changes, blocking vs warning per risk class.
+3. **The human role**: comparing implementation to intent only where the trace is ambiguous.
+
+**Load-bearing constraint**: the gap *check* must be a deterministic script that parses IDs/tags — not
+an agent re-reading the spec. An agent re-reading the spec to "verify" the trace reintroduces the exact
+indeterminism the RTM exists to remove (an agent verifying agents). Make this explicit in the recommendation.
+
+### Step 15: Write the strategy
+
+Load `references/strategy-report-template.md`. Write `verification-strategy.md` following the template, covering all sections from Steps 1-14 (component strategies through roadmap, plus traceability).

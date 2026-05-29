@@ -32,6 +32,9 @@ Requirements for advancing from one autonomy level to the next.
 
 **Gating categories:** Typing strength, Testable boundaries, CI reliability
 
+**Collaboration:** Begin estimating iteration cycles on agent-assisted PRs; optional workflow
+artifact dir for active plans.
+
 ## L3 to L4: Bounded iteration -> Verified autonomy
 
 **Minimum requirements:**
@@ -42,8 +45,10 @@ Requirements for advancing from one autonomy level to the next.
 - CI is the authority for merge decisions
 - Strong feedforward surfaces: instruction file with >10 rules, module boundary enforcement, pre-commit hooks
 - Compound engineering in practice: corrections feed back into durable surfaces
+- Workflow artifacts for in-flight work (plans or specs) linked from agent entry docs
+- First-pass acceptance estimated or tracked; iteration cycles decreasing on bounded tasks
 
-**Gating categories:** Machine-readable intent, Testable boundaries, Deterministic environment and deployment, Progressive context disclosure, Feedforward surfaces
+**Gating categories:** Machine-readable intent, Testable boundaries, Deterministic environment and deployment, Progressive context disclosure, Feedforward surfaces, Compound engineering readiness
 
 ## L4 to L5: Verified autonomy -> End-to-end autonomous
 

@@ -8,6 +8,21 @@ Plugins are **declarative**. They consist of JSON manifests, Markdown skill defi
 
 A plugin packages **domain expertise** into a form that AI agents can consume. The skill tells the agent _what to do_ and _how to do it_; the reference documents provide the _knowledge_ the agent needs to make good decisions.
 
+## Plugin roles (taxonomy)
+
+Use these roles when naming and scoping plugins. Existing plugins already fit; **do not
+rename plugin directories** to match—the taxonomy is for design and documentation only.
+
+| Role | Purpose | Examples in this marketplace |
+|------|---------|--------------------------------|
+| **Assess** | Diagnose one dimension; produce a scored report | `assess-readiness`, `assess-verification`, `detect-ai-smells` |
+| **Prescribe** | Turn assessment into prioritized actions or strategy | `generate-roadmap`, `design-strategy` |
+| **Harden** | Enforce structure via hooks or gate patterns (validation, not generation) | PostToolUse validators, CI integration references in smells skill |
+
+A single plugin may contain multiple skills across roles (e.g. diagnose + prescribe). Prefer
+adding a new skill under an existing plugin when the domain matches; add a new plugin when the
+domain or audience differs (readiness vs verification).
+
 ## Anatomy of a plugin
 
 ```text
@@ -39,8 +54,8 @@ plugins/<plugin-name>/
 
 ### Size limits
 
-- **SKILL.md**: Maximum 300 lines. If your skill needs more, split it into multiple skills or move knowledge into reference documents.
-- **Reference documents**: Maximum 100 lines each. Keep them focused on one topic.
+- **SKILL.md**: Maximum 400 lines. If your skill needs more, split it into multiple skills or move knowledge into reference documents.
+- **Reference documents**: Maximum 150 lines each. Keep them focused on one topic.
 
 ### YAML frontmatter
 
@@ -108,7 +123,7 @@ Hooks are shell scripts that run after the agent performs certain actions (e.g.,
         "hooks": [
           {
             "type": "command",
-            "command": "${CLAUDE_PLUGIN_ROOT}/scripts/validate.sh",
+            "command": "${CLAUDE_PLUGIN_ROOT}/scripts/validate-report.sh",
             "timeout": 30
           }
         ]

@@ -36,6 +36,7 @@ Load `category-definitions-agent.md` for feedforward, compound engineering, and 
 | Multiple checks + coverage | Count jobs/steps; `codecov.yml`, branch protection rules |
 | Flakiness signals | `retry:`, `flaky` annotations, timeout overrides |
 | Shift-left checks | `.pre-commit-config.yaml`, `.husky/`, `lefthook.yml`, watch mode configs |
+| Test impact analysis | pytest-testmon, Jest `--onlyChanged`, Launchable — run only affected tests (essential at agent test volume) |
 
 ### Typing strength
 | Signal | Where to check |
@@ -67,6 +68,8 @@ Load `category-definitions-agent.md` for feedforward, compound engineering, and 
 | API + data schemas | `openapi.*`, `*.graphql`, `*.proto`, `*.schema.json`, Zod/Pydantic |
 | Contracts / property tests | Assertions, invariants, Hypothesis, fast-check |
 | Formal specs | `*.tla`, `*.als` (Alloy), `*.dfy` (Dafny) |
+| Executable acceptance criteria | Gherkin `.feature` files; BDD step defs (Cucumber, Behave, SpecFlow) |
+| Requirement traceability | PRs link issues (`Closes #`); tests tag requirement IDs; requirement-coverage report |
 | Regenerative readiness | Components definable by specs+tests alone; can be deleted and rebuilt |
 
 ### Progressive context disclosure

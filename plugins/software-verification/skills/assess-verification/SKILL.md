@@ -153,6 +153,11 @@ Identify all human review and approval checkpoints in the development workflow:
 - **Change advisory**: CAB processes, architecture review boards referenced in docs
 - **Compliance gates**: Security review requirements, audit sign-offs
 
+Branch protection rules and required-approval counts live in the hosting platform's settings, not
+the working tree. Read them with `gh api` (e.g. `gh api repos/{owner}/{repo}/branches/{branch}/protection`)
+when available; if `gh`/network is unavailable, mark these "not inspectable from working tree" rather
+than assuming they are absent.
+
 For each gate, evaluate:
 
 | Gate | Risk class served | Rejection rate (if estimable) | Could agent pre-review replace? | Produces actionable feedback? |
@@ -163,6 +168,9 @@ Identify:
 - **Bottleneck gates**: Required human review on low-risk changes where CI is authoritative
 - **Missing gates**: High-risk components with no human checkpoint
 - **Duplicate gates**: Same validation done by both CI and human reviewer
+- **Bypassable gates**: Local-only checks an agent can skip (`git commit --no-verify`, push without CI).
+  A gate that only fires client-side is not enforceable — the authoritative gate must be server-side
+  (branch protection + required status checks). Flag any check that exists only as a skippable local hook.
 
 ### Step 10: Assess shift-left positioning
 
@@ -231,8 +239,30 @@ For each telemetry stream, classify the current level (0-3):
 
 Flag critical gaps: verification that cannot be improved because there is no measurement of its effectiveness.
 
-### Step 13: Write the report
+### Step 13: Assess requirement traceability
+
+Evaluate whether intent traces to evidence: requirement → acceptance criterion → test → code → result.
+**Load `references/traceability-model.md` before scoring** — it defines the 0-3 maturity levels and the
+three RTM properties; do not invent your own scale.
+
+Search for these signals:
+
+- **Requirement anchors**: `docs/requirements/`, `docs/specs/`, EARS-style statements, structured issue templates
+- **Executable acceptance criteria**: Gherkin `.feature` files and BDD step definitions (Cucumber, Behave, SpecFlow)
+- **PR → issue links**: this lives in git history, not the working tree — use `git log` (e.g.
+  `git log --oneline -50`) and, if available, `gh pr list`. A valid link is a closing keyword
+  (`Closes #123`, `Fixes #123`), a bare `#123`/`Refs:`, or a tracker key (e.g. `PROJ-123`). Sample
+  recent merges and report the fraction lacking any link rather than asserting a number you cannot compute.
+  If git history or `gh` is unavailable, mark this signal "not inspectable" rather than guessing.
+- **Coverage-by-requirement**: any report mapping requirements to tests (not just lines to tests)
+- **Trace tooling**: Kiro, SpecKit, OpenSpec, BMAD `trace`, AI-DLC
+
+Classify the overall level (0-3). Assess the three RTM properties (scope verification, impact analysis,
+test sufficiency) and flag the failure each gap allows. Flag Level 0-1 as critical: **intent drift** is
+caught only by slow, fully-human review, which cannot keep pace with agents.
+
+### Step 14: Write the report
 
 Load `references/report-template.md` for the output structure.
 
-Write `verification-report.md` following the template. Include all sections assessed in Steps 1-12: maturity tier, component breakdown, missing oracles, exactness analysis, human review requirements, autonomy candidates, feedback loops, workflow gates, shift-left, documentation verification, and AgentOps telemetry.
+Write `verification-report.md` following the template, including all sections assessed in Steps 1-13 (maturity tier through requirement traceability).
