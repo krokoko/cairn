@@ -17,9 +17,9 @@ Write `verification-report.md` with the following structure:
 
 ## Missing Oracles
 
-| Component | Current oracle | Gap | Recommended oracle type |
-|-----------|---------------|-----|------------------------|
-| ... | ... | ... | ... |
+| Component | Current oracle | Strength (strong/weak/none) | Gap (incl. oracle rot) | Recommended oracle type |
+|-----------|---------------|-----------------------------|------------------------|------------------------|
+| ... | ... | ... | ... | ... |
 
 ## Exactness Analysis
 
@@ -89,6 +89,7 @@ Write `verification-report.md` with the following structure:
 | Cost | 0-3 | ... | ... |
 | Quality | 0-3 | ... | ... |
 | Autonomy compliance | 0-3 | ... | ... |
+| Domain | 0-3 | ... | ... |
 
 **Critical blind spots**: ...
 

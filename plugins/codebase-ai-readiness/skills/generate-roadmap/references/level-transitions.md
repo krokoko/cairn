@@ -67,3 +67,17 @@ artifact dir for active plans.
 - Excellent context friendliness: files sized for agent windows, layered docs, retrieval-optimized naming
 
 **Gating categories:** Machine-readable intent (must be 90+), Feedforward surfaces (must be 85+), all other categories 75+
+
+**Hard prerequisites (all required — L5 is gated by the weakest, not the average):**
+At L5 humans leave the code-review loop entirely, so the safety net is the oracle, not a reviewer.
+Treat these as pass/fail gates, not scored categories:
+
+- [ ] Codified, **executable** specifications for all critical behavior (not prose — runnable: BDD/Gherkin, contracts, schemas)
+- [ ] A **strong oracle on every critical path** (machine-checkable and deterministic — see the verification plugin's oracle analysis; weak/brittle oracles do not count)
+- [ ] A **reliable simulation/staging environment** that mirrors production closely enough to trust pre-merge validation
+- [ ] Telemetry rich enough to detect **silent failures** — wrong-but-not-crashing behavior — not just exceptions and downtime
+- [ ] Progressive delivery with **automated rollback** triggered by that telemetry
+
+If any prerequisite is missing, the codebase is not L5-ready regardless of score: agents would ship
+defects faster than the (now absent) human reviewer could have caught them. Recommend staying at L4
+and closing the missing prerequisite first.

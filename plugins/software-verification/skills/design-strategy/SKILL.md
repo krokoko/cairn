@@ -83,9 +83,11 @@ For each target component, identify architectural invariants that should be auto
 For each recommended fitness function, specify:
 - The property being protected
 - The tool to implement it
-- Where it runs (pre-commit, local verification command, CI, or all)
+- Where it runs, matched to execution cost: fast checks (seconds) at pre-commit/per-commit; slow checks (minutes — full Lighthouse, large benchmarks, deep scans) in nightly/scheduled builds so the agent's fast loop stays fast
 - The error message format (actionable for agents)
 - Current maturity level and target level
+
+Calibrate deliberately (see "Calibration and execution cost" in the implementation reference): start permissive and tighten on observed violations; fitness functions enforce decisions already made, they do not replace architectural judgment.
 
 ### Step 6: Design evidence pipeline
 
@@ -250,6 +252,20 @@ and a requirement-coverage report. Recommend the next maturity step plus three e
 an agent re-reading the spec. An agent re-reading the spec to "verify" the trace reintroduces the exact
 indeterminism the RTM exists to remove (an agent verifying agents). Make this explicit in the recommendation.
 
-### Step 15: Write the strategy
+### Step 15: Design safe-evolution strategy
 
-Load `references/strategy-report-template.md`. Write `verification-strategy.md` following the template, covering all sections from Steps 1-14 (component strategies through roadmap, plus traceability).
+For components facing breaking or large-scale change (renames, API/schema reshapes, convention
+migrations), load `references/safe-evolution.md` and recommend a staged approach instead of a one-shot
+diff — the failure mode agents default to.
+
+- **Parallel Change** for interface/shape changes: expand (add new form alongside old) → migrate
+  callers incrementally → contract (remove old). No breaking window; each phase ships reversibly.
+- **Sweep** for one-rule-many-files changes: prefer codemods over regex; write the rule down, sample
+  3-4 sites, execute in small batches, and gate each batch on tests + diff review.
+
+Recommend this wherever the assessment flagged a large refactor, migration, or cross-cutting rename.
+Tie the gate back to the evidence pipeline (Step 6): each incremental step passes the same checks.
+
+### Step 16: Write the strategy
+
+Load `references/strategy-report-template.md`. Write `verification-strategy.md` following the template, covering all sections from Steps 1-15 (component strategies through roadmap, plus traceability and safe-evolution).

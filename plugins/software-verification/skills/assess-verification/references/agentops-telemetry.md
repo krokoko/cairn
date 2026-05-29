@@ -18,7 +18,7 @@ teams cannot:
 - Measure improvement (is the verification strategy working?)
 - Cost-optimize (which checks provide signal vs noise?)
 
-## Four telemetry streams
+## Five telemetry streams
 
 ### 1. Trajectory telemetry
 
@@ -65,3 +65,24 @@ Whether agents operate within their designated verification boundaries.
 | Human override rate | Gate calibration | Approval system logs |
 | Escalation frequency | Autonomy tier fit | Agent decision logs |
 | Policy violation count | Boundary enforcement | Runtime governance logs |
+
+### 5. Domain telemetry
+
+Business-meaningful outcomes instrumented as first-class signals — not derived from infrastructure
+metrics. Technical telemetry answers "is the software running?"; domain telemetry answers "is the
+software doing its job?". This is the stream that catches **silent failures**: an agent can refactor
+code, pass every test, and return `200 OK` at normal latency while quietly breaking domain logic
+(e.g. a serialization bug that drops discount codes). Only a metric that knows what the *outcome*
+should look like exposes it.
+
+| Signal | What it reveals | Where to capture |
+|--------|----------------|------------------|
+| Business-outcome rates | Whether behavior is correct in production | Domain event instrumentation (checkout completion, coupon redemption, signup success) |
+| Outcome value distributions | Silent drift in computed results | Metrics on amounts/counts (avg order value, items per cart) with expected ranges |
+| Conversion/funnel steps | Where real flows break despite green infra | Funnel/event analytics |
+| Anomaly thresholds on domain metrics | Divergence from intent → rollback trigger | Alerting on domain-metric deltas post-deploy |
+
+For autonomous change, domain telemetry is the agent's **production oracle** for behavior no unit
+test covers: it is what makes automated rollback (an L5 prerequisite) trustworthy. Flag its absence
+as a critical gap for any codebase aiming at L4-L5 autonomy — without it, silent regressions ship
+undetected.

@@ -7,7 +7,7 @@ Continues `agentops-telemetry.md`. Maturity scoring, indicators, and recommendat
 ### Mature AgentOps telemetry (score indicators)
 
 **Level 3 — Full observability**
-- All four telemetry streams captured
+- All five telemetry streams captured (including domain-outcome telemetry)
 - Dashboards or reports available for verification performance
 - Alerting on verification regressions (declining pass rates, increasing iterations)
 - Cost tracking per task type
@@ -39,6 +39,7 @@ Continues `agentops-telemetry.md`. Maturity scoring, indicators, and recommendat
 | CI timing visibility | CI platform dashboards, timing artifacts |
 | Cost tracking | Billing alerts, usage dashboards, budget configs |
 | Quality metrics | Coverage trends, defect tracking, flake dashboards |
+| Domain-outcome metrics | Business-event instrumentation, funnel/conversion analytics, anomaly thresholds on domain KPIs |
 | Alerting on verification | Alert configs, monitoring rules, SLO definitions |
 | Structured verification output | JUnit XML, SARIF, JSON reports with timing data |
 
@@ -51,3 +52,4 @@ Continues `agentops-telemetry.md`. Maturity scoring, indicators, and recommendat
 | No quality trends | Track coverage/pass-rate over time; add flake detection |
 | No cost visibility | Tag CI costs per workflow; track token usage per task type |
 | No alerting | Add alerts for declining pass rates, increasing CI time, cost spikes |
+| No domain telemetry | Instrument key business outcomes (completion/redemption/conversion); alert on post-deploy domain-metric drift to catch silent failures |

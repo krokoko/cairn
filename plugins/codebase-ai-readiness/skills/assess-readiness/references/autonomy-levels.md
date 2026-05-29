@@ -28,3 +28,21 @@
 - **L2 to L3**: Tests are reliable (not flaky), types are enforced, scoping is clear
 - **L3 to L4**: Property tests or contracts cover critical paths; CI is the authority
 - **L4 to L5**: Machine-readable specs cover system behavior; oracles exist for all critical paths
+
+## The autonomy ceiling
+
+A high readiness score does **not** by itself justify a high autonomy level. The level a codebase
+can safely operate at is **capped by the strength of its verification oracles** — agents inherit
+oracle quality directly. Running agents above the ceiling turns the pipeline into an *accelerated
+defect delivery system*: more autonomy simply ships wrong code faster.
+
+> Effective autonomy = min(readiness score → level, oracle strength on the changed surface).
+
+Practical rules:
+
+- A category breakdown strong on structure/docs/context but **weak on testable boundaries,
+  machine-readable intent, or oracles** caps the recommended level at L3 regardless of the weighted score.
+- Autonomy is per-surface, not global: a well-tested core may sit at L4 while a weakly-tested
+  integration sits at L2. Recommend the level for the surface being changed, not a single repo-wide number.
+- When oracle strength is unknown or unverified, recommend the **lower** adjacent level and flag
+  oracle assessment as the blocker. Pair this with the verification plugin's oracle analysis.

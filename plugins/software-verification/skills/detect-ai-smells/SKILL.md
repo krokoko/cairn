@@ -12,13 +12,13 @@ user-invocable: true
 
 # Assess AI Smell Detection Gates
 
-Assess whether a codebase has gates in place to catch AI-generated code smells — patterns indicating output was produced for plausibility rather than understanding. Produce an `ai-smells-gates-report.md` with coverage of the 8 AI smell categories, gap analysis, recommendations for missing gates, and human review heuristics for what automation can't catch.
+Assess whether a codebase has gates in place to catch AI-generated code smells — patterns indicating output was produced for plausibility rather than understanding. Produce an `ai-smells-gates-report.md` with coverage of the 9 AI smell categories, gap analysis, recommendations for missing gates, and human review heuristics for what automation can't catch.
 
 ## Workflow
 
 ### Step 1: Load smell taxonomy
 
-Load `references/ai-smells-taxonomy.md` for the 8 AI smell categories and their detection approaches.
+Load `references/ai-smells-taxonomy.md` for the 9 AI smell categories and their detection approaches.
 
 These are the categories of AI-generated quality problems the codebase should be protected against:
 1. Plausible Fabrication
@@ -85,7 +85,7 @@ Search for mechanisms that would catch AI smells:
 
 Load `references/detection-patterns.md` and `references/detection-patterns-gates.md` for what patterns each gate should catch.
 
-For each of the 8 AI smells, determine which existing gates provide coverage:
+For each of the 9 AI smells, determine which existing gates provide coverage:
 
 | Smell | Covered by | Coverage level |
 |-------|-----------|----------------|
@@ -97,6 +97,7 @@ For each of the 8 AI smells, determine which existing gates provide coverage:
 | AI006: Symmetry Without Substance | ... | ... |
 | AI007: Local Reasoning Violations | ... | ... |
 | AI008: Implicit Drift | ... | ... |
+| AI009: Happy-Path-Only Coverage | ... | ... |
 
 Coverage levels:
 - **Full**: Automated gate would block or warn on this smell category
@@ -108,6 +109,8 @@ For AI001 (Plausible Fabrication) specifically: note that interface mocks alone 
 For AI004 (Shallow Error Handling): assess both traditional empty-catch detection AND silent success masking. If only empty-catch rules exist but no detection of `catch { return [] }` / `catch { return null }` patterns, classify as "Partial". Full coverage requires startup validation enforcement and boundary validation checks.
 
 For AI008 (Implicit Drift): check for both the pin itself AND an automated update mechanism. Lockfile enforcement without Dependabot/Renovate is "Partial" — it prevents drift but accumulates staleness. Full coverage requires pinning + deliberate update process.
+
+For AI009 (Happy-Path-Only Coverage): line coverage alone does NOT count — a suite can hit every line via success-case tests while never exercising an error branch. Require branch coverage or mutation testing plus the presence of error-path tests (`assertRaises`/`toThrow`/`pytest.raises`). Line coverage only, with no error-path assertions, is "Partial" at best.
 
 ### Step 4: Assess gate maturity
 

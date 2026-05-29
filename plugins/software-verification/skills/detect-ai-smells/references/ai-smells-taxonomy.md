@@ -2,7 +2,7 @@
 
 AI smells are surface patterns in model-generated output suggesting content was produced for plausibility rather than understanding. They indicate **comprehension debt** — a gap between what code does and what anyone believes it does.
 
-## The 8 AI Smells
+## The 9 AI Smells
 
 | # | Smell | Definition | Severity | Key Indicator |
 |---|-------|-----------|----------|---------------|
@@ -14,6 +14,7 @@ AI smells are surface patterns in model-generated output suggesting content was 
 | 6 | **Symmetry Without Substance** | Parallel structures that appear organized but don't illustrate meaningful differences | Low-Medium | Copy-paste handlers, boilerplate differing only in names |
 | 7 | **Local Reasoning Violations** | Code requiring understanding of distant files or global state | Medium-High | Import sprawl (>5 modules), hidden singleton access, magic values |
 | 8 | **Implicit Drift** | Unpinned references that silently resolve to different versions over time | Medium-High | `latest` tags, floating version ranges, model aliases, mutable external references |
+| 9 | **Happy-Path-Only Coverage** | Tests and code exercise only the success scenario; error paths, edge cases, and boundaries are untested or unhandled | Medium-High | Tests assert on valid input only; no error-branch/exception tests; no empty/boundary/timeout cases; error branches with no covering test |
 
 ## The Pinning Principle
 
@@ -41,6 +42,8 @@ Individual smells compound when combined:
 - Plausible fabrication + tests mirroring implementation = tests pass against non-existent APIs
 - Implicit drift + shallow error handling = system silently degrades when pinned reference changes behavior
 - Implicit drift + plausible fabrication = generated code references a version that never existed
+- Happy-path-only coverage + shallow error handling = error paths are both unhandled and untested — guaranteed production failures
+- Happy-path-only coverage + tests mirroring implementation = a green suite that proves nothing about real-world robustness
 
 Flag files exhibiting 3+ smells simultaneously as high-priority refactoring targets.
 
@@ -53,6 +56,20 @@ AI004 (Shallow Error Handling) extends beyond empty catch blocks to encompass **
 - Catching exceptions at depth instead of validating at boundaries
 
 The fail-fast principle requires: detect problems at the earliest point (system boundaries, startup, function entry), and surface them in a way that demands attention from the appropriate actor. AI-generated code almost never validates at startup or boundaries — it handles errors deep in call stacks where root cause is obscured.
+
+## The Happy-Path Principle
+
+AI009 (Happy-Path-Only Coverage) reflects a consistent agent bias: agents are strong happy-path
+performers but under-handle error conditions. They generate working code for the well-scoped success
+case, while the code that runs when assumptions break — invalid input, timeouts, unavailable
+dependencies, empty/boundary values, unauthorized access — is thin or absent, and the tests rarely
+exercise it. The danger is delayed: a suite with only happy-path tests passes every day until the
+first real failure in production.
+
+Detection signals: assertions only on valid inputs; no tests that expect a raised error/exception or
+exercise an error branch; missing empty/boundary/null cases; error branches in source with no
+covering test. The remedy is to name the happy path, then ask "what are all the ways this breaks?" —
+turning each departure into an error to handle, an edge case to cover, or a documented failure mode.
 
 ## Scoring Formula
 
@@ -80,3 +97,4 @@ Compound multiplier: 2 smells in same file = ×1.5, 3+ smells = ×2.0.
 | AI006 | Symmetry Without Substance | note |
 | AI007 | Local Reasoning Violations | warning |
 | AI008 | Implicit Drift | warning |
+| AI009 | Happy-Path-Only Coverage | warning |

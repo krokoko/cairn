@@ -62,6 +62,25 @@ Ratings: VH=Very High, H=High, M=Medium, L=Low. Columns: Assurance / Cost / Auto
 | Human | Requires domain judgment | UX quality, ambiguous correctness |
 | Behavioral twin | Third-party integrations needing real-behavior verification | Clone of external service exercised via scenarios |
 
+## Oracle strength
+
+Oracle *type* (above) is only half the picture; rate each oracle's *strength*, because autonomy is
+capped by it. Without an oracle a test only proves the code ran without crashing — not that it did
+the right thing.
+
+| Strength | Characteristics | Examples |
+|----------|-----------------|----------|
+| Strong | Machine-checkable, deterministic, generalizes across inputs | Property checks, contracts, differential/reference comparison, exact I/O |
+| Weak | Brittle, narrow, or unverified | Hardcoded expected values that rot as requirements change; satisfaction thresholds with no ground truth; an oracle copied without confirming it is itself correct |
+
+**Oracle rot**: a weak oracle drifts out of sync with the requirement while its tests keep passing —
+so the suite is green but no longer asserts the right thing. This is *more* dangerous than a missing
+oracle because it gives false confidence. Treat it as a distinct gap. Mutation testing is the main
+defense: it reveals oracles that pass regardless of whether the code is correct.
+
+When exact verification is impossible, prefer defining **properties** (validity, invariants,
+performance bounds) over brittle hardcoded values — they catch real bugs without rotting.
+
 ## Key insight
 
 Property-based testing is the most important bridge method for autonomous construction:

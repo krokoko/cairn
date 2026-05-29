@@ -1,6 +1,6 @@
 # Detection Patterns (Gates II)
 
-Continues `detection-patterns.md`. Smell categories AI005–AI008 and minimum viable gate set.
+Continues `detection-patterns.md`. Smell categories AI005–AI009 and minimum viable gate set.
 
 ## AI005: Tests Mirroring Implementation
 
@@ -62,13 +62,36 @@ grep -rn 'uses:.*@v[0-9]\|uses:.*@main\|uses:.*@master' .github/
 grep -rn 'model.*=.*["'"'"']\(gpt-4\|claude\|sonnet\|opus\|haiku\|gemini\)["'"'"']' src/ | grep -v '\-[0-9]\{4\}'
 ```
 
+## AI009: Happy-Path-Only Coverage
+
+| Gate type | Tools | What it catches |
+|-----------|-------|-----------------|
+| Branch coverage (not just line) | `coverage.py --branch`, `c8`, JaCoCo branch | Error branches with no covering test |
+| Mutation testing | `stryker`, `mutmut`, `cargo-mutants` | Error/edge logic that no test pins down |
+| Error-path test presence | Custom lint / review heuristic | Test files with no `assertRaises`/`expect().toThrow`/`pytest.raises` |
+| Boundary/property tests | `hypothesis`, `fast-check` | Untested empty/null/boundary inputs |
+
+**Happy-path principle:** Agents reliably handle the success case and under-handle failure. Branch
+coverage and mutation testing surface the gap; treat an error branch with no test as a real finding,
+not a style nit. The fix is to enumerate departures from the happy path (invalid input, timeout,
+unavailable dependency, empty/boundary, unauthorized) and cover each.
+
+**Detection patterns:**
+```bash
+# test files asserting only on success (no error-path assertions)
+grep -rLn 'assertRaises\|pytest.raises\|toThrow\|expect.*[Ee]rror\|should.*raise' test/ tests/ __tests__/ spec/
+# source error branches to cross-check against test coverage
+grep -rn 'raise \|throw \|return null\|return \[\]\|except\|catch' src/ | grep -v test
+```
+
 ## Minimum Viable Gate Set
 
 For teams starting from zero, recommend in priority order:
 1. Type checking (catches AI001)
 2. Empty catch lint rules + silent success masking (catches AI004)
-3. Mutation testing (catches AI005)
+3. Mutation testing (catches AI005, AI009)
 4. Duplication detection (catches AI006)
 5. Import boundary enforcement + magic value linting (catches AI007)
 6. Dead code detection (catches AI002, AI003)
 7. Lockfile enforcement + Docker tag linting (catches AI008)
+8. Branch coverage + error-path test requirement (catches AI009)

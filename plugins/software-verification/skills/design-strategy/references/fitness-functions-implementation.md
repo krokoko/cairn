@@ -42,6 +42,22 @@ Automated checks for security-critical properties.
 | 3 | Local + CI checks, actionable messages | Agents self-correct within iteration loop |
 | 4 | Pre-commit + agent hooks, comprehensive | Violations caught per-file; near-zero drift |
 
+## Calibration and execution cost
+
+Fitness functions enforce architectural decisions that have *already been made* — they do not make
+architectural judgments. Use them to hold a line a human or ADR has drawn, not to discover where the
+line should be.
+
+**Calibration tension** — a rule too strict blocks legitimate changes (and agents tend to route
+around a hard blocker rather than rethink the change); too loose lets drift through unnoticed. Start
+permissive and tighten on observed violations rather than front-loading speculative rules. Each rule
+needs ongoing maintenance as the architecture evolves; a stale rule is its own form of drift.
+
+**Execution cost** — keep per-commit fitness functions fast (seconds). Functions that take minutes
+(full Lighthouse runs, large benchmark harnesses, deep dependency scans) belong in nightly or
+scheduled builds, not the per-commit path, so they do not slow the agent's fast feedback loop. Match
+placement to cost: fast structural checks at pre-commit/per-commit; slow envelope checks nightly.
+
 ## Recommendations by archetype
 
 | Component archetype | Priority fitness functions |

@@ -96,6 +96,19 @@ For components with third-party integrations, specifically assess:
 
 Flag components with **no oracle at all** as critical gaps. Flag third-party integrations verified only via interface mocks as oracle weakness — agents can fabricate plausible API behavior that mocks will not catch.
 
+For each oracle that exists, also rate its **strength**, not just its presence (see the "Oracle
+strength" section in `references/verification-taxonomy.md`):
+
+- **Strong**: machine-checkable, deterministic, and generalizing (property checks, contracts,
+  reference/differential comparison). Scales without a human in the loop.
+- **Weak**: brittle or unverified (hardcoded expected values that rot as requirements change, an
+  oracle copied without checking it is itself correct, satisfaction thresholds with no ground truth).
+
+This matters because autonomy is capped by oracle strength: a component can have an oracle and still
+be unsafe for autonomous change if that oracle is weak. Flag **oracle rot** — tests that pass while
+the requirement has drifted, so the oracle no longer asserts the right thing — as a distinct gap from
+"no oracle"; it is more dangerous because it gives false confidence.
+
 ### Step 5: Classify correctness feasibility
 
 For each component, determine:
@@ -227,6 +240,7 @@ Search for indicators of operational visibility into verification:
 - **Cost telemetry**: CI timing visibility, token usage tracking, billing alerts or budget configs
 - **Quality telemetry**: Coverage trend tracking, flake dashboards, defect rate monitoring, mutation testing reports
 - **Autonomy compliance telemetry**: Audit logs, override tracking, escalation frequency logging
+- **Domain telemetry**: Business-outcome instrumentation, funnel/conversion analytics, anomaly thresholds on domain KPIs — the stream that catches silent failures (green infra, broken behavior)
 
 For each telemetry stream, classify the current level (0-3):
 
@@ -236,6 +250,7 @@ For each telemetry stream, classify the current level (0-3):
 | Cost | ... | ... | ... |
 | Quality | ... | ... | ... |
 | Autonomy compliance | ... | ... | ... |
+| Domain | ... | ... | ... |
 
 Flag critical gaps: verification that cannot be improved because there is no measurement of its effectiveness.
 
