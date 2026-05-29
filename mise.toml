@@ -6,6 +6,7 @@ node = "24"
 "npm:ajv-cli" = "5"
 "pipx:check-jsonschema" = "latest"
 "pipx:pre-commit" = "4"
+gitleaks = "latest"
 
 [tasks."lint:md"]
 description = "Lint Markdown (SKILL.md, references, docs)"
@@ -51,6 +52,10 @@ depends = ["lint", "validate"]
 [tasks.check]
 description = "Alias for build"
 depends = ["build"]
+
+[tasks."security:secrets"]
+description = "Scan for secrets with gitleaks"
+run = "gitleaks detect --source . --no-banner"
 
 [tasks."pre-commit"]
 description = "Run pre-commit on all files"
