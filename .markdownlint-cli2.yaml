@@ -1,4 +1,4 @@
-# markdownlint-cli2 configuration for autonomy-rails
+# markdownlint-cli2 configuration for Cairn
 
 frontMatter: "^---\\n[\\s\\S]*?\\n---\\n"
 gitignore: true

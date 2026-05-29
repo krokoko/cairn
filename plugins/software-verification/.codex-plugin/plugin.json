@@ -4,10 +4,10 @@
   "description": "Design verification strategies that unlock higher levels of autonomous software development.",
   "author": {
     "name": "Alain Krok",
-    "url": "https://github.com/krokoko/autonomy-rails"
+    "url": "https://github.com/krokoko/cairn"
   },
-  "homepage": "https://github.com/krokoko/autonomy-rails",
-  "repository": "https://github.com/krokoko/autonomy-rails",
+  "homepage": "https://github.com/krokoko/cairn",
+  "repository": "https://github.com/krokoko/cairn",
   "license": "Apache-2.0",
   "keywords": [
     "verification",
@@ -22,10 +22,10 @@
     "displayName": "Software Verification",
     "shortDescription": "Assess verification maturity and design per-component verification strategies.",
     "longDescription": "Inventory oracles, classify components, detect AI smell gates, and produce verification reports and implementation roadmaps.",
-    "developerName": "Autonomy Rails",
+    "developerName": "Cairn",
     "category": "Verification",
     "capabilities": ["Read", "Bash", "Grep", "Glob"],
-    "websiteURL": "https://github.com/krokoko/autonomy-rails",
+    "websiteURL": "https://github.com/krokoko/cairn",
     "defaultPrompt": [
       "What verification do I need for more autonomy?",
       "Assess verification maturity for this codebase.",

@@ -1,4 +1,4 @@
-# Autonomy Rails
+# Cairn
 
 Plugin marketplace for making codebases ready for autonomous AI development.
 

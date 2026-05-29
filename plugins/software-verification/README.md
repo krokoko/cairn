@@ -46,4 +46,4 @@ The AI Readiness plugin answers "where are we?" while this plugin answers "what 
 
 ## Installation
 
-Install via the autonomy-rails plugin marketplace in your AI agent (Claude Code, Codex, or Cursor).
+Install via the Cairn plugin marketplace in your AI agent (Claude Code, Codex, or Cursor).

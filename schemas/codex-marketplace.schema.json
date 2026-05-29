@@ -1,6 +1,6 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "https://autonomy-rails/schemas/codex-marketplace.schema.json",
+  "$id": "https://cairn/schemas/codex-marketplace.schema.json",
   "title": "Codex Marketplace Registry",
   "description": "Schema for Codex marketplace registry files",
   "type": "object",

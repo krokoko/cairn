@@ -1,6 +1,6 @@
 # Development Guide
 
-This guide explains how to create, validate, and test plugins for the autonomy-rails marketplace.
+This guide explains how to create, validate, and test plugins for the Cairn marketplace.
 
 ## Prerequisites
 
@@ -70,9 +70,9 @@ Add entries to `.claude-plugin/marketplace.json` and `.agents/plugins/marketplac
 
 ## Testing a plugin
 
-**Claude Code:** `/plugin marketplace add krokoko/autonomy-rails` then install the plugin.
+**Claude Code:** `/plugin marketplace add krokoko/cairn` then install the plugin.
 
-**Codex:** Open this repo; install from the Autonomy Rails marketplace in the plugin UI.
+**Codex:** Open this repo; install from the Cairn marketplace in the plugin UI.
 
 Verify each skill follows its workflow, loads references, produces the expected report format, and hooks validate output when applicable.
 

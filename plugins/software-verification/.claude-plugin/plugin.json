@@ -8,6 +8,6 @@
   },
   "keywords": ["verification", "testing", "formal-methods", "oracles", "strategy"],
   "license": "Apache-2.0",
-  "homepage": "https://github.com/krokoko/autonomy-rails",
-  "repository": "https://github.com/krokoko/autonomy-rails"
+  "homepage": "https://github.com/krokoko/cairn",
+  "repository": "https://github.com/krokoko/cairn"
 }

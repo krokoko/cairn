@@ -10,8 +10,8 @@ repos:
 
   - repo: local
     hooks:
-      - id: autonomy-rails-build
-        name: autonomy-rails build (lint + validate)
+      - id: cairn-build
+        name: cairn build (lint + validate)
         entry: bash -c 'mise run build'
         language: system
         pass_filenames: false

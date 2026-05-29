@@ -44,4 +44,4 @@ Takes an existing readiness report and generates a detailed improvement plan to 
 
 ## Installation
 
-Install via the autonomy-rails plugin marketplace in your AI agent (Claude Code, Codex, or Cursor).
+Install via the Cairn plugin marketplace in your AI agent (Claude Code, Codex, or Cursor).

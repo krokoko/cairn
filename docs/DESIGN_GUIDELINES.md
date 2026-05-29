@@ -1,6 +1,6 @@
 # Design Guidelines
 
-This document describes how to design plugins for the autonomy-rails marketplace.
+This document describes how to design plugins for the Cairn marketplace.
 
 ## Plugin philosophy
 

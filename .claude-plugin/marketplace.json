@@ -3,7 +3,7 @@
     "description": "Plugin marketplace for making codebases ready for autonomous AI development",
     "version": "0.1.0"
   },
-  "name": "autonomy-rails",
+  "name": "cairn",
   "owner": {
     "name": "krokoko"
   },

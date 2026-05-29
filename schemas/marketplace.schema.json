@@ -1,8 +1,8 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "https://autonomy-rails/schemas/marketplace.schema.json",
+  "$id": "https://cairn/schemas/marketplace.schema.json",
   "title": "Marketplace Registry",
-  "description": "Schema for the autonomy-rails plugin marketplace registry",
+  "description": "Schema for the Cairn plugin marketplace registry",
   "type": "object",
   "required": ["name", "owner", "plugins"],
   "properties": {

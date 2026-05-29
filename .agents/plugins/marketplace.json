@@ -1,7 +1,7 @@
 {
-  "name": "autonomy-rails",
+  "name": "cairn",
   "interface": {
-    "displayName": "Autonomy Rails"
+    "displayName": "Cairn"
   },
   "plugins": [
     {

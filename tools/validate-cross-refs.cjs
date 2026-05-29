@@ -1,5 +1,5 @@
 /**
- * Cross-reference validation for autonomy-rails marketplaces and plugin manifests.
+ * Cross-reference validation for Cairn marketplaces and plugin manifests.
  */
 
 "use strict";

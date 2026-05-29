@@ -4,10 +4,10 @@
   "description": "Assess how AI-friendly a codebase is and produce an autonomy maturity map with scores, blockers, and a roadmap.",
   "author": {
     "name": "Alain Krok",
-    "url": "https://github.com/krokoko/autonomy-rails"
+    "url": "https://github.com/krokoko/cairn"
   },
-  "homepage": "https://github.com/krokoko/autonomy-rails",
-  "repository": "https://github.com/krokoko/autonomy-rails",
+  "homepage": "https://github.com/krokoko/cairn",
+  "repository": "https://github.com/krokoko/cairn",
   "license": "Apache-2.0",
   "keywords": [
     "readiness",
@@ -22,10 +22,10 @@
     "displayName": "Codebase AI Readiness",
     "shortDescription": "Score codebase AI readiness and recommend autonomy level upgrades.",
     "longDescription": "Assess structure, tests, CI, typing, documentation, and agent affordances; produce readiness reports and improvement roadmaps.",
-    "developerName": "Autonomy Rails",
+    "developerName": "Cairn",
     "category": "Assessment",
     "capabilities": ["Read", "Bash", "Grep", "Glob"],
-    "websiteURL": "https://github.com/krokoko/autonomy-rails",
+    "websiteURL": "https://github.com/krokoko/cairn",
     "defaultPrompt": [
       "How AI-friendly is this codebase?",
       "Assess readiness for autonomous coding agents.",

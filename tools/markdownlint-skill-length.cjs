@@ -1,5 +1,5 @@
 /**
- * Validates SKILL.md length limits (autonomy-rails design guidelines).
+ * Validates SKILL.md length limits (Cairn design guidelines).
  * Max 400 lines / 6500 words: hard error (fails the build).
  * Advisory at 350 lines / 5500 words: printed to stderr, does NOT fail the build.
  *
@@ -17,7 +17,7 @@ const WARNING_WORDS = 5500;
 
 module.exports = {
   names: ["skill-length", "SKILL001"],
-  description: "SKILL.md files should stay within autonomy-rails size limits",
+  description: "SKILL.md files should stay within Cairn size limits",
   tags: ["skill", "length"],
   parser: "none",
   function: function skillLength(params, onError) {

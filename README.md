@@ -1,20 +1,38 @@
 <div align="center">
-  <img alt="Autonomy Rails" width="250" src="docs/imgs/autonomyrails.png" />
+  <img alt="Cairn" width="250" src="docs/imgs/cairn.png" />
 
   <br />
   <br />
 
   <strong>
-    The toolkit that turns a codebase from AI-assisted to autonomy ready
+    From AI-assisted to autonomous: make your codebase ready for AI coding agents
   </strong>
   <br />
+  <br />
+
+  <a href="./LICENSE"><img alt="License: Apache-2.0" src="https://img.shields.io/badge/License-Apache_2.0-blue.svg" /></a>
+  <img alt="Works with Claude Code, Cursor, Codex" src="https://img.shields.io/badge/works%20with-Claude%20Code%20%7C%20Cursor%20%7C%20Codex-8A2BE2" />
 </div>
 
-**Autonomy rails** helps engineering teams to make their codebases ready for autonomous software development.
+**Cairn** is an open-source toolkit of AI agent plugins that measure and improve how ready your codebase is for autonomous AI coding agents — charting a path from AI-assisted coding to verified, end-to-end autonomy.
 
-As AI coding agents become more capable, the bottleneck is not just code generation, it is verification. Most software systems were designed for human-driven workflows, with implicit knowledge, inconsistent tests, fragile CI, unclear ownership, and limited machine readable intent. **Autonomy rails** provides a set of agent plugins that help teams turn those codebases into environments where AI agents can operate safely, incrementally, and with measurable confidence. Just install the plugins in any AI assistant that supports the plugin standard (Cursor, Claude Code, Codex), and you're ready to go.
+> A *cairn* is a stack of stones that marks the trail on a climb — each one confirming how far you've come and pointing the way to the next. This project does the same for your codebase's journey to autonomy: marking where you stand today and the path to the next level.
 
-The goal is to help teams move from AI-assisted coding to verified autonomous software workflows, one codebase and one validation layer at a time.
+## Why
+
+AI coding agents can now generate code faster than humans can review it. The bottleneck has shifted from writing code to **trusting it**: can an agent change this codebase safely, without a human reading every line? Most codebases were built for human workflows (implicit knowledge, inconsistent tests, fragile CI, unclear ownership, and little machine-readable intent) and agents amplify those weaknesses at machine speed.
+
+Cairn treats autonomy as something you **measure and earn**, not switch on. Install the plugins in any AI assistant that supports the plugin standard (Claude Code, Cursor, Codex), run a skill, and get back concrete, committable reports.
+
+## What you get
+
+- 📊 **AI readiness score & autonomy maturity map** — where your codebase sits on a 0–5 autonomy scale, a category breakdown, and the blockers holding you at your current level.
+- 🗺️ **Prioritized improvement roadmap** — specific, effort-ranked actions to reach the next level.
+- 🔬 **Verification strategy** — per-component oracles, missing tests, and what to verify to unlock safe autonomous iteration.
+- 🚦 **AI-smell detection gates** — whether your CI catches the failure patterns AI-generated code tends to introduce.
+- 🔗 **Requirement traceability** — proof that every change traces back to an intent, so agents don't silently drift from what was asked.
+
+**Who it's for:** engineering teams adopting AI coding agents who want a measurable, incremental path to autonomy — not a leap of faith.
 
 ## Getting started
 
@@ -27,21 +45,21 @@ Install the plugins in your AI agent:
 Add the marketplace
 
 ```bash
-/plugin marketplace add krokoko/autonomy-rails
+/plugin marketplace add krokoko/cairn
 ```
 
 Add the plugins
 
 ```bash
-/plugin install codebase-ai-readiness@autonomy-rails
-/plugin install software-verification@autonomy-rails
+/plugin install codebase-ai-readiness@cairn
+/plugin install software-verification@cairn
 ```
 
 **Codex:**
 
 1. Clone this repository locally.
 2. Open the repo in Codex so it discovers `.agents/plugins/marketplace.json`.
-3. Restart Codex, open the plugin directory, choose the **Autonomy Rails** marketplace, and install a plugin.
+3. Restart Codex, open the plugin directory, choose the **Cairn** marketplace, and install a plugin.
 
 Claude-specific PostToolUse hooks are not wired into Codex manifests; skills and references work the same.
 
