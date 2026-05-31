@@ -106,4 +106,19 @@ Write `verification-report.md` with the following structure:
 **Untraced changes** (code with no upstream requirement): ...
 **Uncovered requirements** (requirement with no test): ...
 **Intent-drift risk**: ...
+
+## Verification Debt
+
+Consolidated, ticketable backlog rolled up from the gaps found in every section above
+(missing/weak oracles, feedback-loop gaps, shift-left gaps, doc-verification gaps, telemetry
+blind spots, traceability gaps). One row = one liability = one fileable issue.
+
+| ID | Component | Debt type | Severity | Current → Required | Remediation |
+|----|-----------|-----------|----------|--------------------|-------------|
+| VD-1 | ... | Missing oracle / Weak oracle / Oracle rot / No fuzz target / Uncovered requirement / Unrouted feedback / Late shift-left / Stale docs / Telemetry blind spot | High / Medium / Low | e.g. "OpenAPI spec, no contract test" | ... |
+
+**Severity rubric**: High = high-criticality component with no/weak oracle, or a gap that lets
+silent regressions ship; Medium = business logic with partial coverage; Low = utilities, cosmetic.
+
+**Suggested labels** (for export to issues/Jira): `verification-debt`, plus debt type and severity.
 ```

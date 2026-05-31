@@ -67,4 +67,6 @@ placement to cost: fast structural checks at pre-commit/per-commit; slow envelop
 | Distributed/stateful | Dependency constraints, protocol compatibility, timeout budgets |
 | Safety/security kernel | All security invariants, dependency isolation, no-magic rules |
 | ML-backed | Performance envelope, API surface, model version pinning |
+| Data pipeline | Schema compatibility, data-quality thresholds, freshness/volume bounds |
+| Infrastructure/IaC | Policy-as-code rules, no-secrets, drift detection, blast-radius limits |
 | Agent-written | Structural rules, naming conventions, test-to-source ratio |

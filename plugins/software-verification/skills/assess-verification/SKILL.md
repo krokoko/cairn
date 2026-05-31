@@ -34,6 +34,11 @@ Search for all verification-related artifacts:
 - Sanitizers: ASan/TSan/UBSan flags in build configs or CI
 - Profiling: `pprof`, `perf`, `py-spy` configurations or scripts
 
+**Security and supply chain:**
+- Dependency / SCA scanning: Dependabot (`.github/dependabot.yml`), Renovate, Snyk, `npm audit`, `pip-audit`, `osv-scanner`, `govulncheck` in CI
+- Secret scanning: `gitleaks`, `detect-secrets`, `trufflehog` configs or hooks
+- IaC scanning: `tfsec`, `checkov`, `kics`, `terrascan` configs or CI steps
+
 **Contracts and schemas:**
 - Schemas: `*.schema.json`, `*.proto`, `openapi.*`, `*.graphql`
 - Contracts: assertions, `icontract`, `contracts` library imports, `invariant`
@@ -53,7 +58,7 @@ Load `references/decision-framework.md` for classification guidance. Load `refer
 
 | Property | Options |
 |----------|---------|
-| **Archetype** | Deterministic library, CRUD/API service, Distributed/stateful, Safety/security kernel, ML-backed, Agent-written |
+| **Archetype** | Deterministic library, CRUD/API service, Distributed/stateful, Safety/security kernel, ML-backed, Data pipeline, Infrastructure/IaC, Agent-written |
 | **Criticality** | High (safety, security, money, core data), Medium (business logic), Low (UI, utilities) |
 | **Determinism** | Deterministic, Concurrent/distributed, Probabilistic/learned |
 | **Current verification** | List which methods are already applied |
@@ -276,8 +281,20 @@ Classify the overall level (0-3). Assess the three RTM properties (scope verific
 test sufficiency) and flag the failure each gap allows. Flag Level 0-1 as critical: **intent drift** is
 caught only by slow, fully-human review, which cannot keep pace with agents.
 
-### Step 14: Write the report
+### Step 14: Consolidate verification debt
+
+Roll up every gap surfaced in Steps 4-13 (missing/weak oracles, oracle rot, feedback-loop gaps,
+shift-left gaps, doc-verification gaps, telemetry blind spots, traceability gaps) into a single
+ticketable backlog. This is consolidation, not new analysis — collect findings already made.
+
+For each entry produce: component, debt type, severity, current → required state, and remediation.
+One row = one liability = one fileable issue. Severity: High = high-criticality component with
+no/weak oracle or a gap that lets silent regressions ship; Medium = business logic with partial
+coverage; Low = utilities/cosmetic. Order the backlog by severity. Note that rows can be exported
+as issues/Jira tickets with a `verification-debt` label.
+
+### Step 15: Write the report
 
 Load `references/report-template.md` for the output structure.
 
-Write `verification-report.md` following the template, including all sections assessed in Steps 1-13 (maturity tier through requirement traceability).
+Write `verification-report.md` following the template, including all sections assessed in Steps 1-14 (maturity tier through verification debt).

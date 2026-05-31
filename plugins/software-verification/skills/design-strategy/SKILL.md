@@ -37,7 +37,7 @@ Load `references/toolchain-catalog.md` and `references/toolchain-catalog-ecosyst
 
 For each target component:
 
-1. **Identify archetype**: Deterministic lib, CRUD service, distributed/stateful, safety kernel, ML-backed, agent-written
+1. **Identify archetype**: Deterministic lib, CRUD service, distributed/stateful, safety kernel, ML-backed, data pipeline, infrastructure/IaC, agent-written
 2. **Look up recommended stack**: From the hybrid strategies reference
 3. **Diff current vs recommended**: What already exists? What is missing?
 4. **Produce specific recommendations**:

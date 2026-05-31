@@ -55,6 +55,8 @@ Ratings: VH=Very High, H=High, M=Medium, L=Low. Columns: Assurance / Cost / Auto
 | Exact | Deterministic function, known I/O pairs | `sort([3,1,2]) == [1,2,3]` |
 | Metamorphic | Transformations have known effects | `search(q) ⊆ search(broader_q)` |
 | Differential | Multiple implementations to compare | Old vs new version |
+| Contract | API/interface must obey a schema or protocol | Response matches OpenAPI spec; pre/postconditions hold |
+| Temporal | State transitions must follow ordering/protocol rules | `open → close` legal, `close → close` rejected |
 | Statistical | Bounded stochastic output | Accuracy > 0.95, p99 < 200ms |
 | Performance envelope | Measurable load/latency/resource bounds | p99 < 100ms under 10k req/s, memory < 512MB |
 | Replay | Historical inputs with validated outputs | Production traces as regression |

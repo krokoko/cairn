@@ -7,6 +7,8 @@
 | Exact | Known input/output pairs | Highest confidence | Doesn't scale to large input spaces |
 | Metamorphic | Relations between executions | No need for exact answers | Weak relations give weak assurance |
 | Differential | Compare multiple implementations | Catches divergence | Requires reference impl |
+| Contract | Conformance to a schema or protocol | Machine-checkable; guards API boundaries | Verifies shape/protocol, not business correctness |
+| Temporal | Legal state transitions and event ordering | Catches illegal sequences and protocol violations | Requires an explicit state/protocol model |
 | Statistical | Bounded distributions/thresholds | Handles stochastic behavior | Not proof of correctness |
 | Replay | Historical inputs with validated outputs | Reality-grounded | Stale if system evolves |
 | Performance envelope | Measurable load/latency/resource bounds | Machine-checkable; prevents perf regressions | Doesn't verify functional correctness |
@@ -21,6 +23,8 @@
 | Exact | Deterministic, enumerable inputs | `assert f(input) == expected` | Sorting, parsing, encoding |
 | Metamorphic | Known relations between I/O | `assert f(shuffle(x)) == f(x)` | Search, compilers, ML |
 | Differential | Reference impl exists | `assert new(x) == old(x)` | Rewrites, migrations, ports |
+| Contract | API obeys schema/protocol | `assert conforms(response, schema)` | REST/gRPC APIs, library interfaces |
+| Temporal | State transitions must follow rules | `assert legal(prev_state, event, next_state)` | State machines, workflows, protocols |
 | Statistical | Stochastic but bounded | `assert mean(results) in CI` | ML inference, load balancers |
 | Replay | Historical data with known-good outputs | `assert new(trace.input) ≈ trace.output` | API migrations, model upgrades |
 | Performance envelope | Performance constraints must hold | `assert p99 < 100ms, mem < 512MB` | APIs, pipelines, real-time |

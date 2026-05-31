@@ -32,7 +32,7 @@ ERRORS=""
 
 # Check for verification-report.md sections
 if [[ "$FILENAME" == "verification-report.md" ]]; then
-  for section in "Verification Maturity" "Component Breakdown" "Missing Oracles" "Exactness Analysis" "Human Review Requirements" "Autonomy Candidates" "Feedback Loop Completeness" "Workflow Gate Assessment" "Shift-Left Assessment" "Documentation Verification" "AgentOps Telemetry" "Requirement Traceability"; do
+  for section in "Verification Maturity" "Component Breakdown" "Missing Oracles" "Exactness Analysis" "Human Review Requirements" "Autonomy Candidates" "Feedback Loop Completeness" "Workflow Gate Assessment" "Shift-Left Assessment" "Documentation Verification" "AgentOps Telemetry" "Requirement Traceability" "Verification Debt"; do
     if ! grep -q "## $section" "$FILE_PATH"; then
       ERRORS="${ERRORS}Missing required section: '## ${section}'. "
     fi

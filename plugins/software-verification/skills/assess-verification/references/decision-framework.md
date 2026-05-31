@@ -52,4 +52,6 @@ Rely on alternative oracles and operational validation.
 | Distributed/stateful | Interleavings, partial failure | Formal spec, model checking, replay, chaos |
 | Safety/security kernel | Correctness of invariants | Proofs, abstract interpretation, SMT |
 | ML-backed | Output quality, drift | Metamorphic, shadow, statistical, human |
+| Data pipeline | Data quality, silent corruption, lineage | Golden datasets, data-quality/schema checks, metamorphic, replay |
+| Infrastructure/IaC | Drift, misconfiguration, blast radius | Policy-as-code, plan validation, IaC scanning, drift detection |
 | Agent-written | Trust, specification drift | Sandboxing, equivalence oracles, progressive delivery |

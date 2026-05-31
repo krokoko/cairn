@@ -9,6 +9,8 @@
 | Distributed/stateful | Formal spec + model checking + deterministic replay + integration/system tests + runtime verification + canaries + chaos | Interleavings and partial failures are the hard part |
 | Safety/security kernel | Contracts + deductive verification + SMT proofs + abstract interpretation + theorem proving + operational checks | Failure cost justifies proof investment; runtime catches spec mismatches |
 | ML-backed | Metamorphic + differential evaluation + statistical thresholds + shadow testing + canaries + human escalation | Exact outputs unavailable; alternative oracles and operational validation dominate |
+| Data pipeline | Schema/contract checks + golden datasets + data-quality assertions + metamorphic relations + replay + lineage tracking | Failures are silent data corruption, not crashes; correctness lives in the data, not the code path |
+| Infrastructure/IaC | Policy-as-code + plan validation + IaC scanning + drift detection + progressive rollout + post-apply checks | Blast radius is large and reversibility low; verify before apply and detect drift after |
 | Agent-written | Equivalence oracle + held-out validation + sandboxing + progressive delivery + telemetry + risk-based human approval | Mirrors strongest pattern for autonomous iteration |
 
 ## Detailed recommendations per archetype
@@ -47,6 +49,20 @@
 2. **Add next**: Shadow testing against production traffic
 3. **Add for deployment**: Statistical monitoring, drift detection, canary analysis
 4. **Always include**: Human-in-the-loop for edge cases and low-confidence outputs
+
+### Data pipeline
+
+1. **Start with**: Schema/contract validation on inputs and outputs, data-quality assertions (nullability, ranges, uniqueness)
+2. **Add next**: Golden datasets (known input → known output) and metamorphic relations (e.g. row count preserved, aggregates consistent)
+3. **Add for evolution**: Replay against historical data; diff new vs old pipeline output
+4. **Always include**: Lineage tracking and freshness/volume anomaly alerts — failures are silent corruption, not crashes
+
+### Infrastructure/IaC
+
+1. **Start with**: Plan validation (`terraform plan`, CDK diff) and policy-as-code gates (OPA/Conftest, Sentinel, cdk-nag)
+2. **Add next**: IaC security scanning (tfsec, checkov, kics, terrascan) in pre-commit and CI
+3. **Add for deployment**: Progressive rollout, post-apply health checks, automated rollback
+4. **Always include**: Drift detection comparing live state to declared state
 
 ### Agent-written
 
