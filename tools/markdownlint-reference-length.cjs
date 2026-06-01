@@ -16,7 +16,13 @@ module.exports = {
       return;
     }
 
-    const totalLines = (params.frontMatterLines || []).length + params.lines.length;
+    // markdownlint appends a trailing empty element to params.lines for newline-terminated
+    // files; drop it so totalLines matches `wc -l` rather than running one line high.
+    const bodyLines = params.lines.slice();
+    if (bodyLines.length > 0 && bodyLines[bodyLines.length - 1] === "") {
+      bodyLines.pop();
+    }
+    const totalLines = (params.frontMatterLines || []).length + bodyLines.length;
     if (totalLines > MAX_LINES) {
       onError({
         lineNumber: 1,

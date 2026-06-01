@@ -10,6 +10,7 @@ Tools organized by language ecosystem and verification category. Load `toolchain
 | Linting | ruff, pylint, flake8 |
 | Testing | pytest, unittest |
 | Property testing | Hypothesis |
+| Approval / snapshot testing | approvaltests, syrupy |
 | BDD / executable specs | behave, pytest-bdd, radish |
 | Mutation testing | mutmut, cosmic-ray |
 | Test impact analysis | pytest-testmon |
@@ -28,6 +29,7 @@ Tools organized by language ecosystem and verification category. Load `toolchain
 | Linting | ESLint, biome |
 | Testing | Jest, Vitest, Mocha |
 | Property testing | fast-check |
+| Approval / snapshot testing | Jest snapshots, jest-image-snapshot |
 | BDD / executable specs | Cucumber.js, Jest-Cucumber, CodeceptJS |
 | Mutation testing | Stryker |
 | Test impact analysis | Jest `--onlyChanged` / `--changedSince`, Vitest `--changed` |
@@ -44,6 +46,7 @@ Tools organized by language ecosystem and verification category. Load `toolchain
 | Linting | golangci-lint, staticcheck, go vet |
 | Testing | go test, testify |
 | Property testing | rapid, gopter |
+| Approval / snapshot testing | golden files (`-update` convention), goldie, cupaloy |
 | BDD / executable specs | godog, ginkgo |
 | Mutation testing | go-mutesting, gremlins |
 | Test impact analysis | go test (package-level via `go list` + dependency graph) |
@@ -61,10 +64,12 @@ Tools organized by language ecosystem and verification category. Load `toolchain
 | Linting | clippy, cargo-deny |
 | Testing | cargo test, #[test] |
 | Property testing | proptest, quickcheck |
+| Approval / snapshot testing | insta |
 | BDD / executable specs | cucumber-rs |
 | Mutation testing | cargo-mutants |
 | Test impact analysis | cargo-nextest (partition/filter), rust-test-impact (experimental) |
 | Fuzzing | cargo-fuzz (libFuzzer), afl.rs |
+| Schedule exploration | Loom (exhaustive interleavings), Shuttle (randomized PCT) |
 | Formal verification | Kani (bounded model checking), Verus |
 | Sanitizers | ASan, MSan, TSan, UBSan via RUSTFLAGS |
 | Profiling | flamegraph, perf, cargo-flamegraph |

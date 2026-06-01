@@ -10,6 +10,7 @@ Continues `toolchain-catalog.md`. Java/Kotlin ecosystems and cross-language infr
 | Linting | SpotBugs, Error Prone, ktlint |
 | Testing | JUnit, TestNG, Kotest |
 | Property testing | jqwik, kotlin-quickcheck |
+| Approval / snapshot testing | ApprovalTests (Java) |
 | BDD / executable specs | Cucumber-JVM, JBehave, Serenity BDD |
 | Mutation testing | PIT (pitest) |
 | Test impact analysis | Drill4J, JUnit5 + affected-test plugins, Parasoft Jtest |
@@ -37,6 +38,7 @@ Continues `toolchain-catalog.md`. Java/Kotlin ecosystems and cross-language infr
 | Progressive delivery | Argo Rollouts, Flagger, LaunchDarkly |
 | Chaos engineering | Chaos Monkey, Litmus, Gremlin |
 | Runtime monitoring | OpenTelemetry, Prometheus + alerts |
+| Evidence / provenance | in-toto (attestation format), SLSA (provenance spec/levels), Sigstore/Cosign + GitHub artifact attestations (signing) |
 | Agentic QA | Playwright + agent charters, CDP, Cypress + AI drivers |
 | LLM-as-Judge | OpenAI Evals, Braintrust, custom rubric evaluators |
 | Statistical model checking | PRISM, UPPAAL, Monte Carlo methods |

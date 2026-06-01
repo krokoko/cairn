@@ -6,11 +6,12 @@
 |-----------|-------------------|-------------------|
 | Deterministic library | Types + unit tests + property tests + fuzzing + sanitizers + selective SMT/deductive | Semantics are local, input-heavy; generative methods dominate |
 | CRUD/API service | Contracts/schemas + types + linters + unit/integration/regression + canaries + runtime SLOs | Most failures are interface, config, regression; proofs rarely justify ROI |
-| Distributed/stateful | Formal spec + model checking + deterministic replay + integration/system tests + runtime verification + canaries + chaos | Interleavings and partial failures are the hard part |
+| Distributed/stateful | Formal spec + model checking + schedule exploration + deterministic replay + integration/system tests + runtime verification + canaries + chaos | Interleavings and partial failures are the hard part |
 | Safety/security kernel | Contracts + deductive verification + SMT proofs + abstract interpretation + theorem proving + operational checks | Failure cost justifies proof investment; runtime catches spec mismatches |
 | ML-backed | Metamorphic + differential evaluation + statistical thresholds + shadow testing + canaries + human escalation | Exact outputs unavailable; alternative oracles and operational validation dominate |
 | Data pipeline | Schema/contract checks + golden datasets + data-quality assertions + metamorphic relations + replay + lineage tracking | Failures are silent data corruption, not crashes; correctness lives in the data, not the code path |
 | Infrastructure/IaC | Policy-as-code + plan validation + IaC scanning + drift detection + progressive rollout + post-apply checks | Blast radius is large and reversibility low; verify before apply and detect drift after |
+| Legacy monolith | Approval/characterization tests + golden-trace replay + integration smoke + baseline telemetry, then strangler-edge contracts | Freeze observable behavior before refactoring; the risk is silent regression, not greenfield design |
 | Agent-written | Equivalence oracle + held-out validation + sandboxing + progressive delivery + telemetry + risk-based human approval | Mirrors strongest pattern for autonomous iteration |
 
 ## Detailed recommendations per archetype
@@ -33,7 +34,7 @@
 
 1. **Start with**: Write a formal spec (TLA+ or Alloy) of the protocol
 2. **Add next**: Model check the spec (TLC, Apalache, Stateright)
-3. **Add for implementation**: Deterministic replay/simulation testing
+3. **Add for implementation**: Schedule exploration of the real code (Loom/Shuttle), deterministic replay/simulation testing
 4. **Add for production**: Runtime monitors for temporal properties, chaos experiments
 
 ### Safety/security kernel
@@ -63,6 +64,14 @@
 2. **Add next**: IaC security scanning (tfsec, checkov, kics, terrascan) in pre-commit and CI
 3. **Add for deployment**: Progressive rollout, post-apply health checks, automated rollback
 4. **Always include**: Drift detection comparing live state to declared state
+
+### Legacy monolith
+
+1. **Start with**: Approval/characterization tests that freeze current observable behavior of the code you intend to change
+2. **Add next**: Golden-trace replay — capture sanitized production traffic, normalize nondeterministic fields, replay against the candidate
+3. **Add for refactor safety**: Integration smoke tests and baseline telemetry to detect drift
+4. **Always include**: Strangler-edge contract tests as behavior moves out of the monolith
+5. **Sequencing note**: freeze behavior *first*; do not begin deep refactors until a characterization net and golden traces are green
 
 ### Agent-written
 

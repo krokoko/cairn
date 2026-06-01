@@ -23,7 +23,7 @@ Move semantics into specifications and invest in proof-oriented methods.
 
 Prioritize protocol modeling, interleaving exploration, and replay.
 
-**Recommended stack**: Formal spec (TLA+), model checking, deterministic replay/simulation, runtime verification, integration tests.
+**Recommended stack**: Formal spec (TLA+), model checking, deterministic schedule exploration of the implementation (Loom/Shuttle), deterministic replay/simulation, runtime verification, integration tests.
 
 **Typical targets**: Consensus protocols, distributed state machines, queue processors, failover logic.
 
@@ -54,4 +54,5 @@ Rely on alternative oracles and operational validation.
 | ML-backed | Output quality, drift | Metamorphic, shadow, statistical, human |
 | Data pipeline | Data quality, silent corruption, lineage | Golden datasets, data-quality/schema checks, metamorphic, replay |
 | Infrastructure/IaC | Drift, misconfiguration, blast radius | Policy-as-code, plan validation, IaC scanning, drift detection |
+| Legacy monolith | Regressions during refactor; stable-I/O drift | Approval/characterization tests, golden-trace replay, integration smoke |
 | Agent-written | Trust, specification drift | Sandboxing, equivalence oracles, progressive delivery |

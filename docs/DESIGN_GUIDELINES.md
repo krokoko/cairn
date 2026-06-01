@@ -28,7 +28,9 @@ domain or audience differs (readiness vs verification).
 ```text
 plugins/<plugin-name>/
   .claude-plugin/
-    plugin.json               # Manifest: name, version, description, author, keywords, license
+    plugin.json               # Claude manifest: name, version, description, author, keywords, license
+  .codex-plugin/
+    plugin.json               # Codex manifest: name, version, description, author, interface
   hooks/
     hooks.json                # PostToolUse hook definitions
   scripts/

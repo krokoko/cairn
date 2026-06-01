@@ -20,7 +20,10 @@ function resolvePathUnderBase(relativePath) {
   const normalized = path.normalize(relativePath.replace(/^\.\//, "").replace(/\/$/, ""));
   if (normalized.startsWith("..") || path.isAbsolute(normalized)) return null;
   const fullPath = path.resolve(process.cwd(), normalized);
-  if (!fullPath.startsWith(path.resolve(BASE_DIR))) return null;
+  const baseDir = path.resolve(BASE_DIR);
+  // Use path.relative so sibling dirs like "plugins-evil" don't pass a bare startsWith("plugins") check.
+  const rel = path.relative(baseDir, fullPath);
+  if (rel !== "" && (rel.startsWith("..") || path.isAbsolute(rel))) return null;
   return fullPath;
 }
 

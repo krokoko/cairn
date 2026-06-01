@@ -16,7 +16,8 @@ Ratings: VH=Very High, H=High, M=Medium, L=Low. Columns: Assurance / Cost / Auto
 | Fuzzing | libFuzzer, AFL, cargo-fuzz | M-H / M / H / H / M | Parsers, codecs, security-sensitive inputs |
 | Consumer-driven contracts | Pact, Spring Cloud Contract | M-H / M / H / H / M | Multi-service APIs; prevents agent-caused breaking changes |
 | Behavioral twin testing | Agent-built service clones, scenario runners | H / M-H / H / H / M | Third-party integrations; verifies real behavior, not assumptions |
-| Regression replay | Captured inputs/outputs | M / L-M / H / H / L | Every bug becomes a permanent test case |
+| Approval / characterization testing | ApprovalTests, insta, snapshots | M / L / H / M / L | Freezing existing behavior of untested/legacy code before refactor; text/render-heavy output |
+| Regression replay | Captured inputs/outputs, production golden traces | M / L-M / H / H / L | Every bug becomes a permanent test case; replay sanitized production traffic against a candidate |
 | Mutation testing | mutmut, Stryker, cargo-mutants | M / M / H / M / M | Assessing test suite quality and strength |
 
 ### Static and formal methods
@@ -29,6 +30,7 @@ Ratings: VH=Very High, H=High, M=Medium, L=Low. Columns: Assurance / Cost / Auto
 | Sanitizers | ASan, TSan, UBSan, MSan | H / L-M / H / H / L-M | Mandatory for native/unsafe code |
 | Contracts (DbC) | icontract, JML, assertions | M-H / M / H / H / M | Interface semantics; first step to formal |
 | Abstract interpretation | Astree, Frama-C/EVA | H / H / H / M / H | Safety-critical embedded, numeric code |
+| Schedule exploration | Loom (exhaustive), Shuttle (randomized), Coyote | H / M-H / H / M / M-H | Concurrent implementation code: explores interleavings of the real code, not a model |
 | Formal spec + model checking | TLA+/TLC, Alloy, Stateright | H-VH / M-H / H / M-L / H | Protocols, distributed state, concurrency |
 | SMT / bounded verification | Kani, Dafny, Z3 | H / M / H / M / H | Bit-precise kernels, arithmetic invariants |
 | Deductive verification | Dafny, SPARK, Frama-C/WP | H-VH / H / M-H / M / H | Critical algorithms, codecs, memory safety |
@@ -46,6 +48,7 @@ Ratings: VH=Very High, H=High, M=Medium, L=Low. Columns: Assurance / Cost / Auto
 | Canary / progressive delivery | Argo Rollouts, feature flags | M-H / M / H / H / M | All production-facing releases |
 | Chaos engineering | Chaos Monkey, Litmus | M / M / M / M / M | Distributed systems, failover paths |
 | LLM-as-Judge evaluation | Model scoring against rubrics | M / L-M / H / H / M | Non-deterministic outputs, style, generated content |
+| Provenance / attestation | in-toto, SLSA, Sigstore/Cosign | M / M / H / H / M | Packaging signed evidence of what ran on which commit; cross-team/regulated delivery (evidence, not an oracle) |
 | Human review | Code review, approvals | Variable / M / M / M / M | High-risk, ambiguous, low-confidence changes |
 
 ## Oracle types
@@ -63,6 +66,10 @@ Ratings: VH=Very High, H=High, M=Medium, L=Low. Columns: Assurance / Cost / Auto
 | LLM-as-Judge | Non-deterministic output, human review too slow | Generated docs, UI copy, refactoring quality |
 | Human | Requires domain judgment | UX quality, ambiguous correctness |
 | Behavioral twin | Third-party integrations needing real-behavior verification | Clone of external service exercised via scenarios |
+
+Attestation/provenance (in-toto, SLSA) is deliberately **not** in this table: it records *what
+ran on which commit with what verdict* and signs it — it packages evidence, it does not adjudicate
+output correctness. Treat it as an evidence rail, not an oracle.
 
 ## Oracle strength
 

@@ -43,7 +43,7 @@ run = "bash tests/validators/run.sh"
 
 [tasks.validate]
 description = "Run validation checks"
-depends = ["validate:refs", "test:validators"]
+depends = ["validate:refs", "test:validators", "security:secrets"]
 
 [tasks.build]
 description = "Lint and validate (CI entrypoint)"

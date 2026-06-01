@@ -9,7 +9,7 @@
   },
   "plugins": [
     {
-      "category": "assessment",
+      "category": "Assessment",
       "description": "Assess how AI-friendly a codebase is and produce an autonomy maturity map",
       "keywords": ["readiness", "assessment", "maturity", "autonomy-levels", "diagnosis"],
       "name": "codebase-ai-readiness",
@@ -18,13 +18,13 @@
       "version": "0.1.0"
     },
     {
-      "category": "verification",
+      "category": "Verification",
       "description": "Design verification strategies that unlock higher levels of autonomous software development",
       "keywords": ["verification", "testing", "formal-methods", "oracles", "strategy"],
       "name": "software-verification",
       "source": "./plugins/software-verification",
       "tags": ["autonomy", "verification", "testing", "agents"],
-      "version": "0.2.0"
+      "version": "0.3.0"
     }
   ]
 }

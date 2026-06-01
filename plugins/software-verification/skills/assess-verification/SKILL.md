@@ -58,7 +58,7 @@ Load `references/decision-framework.md` for classification guidance. Load `refer
 
 | Property | Options |
 |----------|---------|
-| **Archetype** | Deterministic library, CRUD/API service, Distributed/stateful, Safety/security kernel, ML-backed, Data pipeline, Infrastructure/IaC, Agent-written |
+| **Archetype** | Deterministic library, CRUD/API service, Distributed/stateful, Safety/security kernel, ML-backed, Data pipeline, Infrastructure/IaC, Legacy monolith, Agent-written |
 | **Criticality** | High (safety, security, money, core data), Medium (business logic), Low (UI, utilities) |
 | **Determinism** | Deterministic, Concurrent/distributed, Probabilistic/learned |
 | **Current verification** | List which methods are already applied |
@@ -87,6 +87,8 @@ Load `references/verification-taxonomy.md` for oracle types.
 | Exact expected output | Deterministic, well-specified inputs/outputs |
 | Metamorphic relations | Output hard to predict but transformations have known effects |
 | Differential oracle | Multiple implementations or versions to compare |
+| Contract | API/interface must conform to a schema or protocol |
+| Temporal | State transitions or event ordering must follow protocol rules |
 | Statistical threshold | Stochastic outputs with bounded distributions |
 | Performance envelope | Measurable load/latency/resource bounds that must hold |
 | Replay/held-out data | Historical inputs with known-good outputs |

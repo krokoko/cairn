@@ -16,6 +16,30 @@ independently and produces uniform evidence records.
 All lanes feed an **Evidence Store** and then a **Scoring and Policy Engine** that
 decides: may this merge, may this deploy, must a human approve?
 
+## Four-rail coverage
+
+The five lanes above are *method categories*. They are orthogonal to a second question: does the
+stack cover the whole lifecycle? A sound base stack has **one rail in each of four positions**:
+
+| Rail | Position | Catches | Example |
+|------|----------|---------|---------|
+| Pre-merge | Before code lands | Logic/regression bugs | Property tests, unit tests, types |
+| Boundary | At interfaces | Integration/contract breaks | Contract tests, schema compatibility |
+| Production-proximate | Near/in production | What labs miss | Shadow, canary, replay, SLOs |
+| Evidence | After verdict | Unverifiable/untrusted delivery | Signed attestation (in-toto/SLSA) |
+
+Use this as a coverage checklist: a stack missing a rail has a blind spot regardless of how many
+lanes it exercises.
+
+## Evidence rail and attestations
+
+The Evidence Store should not only retain records — for high/critical risk it should emit **signed,
+portable attestations** (in-toto attestation format, SLSA provenance levels, signed via
+Sigstore/Cosign or GitHub artifact attestations). This lets downstream and cross-team consumers
+trust *what ran, on which commit, with which verdict* without rerunning the harness. Attestation is
+evidence packaging — it proves the process happened, not that the output is semantically correct —
+so it complements oracles, never replaces them.
+
 ## Core interface schemas
 
 ### Spec pack

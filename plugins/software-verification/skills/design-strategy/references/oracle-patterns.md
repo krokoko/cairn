@@ -18,6 +18,10 @@
 
 ## When to use each oracle
 
+**Selection rule**: pick the cheapest oracle that is still strong enough to reject bad changes
+automatically. If an exact or differential oracle exists, do not reach for an expensive end-to-end
+or human check; escalate to a stronger (costlier) oracle only when no cheaper one is strong enough.
+
 | Oracle | Use when | Pattern | Examples |
 |--------|----------|---------|----------|
 | Exact | Deterministic, enumerable inputs | `assert f(input) == expected` | Sorting, parsing, encoding |

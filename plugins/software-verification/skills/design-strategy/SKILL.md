@@ -37,7 +37,7 @@ Load `references/toolchain-catalog.md` and `references/toolchain-catalog-ecosyst
 
 For each target component:
 
-1. **Identify archetype**: Deterministic lib, CRUD service, distributed/stateful, safety kernel, ML-backed, data pipeline, infrastructure/IaC, agent-written
+1. **Identify archetype**: Deterministic lib, CRUD service, distributed/stateful, safety kernel, ML-backed, data pipeline, infrastructure/IaC, legacy monolith, agent-written
 2. **Look up recommended stack**: From the hybrid strategies reference
 3. **Diff current vs recommended**: What already exists? What is missing?
 4. **Produce specific recommendations**:
@@ -106,6 +106,9 @@ Recommend how verification evidence should flow through CI/CD:
 - What checks must pass before deploy
 - When to require human approval
 - Rollback triggers and thresholds
+- For high/critical risk, require a signed evidence attestation (in-toto/SLSA via Sigstore/Cosign or GitHub artifact attestations) as the evidence rail — it records what ran on which commit with what verdict, not output correctness
+
+Check rail coverage (see `references/harness-architecture.md`): the stack should have one pre-merge rail, one boundary rail, one production-proximate rail, and one evidence rail.
 
 ### Step 7: Design feedback loop improvements
 

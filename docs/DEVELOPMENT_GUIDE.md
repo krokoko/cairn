@@ -17,8 +17,6 @@ mise install
 
 ## Repository tooling
 
-Aligned with [awslabs/agent-plugins](https://github.com/awslabs/agent-plugins):
-
 | Task | Command | What it checks |
 |------|---------|----------------|
 | Full CI build | `mise run build` | Lint + validate |
@@ -26,13 +24,15 @@ Aligned with [awslabs/agent-plugins](https://github.com/awslabs/agent-plugins):
 | Markdown | `mise run lint:md` | All `**/*.md` + custom SKILL/reference rules |
 | Manifests | `mise run lint:manifests` | JSON Schema via ajv |
 | Cross-refs | `mise run lint:cross-refs` | Claude + Codex marketplaces vs plugin dirs |
+| JSON | `mise run lint:json` | JSON validity of all `.json` files |
 | References | `mise run validate:refs` | Broken links and orphan reference files |
 | Validators | `mise run test:validators` | Report-validator hook scripts + template-drift guard |
+| Secrets | `mise run security:secrets` | gitleaks secret scan (runs as part of `build`) |
 | Pre-commit | `mise run pre-commit` | Optional local hook bundle |
 
 Custom markdownlint rules in `tools/`:
 
-- `markdownlint-skill-length.cjs` — SKILL.md hard max 400 lines (fails build); 350-line advisory printed to stderr without failing
+- `markdownlint-skill-length.cjs` — SKILL.md hard max 400 lines / 6500 words (fails build); 350-line / 5500-word advisory printed to stderr without failing
 - `markdownlint-reference-length.cjs` — references max 150 lines
 - `markdownlint-frontmatter.cjs` — SKILL frontmatter vs schema
 

@@ -13,6 +13,7 @@ recommending methods and to identify false confidence in existing verification.
 | Property-based testing | Weak generators or weak properties create false confidence; poor shrinking hurts debugging | Invariants easier to state than enumerate |
 | Fuzzing | Strong for crashes but weak for semantic correctness unless paired with assertions | Seed corpus, harness quality, sanitizers |
 | Regression replay | Only protects what is already covered; accretes brittle tests | Historical failing cases, captured workflows |
+| Approval / characterization testing | Snapshot churn; approving a bad baseline locks in the current (possibly wrong) behavior | Stable I/O edges, diff-friendly serialization, disciplined re-approval |
 | Mutation testing | Slow on large codebases; equivalent mutants create noise | Existing test suite to evaluate |
 
 ## Static and formal methods
@@ -25,6 +26,7 @@ recommending methods and to identify false confidence in existing verification.
 | Sanitizers | Only sees executed paths; adds overhead; poor coverage = false negatives | Compatible toolchains, test/fuzz workloads |
 | Contracts (DbC) | Weak or inaccurate contracts create correctness theater; runtime-only misses unexecuted paths | Explicit invariants, ownership of semantics |
 | Abstract interpretation | Precision loss creates too many alarms; domain tuning is hard | Sound semantics, language/tool support |
+| Schedule exploration | State explosion; harness not representative of production integration; only exhaustive (Loom) up to a bound, randomized (Shuttle) gives no completeness guarantee | Instrumented concurrency primitives, bounded scope |
 | Model checking | State explosion is the classic limit; finite abstractions miss bugs outside scope | Explicit state models, checkable properties |
 | SMT solving | Fragile encodings, solver timeouts, quantifier pain, assumption mistakes | Good specs, loop bounds or invariants |
 | Deductive verification | Annotation burden is high; proof breakage under code change; specs may be weaker than intent | Contracts, loop invariants, framing |

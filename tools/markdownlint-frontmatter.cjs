@@ -33,7 +33,10 @@ function loadAllowedProperties() {
 const ALLOWED_PROPERTIES = loadAllowedProperties();
 
 function extractDescription(frontmatter) {
-  const block = frontmatter.match(/^description:\s*\|\s*\n([\s\S]*?)(?=\n[a-z][\w-]*:|$)/m);
+  // Capture the full block scalar: terminate at the next non-indented line (top-level key)
+  // or true end of string. `$(?![\s\S])` matches only end-of-string, not end-of-line under /m,
+  // so multi-line descriptions are captured in full (not truncated to the first line).
+  const block = frontmatter.match(/^description:\s*\|\s*\n([\s\S]*?)(?=\n\S|$(?![\s\S]))/m);
   if (block) {
     return block[1].replace(/\n[ \t]+/g, " ").trim();
   }
