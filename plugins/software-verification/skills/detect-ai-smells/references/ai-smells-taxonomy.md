@@ -2,7 +2,7 @@
 
 AI smells are surface patterns in model-generated output suggesting content was produced for plausibility rather than understanding. They indicate **comprehension debt** — a gap between what code does and what anyone believes it does.
 
-## The 9 AI Smells
+## The 10 AI Smells
 
 | # | Smell | Definition | Severity | Key Indicator |
 |---|-------|-----------|----------|---------------|
@@ -10,11 +10,12 @@ AI smells are surface patterns in model-generated output suggesting content was 
 | 2 | **Cargo-Cult Patterns** | Design patterns applied because they appear in similar codebases, not because the problem requires them | Medium | Single-implementation interfaces, unnecessary factories |
 | 3 | **Architecture Astronaut** | Excessive abstraction disconnected from problem complexity | Medium-High | More abstraction layers than implementations; vocabulary inflation |
 | 4 | **Shallow Error Handling** | Error handling that suppresses, masks, or defers failures rather than surfacing them | High | Empty catch blocks, log-and-swallow, context stripping, silent success masking (return []/null on failure), missing boundary validation |
-| 5 | **Tests Mirroring Implementation** | Tests verifying what code does rather than what it should do | Medium | Mock-ordering assertions, tautological tests, implementation duplication |
+| 5 | **Tests Mirroring Implementation** | Tests verifying what code does rather than what it should do | Medium | Mock-ordering assertions, tautological tests, implementation duplication, asserts on mock call counts but never on results |
 | 6 | **Symmetry Without Substance** | Parallel structures that appear organized but don't illustrate meaningful differences | Low-Medium | Copy-paste handlers, boilerplate differing only in names |
 | 7 | **Local Reasoning Violations** | Code requiring understanding of distant files or global state | Medium-High | Import sprawl (>5 modules), hidden singleton access, magic values |
 | 8 | **Implicit Drift** | Unpinned references that silently resolve to different versions over time | Medium-High | `latest` tags, floating version ranges, model aliases, mutable external references |
 | 9 | **Happy-Path-Only Coverage** | Tests and code exercise only the success scenario; error paths, edge cases, and boundaries are untested or unhandled | Medium-High | Tests assert on valid input only; no error-branch/exception tests; no empty/boundary/timeout cases; error branches with no covering test |
+| 10 | **Vacuous Tests** | Tests that execute code but verify nothing falsifiable — they pass regardless of behavior | Medium-High | No assertion at all; assertion only that code does `not throw`; assertions only on stubbed/mock return values; snapshot tests auto-updated without review |
 
 ## The Pinning Principle
 
@@ -44,6 +45,7 @@ Individual smells compound when combined:
 - Implicit drift + plausible fabrication = generated code references a version that never existed
 - Happy-path-only coverage + shallow error handling = error paths are both unhandled and untested — guaranteed production failures
 - Happy-path-only coverage + tests mirroring implementation = a green suite that proves nothing about real-world robustness
+- Vacuous tests + happy-path-only coverage = high reported coverage with near-zero defect-detection power
 
 Flag files exhibiting 3+ smells simultaneously as high-priority refactoring targets.
 
@@ -70,6 +72,24 @@ Detection signals: assertions only on valid inputs; no tests that expect a raise
 exercise an error branch; missing empty/boundary/null cases; error branches in source with no
 covering test. The remedy is to name the happy path, then ask "what are all the ways this breaks?" —
 turning each departure into an error to handle, an edge case to cover, or a documented failure mode.
+
+## The Vacuity Principle
+
+AI010 (Vacuous Tests) is distinct from AI005 and AI009 along one axis: **what the test verifies**, not
+which paths it covers.
+- **AI005 (Tests Mirroring Implementation)** — the test asserts, but on the *implementation's mechanics*
+  (mock call order, internal calls) rather than observable behavior. It can fail, but only when the
+  implementation is restructured.
+- **AI009 (Happy-Path-Only Coverage)** — the test asserts on real behavior, but only for the *success
+  path*; error and boundary paths are unexercised.
+- **AI010 (Vacuous Tests)** — the test exercises code but makes *no falsifiable assertion about its
+  output* — no assertion, only `not throws`, or assertions solely against stubbed return values. It
+  passes regardless of what the code does, so it can never fail.
+
+The diagnostic question: *"Can this test ever go red if the code under test is wrong?"* If no, it is
+vacuous. Mutation testing is the strongest signal — a vacuous test kills no mutants. Line coverage is
+the trap: vacuous tests inflate coverage while contributing zero defect-detection power, which is why
+AI010 is rated Medium-High rather than Low despite looking harmless.
 
 ## Scoring Formula
 
@@ -98,3 +118,4 @@ Compound multiplier: 2 smells in same file = ×1.5, 3+ smells = ×2.0.
 | AI007 | Local Reasoning Violations | warning |
 | AI008 | Implicit Drift | warning |
 | AI009 | Happy-Path-Only Coverage | warning |
+| AI010 | Vacuous Tests | warning |

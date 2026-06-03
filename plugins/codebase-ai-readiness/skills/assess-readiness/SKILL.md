@@ -93,6 +93,8 @@ Evaluate 15 categories. Load `references/category-definitions.md` and `reference
 - ADR directory exists with entries
 - Design documents or RFCs
 - Clear ownership boundaries (CODEOWNERS)
+- Enforced decisions: a documented decision traces to the mechanical check enforcing it (ADR ↔ fitness function/lint rule)
+- Living decisions: ADRs carry Status + dates; superseded decisions linked, not deleted
 
 **2.8 Machine-readable intent**
 - Schemas (JSON Schema, protobuf, OpenAPI, GraphQL SDL)
@@ -110,6 +112,7 @@ Evaluate 15 categories. Load `references/category-definitions.md` and `reference
 - Cross-links between documents
 - Clear entry point for newcomers (human or agent)
 - Plans as first-class versioned artifacts (execution plans, progress logs, decision logs in-repo)
+- Agent context file links to the decision corpus (ADRs, specs, `.feature` files), not just file locations
 
 **2.10 Hidden state and magic**
 - Environment variables documented in one place (`.env.example`, config schema)

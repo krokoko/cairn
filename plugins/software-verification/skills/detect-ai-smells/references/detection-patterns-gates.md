@@ -1,6 +1,6 @@
 # Detection Patterns (Gates II)
 
-Continues `detection-patterns.md`. Smell categories AI005–AI009 and minimum viable gate set.
+Continues `detection-patterns.md`. Smell categories AI005–AI010 and minimum viable gate set.
 
 ## AI005: Tests Mirroring Implementation
 
@@ -84,6 +84,29 @@ grep -rLn 'assertRaises\|pytest.raises\|toThrow\|expect.*[Ee]rror\|should.*raise
 grep -rn 'raise \|throw \|return null\|return \[\]\|except\|catch' src/ | grep -v test
 ```
 
+## AI010: Vacuous Tests
+
+| Gate type | Tools | What it catches |
+|-----------|-------|-----------------|
+| Assertion-presence lint | `eslint-plugin-jest` (`expect-expect`), `flake8-pytest-style`, custom AST checks | Test bodies with no assertion at all or only a `not throws` |
+| Mutation testing | `stryker`, `mutmut`, `cargo-mutants` | Tests that kill no mutants — pass regardless of behavior |
+| Mock-return assertion detection | Custom AST/semgrep | Assertions made only against stubbed/mock return values |
+| Snapshot hygiene | Review gate, `--ci` snapshot mode | Auto-updated snapshots committed without review |
+
+**Vacuity principle:** the diagnostic is "can this test go red if the code is wrong?" Line coverage is
+the trap — vacuous tests inflate coverage while detecting no defects. Mutation testing is the
+authoritative gate; assertion-presence lint is the cheap pre-commit approximation. Distinct from AI005
+(asserts on the wrong thing — implementation mechanics) and AI009 (asserts correctly but only on the
+success path).
+
+**Detection patterns:**
+```bash
+# test functions with no assertion call (JS/TS)
+grep -rLn 'expect(\|assert\|should\b' test/ tests/ __tests__/ spec/ --include="*.test.*" --include="*.spec.*"
+# python test functions lacking any assert statement
+grep -rLn 'assert \|assertRaises\|assertEqual\|pytest.raises' test/ tests/ --include="test_*.py"
+```
+
 ## Minimum Viable Gate Set
 
 For teams starting from zero, recommend in priority order:
@@ -95,3 +118,4 @@ For teams starting from zero, recommend in priority order:
 6. Dead code detection (catches AI002, AI003)
 7. Lockfile enforcement + Docker tag linting (catches AI008)
 8. Branch coverage + error-path test requirement (catches AI009)
+9. Assertion-presence lint + mutation testing (catches AI010)
