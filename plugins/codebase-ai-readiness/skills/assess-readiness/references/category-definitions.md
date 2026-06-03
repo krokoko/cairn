@@ -61,6 +61,8 @@ Load `category-definitions-agent.md` for feedforward, compound engineering, and 
 | ADR directory | `docs/adr/`, `docs/decisions/`, `ADR/` |
 | CODEOWNERS | `.github/CODEOWNERS`, `CODEOWNERS` |
 | Design docs | `docs/design/`, `docs/rfcs/`, `DESIGN.md` |
+| Enforced decisions | A documented decision is traceable to the mechanical check that enforces it — ADR references its fitness function/lint rule, or the check cites the ADR (the *decision→enforcement* link; the generic boundary check itself is scored under Structure and modularity) |
+| Living decisions | ADRs carry Status (Accepted/Superseded) and dates; superseded decisions are linked, not deleted — guards against decision rot |
 
 ### Machine-readable intent
 | Signal | Where to check |
@@ -79,6 +81,7 @@ Load `category-definitions-agent.md` for feedforward, compound engineering, and 
 | Layered docs | Root README links to deeper docs; per-folder READMEs |
 | Cross-linking + entry point | Docs reference each other; README states what/how/where next |
 | Plans as versioned artifacts | `docs/plans/`, `docs/exec-plans/`, active/completed plans in-repo |
+| Decisions linked from agent context | `AGENTS.md`/`CLAUDE.md` references the decision corpus (ADRs, specs, `.feature` files) so an agent discovers constraints, not just file locations |
 
 ### Hidden state and magic
 | Signal | Where to check |

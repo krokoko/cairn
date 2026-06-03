@@ -61,6 +61,8 @@ Load `improvement-actions-agent.md` for feedforward, compound engineering, and c
 |--------|--------|--------|-------|
 | Create ADR directory with template | Small | +15-25 | MADR or similar template |
 | Add CODEOWNERS file | Small | +10-15 | Maps directories to owners |
+| Back a key ADR constraint with a fitness function | Medium | +10-20 | Make the decision machine-checked; link ADR ↔ CI check so the constraint can't silently erode |
+| Adopt MADR Status field + supersession links | Small | +5-10 | Decisions carry Accepted/Superseded + dates; supersede rather than delete to prevent decision rot |
 
 ## Machine-readable intent
 
@@ -80,6 +82,7 @@ Load `improvement-actions-agent.md` for feedforward, compound engineering, and c
 | Add CLAUDE.md / AGENTS.md at root | Small | +15-25 | Entry point for AI agents |
 | Add per-directory READMEs; cross-link docs | Medium | +10-15 | Layered navigation, prevents orphaned docs |
 | Add versioned execution plans directory | Small | +10-15 | Active plans, progress logs, decision logs in-repo |
+| Link agent context file to the decision corpus | Small | +5-10 | CLAUDE.md/AGENTS.md points to ADRs, specs, `.feature` files so agents discover constraints, not just paths |
 
 ## Hidden state and magic
 

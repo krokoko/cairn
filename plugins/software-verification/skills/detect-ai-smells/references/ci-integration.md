@@ -14,9 +14,9 @@ Smell-specific gates by pipeline stage:
 
 | Stage | Gates | Smells caught |
 |-------|-------|---------------|
-| Pre-commit | Empty catch lint, commit message lint, magic number lint | AI004, AI007, git hygiene |
+| Pre-commit | Empty catch lint, commit message lint, magic number lint, assertion-presence lint | AI004, AI007, AI010, git hygiene |
 | CI - fast | Type check, dead code, import boundaries, version pin check | AI001, AI002, AI003, AI007, AI008 |
-| CI - slow | Mutation testing, branch coverage, duplication detection, silent success scan | AI004, AI005, AI006, AI009 |
+| CI - slow | Mutation testing, branch coverage, duplication detection, silent success scan | AI004, AI005, AI006, AI009, AI010 |
 | PR review | PR template check, test-with-source requirement, Docker tag lint | Git hygiene, AI008 |
 
 ## Enforcement Levels
@@ -24,7 +24,7 @@ Smell-specific gates by pipeline stage:
 | Level | Meaning | When appropriate |
 |-------|---------|-----------------|
 | **Blocking** | Fails build, prevents merge | High-severity smells (AI001, AI004) |
-| **Warning** | PR annotation, does not block | Medium-severity (AI002, AI003, AI005, AI007, AI008, AI009) |
+| **Warning** | PR annotation, does not block | Medium-severity (AI002, AI003, AI005, AI007, AI008, AI009, AI010) |
 | **Informational** | Report only, trend tracked | Low-severity (AI006), new gates in trial period |
 
 ## Feedback Quality Criteria
