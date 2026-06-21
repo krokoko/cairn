@@ -59,6 +59,8 @@ Write `readiness-report.md` at the codebase root using this structure:
 1. ...
 2. ...
 
+**Alignment note:** [Include only when mismatch detected — practices ahead of codebase or codebase ahead of practices. See `references/autonomy-levels.md`. Otherwise omit or write "Aligned."]
+
 ## Blockers
 
 [List of specific blockers preventing advancement to next level]

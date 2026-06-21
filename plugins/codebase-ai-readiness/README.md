@@ -9,6 +9,7 @@ This plugin reviews an existing codebase and evaluates it across 15 categories t
 - **Overall score** (0-100)
 - **Category breakdown** with per-category scores
 - **Recommended autonomy level** (L0-L5)
+- **Collaboration effectiveness** with optional **alignment note** when agent practices and codebase score diverge
 - **Blockers** preventing advancement to the next level
 - **Prioritized roadmap** of improvement actions
 
@@ -16,11 +17,11 @@ This plugin reviews an existing codebase and evaluates it across 15 categories t
 
 ### `/assess-readiness`
 
-Performs a full assessment of the codebase. Examines structure, documentation, tests, CI (including test impact analysis), typing, setup, architecture decisions, machine-readable intent (schemas, contracts, executable acceptance criteria, requirement traceability), progressive context disclosure, workflow artifacts, collaboration effectiveness metrics, hidden state, repository-scale reasoning, failure mode legibility, and feedforward surfaces (including non-bypassable hooks). Outputs `readiness-report.md`.
+Performs a full assessment of the codebase. Examines structure, documentation, tests, CI (including test impact analysis), typing, setup, architecture decisions, machine-readable intent (schemas, contracts, executable acceptance criteria, requirement traceability), progressive context disclosure, workflow artifacts, collaboration effectiveness metrics, hidden state, repository-scale reasoning, failure mode legibility, and feedforward surfaces (including non-bypassable hooks). Outputs `readiness-report.md` with an alignment note when practices and score diverge.
 
 ### `/generate-roadmap`
 
-Takes an existing readiness report and generates a detailed improvement plan to reach the next autonomy level (or a specified target). Outputs `readiness-roadmap.md`.
+Takes an existing readiness report and generates a detailed improvement plan to reach the next autonomy level (or a specified target). Outputs `readiness-roadmap.md` with an **L2 → L3 hinge** section when the plan crosses that boundary (current ≤ L2, target ≥ L3).
 
 ## Categories assessed
 

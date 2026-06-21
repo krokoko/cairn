@@ -1,6 +1,6 @@
 {
   "name": "codebase-ai-readiness",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "Assess how AI-friendly a codebase is and produce an autonomy maturity map with scores, blockers, and a roadmap.",
   "author": {
     "name": "Alain Krok",

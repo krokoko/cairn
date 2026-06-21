@@ -35,6 +35,9 @@ Requirements for advancing from one autonomy level to the next.
 **Collaboration:** Begin estimating iteration cycles on agent-assisted PRs; optional workflow
 artifact dir for active plans.
 
+**L2→L3 hinge:** This transition requires explicit investment — it does not happen organically.
+Load `l2-to-l3-hinge.md` for the paired codebase + repo-enabler checklist.
+
 ## L3 to L4: Bounded iteration -> Verified autonomy
 
 **Minimum requirements:**

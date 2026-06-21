@@ -27,17 +27,24 @@ Search for `readiness-report.md` in the codebase root. If it exists, read it and
 If no report exists, inform the user: "No readiness report found. Run `/assess-readiness` first to generate a baseline assessment."
 
 Also extract from the report if present: workflow artifacts summary, compound engineering score,
-collaboration effectiveness recommendations.
+collaboration effectiveness recommendations, alignment note (if any).
 
 ### Step 2: Determine target level
 
 - If the user provided a target level argument (L1-L5), use that.
 - Otherwise, use the next level above the current level.
 - Load `references/level-transitions.md` for transition requirements.
+- If **current level ≤ L2 and target level ≥ L3**, load `references/l2-to-l3-hinge.md` and add
+  the **L2 → L3 hinge** section to the roadmap.
 
 ### Step 3: Identify gaps
 
 For each category, compare the current score to what is needed for the target level. Load `references/improvement-actions.md` and `references/improvement-actions-agent.md` for common actions. Load `references/implementation-phases.md` for the strategic phasing model and prioritization principles.
+
+If the report's alignment note indicates **codebase ahead of practices**, prioritize repo
+enablers from `references/l2-to-l3-hinge.md` and collaboration actions from
+`improvement-actions-agent.md`. If **practices ahead of codebase**, prioritize verification,
+types, CI, and testable-boundaries actions before expanding agent workflows.
 
 Focus on:
 - Categories that are below the threshold for the target level
@@ -67,7 +74,9 @@ For each recommended action, specify:
 - **Dependencies**: Other actions that should happen first
 - **Details**: Specific files to create/modify, tools to install, configs to add
 
-Order actions by: (1) unblock the next level first, (2) highest impact/effort ratio, (3) foundational actions before dependent ones.
+Order actions by: (1) unblock the next level first, (2) alignment-driven priority when the
+report flags a mismatch (see Step 3), (3) highest impact/effort ratio, (4) foundational actions
+before dependent ones.
 
 ### Step 5: Write the roadmap
 
@@ -83,6 +92,11 @@ Write a new `readiness-roadmap.md` file in the codebase root:
 | # | Action | Category | Effort | Impact | Details |
 |---|--------|----------|--------|--------|---------|
 | 1 | ... | ... | ... | ... | ... |
+
+## L2 → L3 hinge
+
+Include when current level ≤ L2 and target level ≥ L3. Split codebase critical path vs repo
+enablers. Load `references/l2-to-l3-hinge.md`.
 
 ## Session infrastructure (dual track)
 

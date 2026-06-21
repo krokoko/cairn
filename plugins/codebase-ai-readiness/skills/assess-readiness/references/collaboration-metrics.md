@@ -42,3 +42,10 @@ Always include a **Collaboration effectiveness** section with:
 2. **Infrastructure**: which measurement enablers exist or are missing
 3. **Recommendations**: 2-4 concrete steps to start or improve tracking
 4. **Link to roadmap**: actions that improve both compound engineering and collaboration
+
+## Alignment with autonomy level
+
+After scoring collaboration infrastructure, check `references/autonomy-levels.md` **Alignment
+note**. If collaboration signals are strong but the codebase maps to L1–L2, flag **practices
+ahead of codebase** in the report. If the codebase maps to L3+ but infrastructure is absent,
+flag **codebase ahead of practices**.

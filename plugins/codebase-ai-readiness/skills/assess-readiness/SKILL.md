@@ -12,7 +12,7 @@ user-invocable: true
 
 # Codebase AI Readiness Assessment
 
-Produce an autonomy maturity map for the target codebase. The output is a `readiness-report.md` file containing a numeric score, category breakdown, workflow artifact summary, collaboration effectiveness assessment, recommended autonomy level, blockers, and a prioritized roadmap.
+Produce an autonomy maturity map for the target codebase. The output is a `readiness-report.md` file containing a numeric score, category breakdown, workflow artifact summary, collaboration effectiveness assessment (including an alignment note when practices and score diverge), recommended autonomy level, blockers, and a prioritized roadmap.
 
 ## Workflow
 
@@ -194,7 +194,8 @@ For the current autonomy level, identify what specifically prevents moving to th
 Load `references/collaboration-metrics.md`. Estimate or mark "not measured" for first-pass
 acceptance, iteration cycles per task, and post-merge rework. Note infrastructure enablers
 (PR templates, labels, review rubrics, learning docs). Produce 2-4 recommendations to start
-or improve tracking aligned with the recommended autonomy level.
+or improve tracking aligned with the recommended autonomy level. Apply the **Alignment note**
+from `references/autonomy-levels.md` when collaboration signals and score diverge.
 
 ### Step 8: Generate roadmap
 
@@ -204,7 +205,16 @@ Produce a prioritized list of 5-10 recommended actions. For each action:
 - Estimated effort (small/medium/large)
 - Expected score impact
 
+When the recommended autonomy level is **L2**, load
+`../../generate-roadmap/references/l2-to-l3-hinge.md` and prioritize paired codebase +
+repo-enabler items in the roadmap table.
+
+If Step 7 flagged **practices ahead of codebase**, weight actions toward verification, types,
+and CI. If **codebase ahead of practices**, weight toward `AGENTS.md`, plans dir, and
+collaboration tracking from the hinge repo-enabler table.
+
 ### Step 9: Write the report
 
 Write `readiness-report.md` in the codebase root. Load `references/report-template.md` for the
-required sections and tables.
+required sections and tables. Write the **Alignment note** under **Collaboration effectiveness**
+after completing Step 7.

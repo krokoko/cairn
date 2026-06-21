@@ -24,6 +24,7 @@ Load `improvement-actions-agent.md` for feedforward, compound engineering, and c
 | Action | Effort | Impact | Notes |
 |--------|--------|--------|-------|
 | Add test framework and first test suite | Medium | +20-30 | Foundation for everything else |
+| Add test-with-code policy in CONTRIBUTING; enforce in CI | Small | +10-15 | New code ships with tests; L2→L3 enabler |
 | Separate unit and integration tests | Small | +10-15 | Different directories or markers |
 | Add test fixtures / factories | Medium | +10-15 | Reduces test setup duplication |
 | Add property-based tests for key functions | Medium | +15-20 | Hypothesis, fast-check, proptest |

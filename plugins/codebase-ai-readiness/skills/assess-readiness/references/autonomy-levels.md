@@ -46,3 +46,18 @@ Practical rules:
   integration sits at L2. Recommend the level for the surface being changed, not a single repo-wide number.
 - When oracle strength is unknown or unverified, recommend the **lower** adjacent level and flag
   oracle assessment as the blocker. Pair this with the verification plugin's oracle analysis.
+
+## Alignment note
+
+Include under **Collaboration effectiveness** when a mismatch is detected (otherwise omit or
+write "Aligned"):
+
+- **Practices ahead of codebase** — Collaboration infrastructure is strong (PR template/labels,
+  agent review rubric, multiple project-local agent skills in `.claude/skills/` or equivalent) or
+  estimated first-pass acceptance is high, but the score maps to L1–L2: warn that agent usage may
+  outpace merge safety; prioritize verification, types, and CI before raising autonomy.
+- **Codebase ahead of practices** — Score maps to L3+ but collaboration infrastructure is absent
+  and workflow artifacts are missing: warn that raising agent autonomy without shared context
+  will increase iteration cycles; prioritize `AGENTS.md`, plans dir, and collaboration tracking.
+
+Do not infer org-wide maturity levels — only repo-observable signals.

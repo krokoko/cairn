@@ -30,6 +30,7 @@ Continues `improvement-actions.md`. Actions for failure legibility, feedforward,
 | Create first custom skill for a repeated workflow | Medium | +10-15 | Package a task agents perform repeatedly |
 | Add `docs/plans/` (or team convention) with plan + decision log template | Small | +10-20 | Session context; pair with CI/types (dual track) |
 | Add `docs/requirements/` or `docs/specs/` for feature-scoped specs before large changes | Medium | +10-15 | Design-first anchor; link from AGENTS.md |
+| Add new-module/API scaffold checklist or generator | Medium | +10-15 | Handler + test + contract + docs; L2→L3 enabler |
 | Add hooks that enforce recently-discovered conventions | Small | +10-15 | Convert corrections into automated enforcement |
 | Add regression tests for each bug found during agent work | Small | +10-15 | Prevents re-introduction; compounds over time |
 | Schedule monthly instruction file review for stale/conflicting rules | Small | +5-10 | Maintenance prevents rot |
@@ -41,6 +42,7 @@ Continues `improvement-actions.md`. Actions for failure legibility, feedforward,
 | Sample last 10 agent-assisted PRs; estimate first-pass acceptance | Small | — | Baseline; no tooling required |
 | Add PR template field for agent-assisted / task id | Small | +5-10 | Enables later metric automation |
 | Document agent review checklist in CONTRIBUTING or AGENTS.md | Small | +10-15 | Reduces iteration cycles |
+| Document ops runbook links or add `docs/runbooks/` | Medium | +5-10 | Ops legibility for agent-assisted triage; L2→L3 enabler |
 | After each major agent correction, add one rule or regression test | Small | +15-25 | Closes feedback flywheel |
 | Set team target: first-pass acceptance ≥50% on L3 bounded tasks | Small | — | Governance for L4 transition |
 
