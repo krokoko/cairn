@@ -7,6 +7,7 @@ Design verification strategies that unlock higher levels of autonomous software 
 This plugin analyzes a codebase's current verification posture and designs a tailored strategy to close gaps. It produces:
 
 - **Verification maturity tier** (0-5)
+- **Bug-surface classification** (A–E) with ceremony-risk and routing guidance
 - **Component breakdown** with archetype classification and per-component maturity
 - **Missing oracles** and recommended oracle types
 - **Exactness analysis** (where exact correctness is possible vs. statistical/empirical)
@@ -18,15 +19,15 @@ This plugin analyzes a codebase's current verification posture and designs a tai
 
 ### `/assess-verification`
 
-Performs a full assessment of existing verification infrastructure. Inventories tests, linters, type checkers, contracts, schemas, formal specs, CI, test impact analysis, and operational validation. Classifies components and scores maturity, including requirement traceability (does intent trace to tests and code?). Outputs `verification-report.md`.
+Performs a full assessment of existing verification infrastructure. Inventories tests, linters, type checkers, contracts, schemas, formal specs, CI, test impact analysis, and operational validation. Classifies components by bug-surface (A–E), scores maturity, and assesses requirement traceability (does intent trace to tests and code?). Outputs `verification-report.md`.
 
 ### `/design-strategy`
 
-Takes an existing verification report (or performs lightweight discovery) and designs per-component verification strategies. Recommends tools, oracle patterns, evidence pipeline design, a pipeline-enforced requirement traceability check, and an implementation roadmap. Outputs `verification-strategy.md`.
+Takes an existing verification report (or performs lightweight discovery) and designs per-component verification strategies. Recommends tools, oracle patterns, evidence pipeline design, **verification cost tiers** (check / verify-quick / verify-full), a pipeline-enforced requirement traceability check, and an implementation roadmap. Outputs `verification-strategy.md`.
 
 ### `/detect-ai-smells`
 
-Assesses whether the codebase has automated gates to catch AI-generated code smells (plausible fabrication, shallow error handling, tests mirroring implementation, implicit drift, and more). Outputs `ai-smells-gates-report.md`.
+Assesses whether the codebase has automated gates to catch AI-generated code smells across **11 categories** (plausible fabrication, shallow error handling, vacuous tests, vacuous formal specs, implicit drift, and more). Outputs `ai-smells-gates-report.md`.
 
 ## Verification methods covered
 

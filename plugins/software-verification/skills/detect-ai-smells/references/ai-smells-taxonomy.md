@@ -2,7 +2,7 @@
 
 AI smells are surface patterns in model-generated output suggesting content was produced for plausibility rather than understanding. They indicate **comprehension debt** — a gap between what code does and what anyone believes it does.
 
-## The 10 AI Smells
+## The 11 AI Smells
 
 | # | Smell | Definition | Severity | Key Indicator |
 |---|-------|-----------|----------|---------------|
@@ -16,6 +16,7 @@ AI smells are surface patterns in model-generated output suggesting content was 
 | 8 | **Implicit Drift** | Unpinned references that silently resolve to different versions over time | Medium-High | `latest` tags, floating version ranges, model aliases, mutable external references |
 | 9 | **Happy-Path-Only Coverage** | Tests and code exercise only the success scenario; error paths, edge cases, and boundaries are untested or unhandled | Medium-High | Tests assert on valid input only; no error-branch/exception tests; no empty/boundary/timeout cases; error branches with no covering test |
 | 10 | **Vacuous Tests** | Tests that execute code but verify nothing falsifiable — they pass regardless of behavior | Medium-High | No assertion at all; assertion only that code does `not throw`; assertions only on stubbed/mock return values; snapshot tests auto-updated without review |
+| 11 | **Vacuous Formal Specs** | Formal specs, invariants, or verification configs that constrain nothing — green gate, zero assurance | High | TLA+ invariant always true; empty scanner ruleset; `(verified=…)` marker with no linked proof; hand-written spec diverged from code with no sync gate |
 
 ## The Pinning Principle
 
@@ -35,6 +36,9 @@ Pinning to an alias (e.g., `gpt-4` instead of `gpt-4-0613`) is not pinning.
 | **Medium** | Increased maintenance cost, compounds over time | Warn in PR, track trend |
 | **Low** | Cosmetic or minor; acceptable if isolated | Informational only |
 
+AI011 default enforcement is **conditional**: block merge when formal specs or `(verified=…)` markers
+exist on disk; warn when no formal artifacts are present (see `ci-integration.md`).
+
 ## Compound Risk
 
 Individual smells compound when combined:
@@ -46,6 +50,8 @@ Individual smells compound when combined:
 - Happy-path-only coverage + shallow error handling = error paths are both unhandled and untested — guaranteed production failures
 - Happy-path-only coverage + tests mirroring implementation = a green suite that proves nothing about real-world robustness
 - Vacuous tests + happy-path-only coverage = high reported coverage with near-zero defect-detection power
+- Vacuous formal specs + traceability markers = `(verified=kani)` theater with no proof obligation
+- Vacuous gates + agent autonomy = accelerated false confidence — wrong code ships at machine speed
 
 Flag files exhibiting 3+ smells simultaneously as high-priority refactoring targets.
 
@@ -91,6 +97,18 @@ vacuous. Mutation testing is the strongest signal — a vacuous test kills no mu
 the trap: vacuous tests inflate coverage while contributing zero defect-detection power, which is why
 AI010 is rated Medium-High rather than Low despite looking harmless.
 
+## The Vacuous-Spec Principle
+
+AI011 (Vacuous Formal Specs) is distinct from AI010: the **verification artifact** is present but
+load-bearing properties are missing or unconstrained.
+- **AI010** — tests run but assert nothing falsifiable.
+- **AI011** — specs, invariants, or gate configs exist but a deliberate mutation or vacuity probe
+  still passes (TLC green on flipped guard, secret scan with zero rules, coverage scoped away from core).
+
+Diagnostic question: *"If I introduce a known violation of the stated property, does the gate fail?"*
+If no, the spec or gate is vacuous. **Anti-vacuity mutations** (required violating edits per
+invariant) are the authoritative fix — stronger than reviewing spec prose by hand.
+
 ## Scoring Formula
 
 ```
@@ -119,3 +137,4 @@ Compound multiplier: 2 smells in same file = ×1.5, 3+ smells = ×2.0.
 | AI008 | Implicit Drift | warning |
 | AI009 | Happy-Path-Only Coverage | warning |
 | AI010 | Vacuous Tests | warning |
+| AI011 | Vacuous Formal Specs | error if formal artifacts on disk; else warning |

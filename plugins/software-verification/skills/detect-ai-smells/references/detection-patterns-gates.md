@@ -1,6 +1,7 @@
 # Detection Patterns (Gates II)
 
-Continues `detection-patterns.md`. Smell categories AI005–AI010 and minimum viable gate set.
+Continues `detection-patterns.md`. Smell categories AI005–AI010, minimum viable gate set; load
+`detection-patterns-gates-formal.md` for AI011.
 
 ## AI005: Tests Mirroring Implementation
 
@@ -107,6 +108,8 @@ grep -rLn 'expect(\|assert\|should\b' test/ tests/ __tests__/ spec/ --include="*
 grep -rLn 'assert \|assertRaises\|assertEqual\|pytest.raises' test/ tests/ --include="test_*.py"
 ```
 
+Load `detection-patterns-gates-formal.md` for AI011 (vacuous formal specs).
+
 ## Minimum Viable Gate Set
 
 For teams starting from zero, recommend in priority order:
@@ -119,3 +122,4 @@ For teams starting from zero, recommend in priority order:
 7. Lockfile enforcement + Docker tag linting (catches AI008)
 8. Branch coverage + error-path test requirement (catches AI009)
 9. Assertion-presence lint + mutation testing (catches AI010)
+10. Anti-vacuity probes + presence⇒mandatory meta-gates (catches AI011 — see `detection-patterns-gates-formal.md`)

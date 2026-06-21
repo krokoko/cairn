@@ -65,12 +65,18 @@ Load `category-definitions-agent.md` for feedforward, compound engineering, and 
 | Living decisions | ADRs carry Status (Accepted/Superseded) and dates; superseded decisions are linked, not deleted — guards against decision rot |
 
 ### Machine-readable intent
+
+Load `spec-first-artifacts.md` for spec-first scoring bands and the cap rule.
+
 | Signal | Where to check |
 |--------|----------------|
+| Stable requirement IDs | `docs/requirements/`, `spec/requirements/`, `REQ-*.md` with frontmatter |
 | API + data schemas | `openapi.*`, `*.graphql`, `*.proto`, `*.schema.json`, Zod/Pydantic |
 | Contracts / property tests | Assertions, invariants, Hypothesis, fast-check |
 | Formal specs | `*.tla`, `*.als` (Alloy), `*.dfy` (Dafny) |
-| Executable acceptance criteria | Gherkin `.feature` files; BDD step defs (Cucumber, Behave, SpecFlow) |
+| Executable acceptance criteria | Gherkin `.feature` files; BDD step defs; scenario tagged per REQ |
+| Pure verified core | Domain logic in IO-free module/crate; adapters in outer layer |
+| Determinism ports | Injected Clock/Rng/Id; no ambient `now()`/thread RNG in domain |
 | Requirement traceability | PRs link issues (`Closes #`); tests tag requirement IDs; requirement-coverage report |
 | Regenerative readiness | Components definable by specs+tests alone; can be deleted and rebuilt |
 

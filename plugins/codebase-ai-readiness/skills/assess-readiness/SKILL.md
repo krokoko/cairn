@@ -97,14 +97,20 @@ Evaluate 15 categories. Load `references/category-definitions.md` and `reference
 - Living decisions: ADRs carry Status + dates; superseded decisions linked, not deleted
 
 **2.8 Machine-readable intent**
+
+Load `references/spec-first-artifacts.md` for the spec-first checklist, scoring bands, and cap rule.
+
 - Schemas (JSON Schema, protobuf, OpenAPI, GraphQL SDL)
 - Contracts (pre/postconditions, invariants, assertions)
 - Property-based tests
 - Formal specifications (TLA+, Alloy)
 - Configuration schemas with validation
 - Executable acceptance criteria (EARS-style requirements turned into Gherkin/BDD scenarios)
+- **Spec-first artifacts**: stable requirement IDs (`REQ-*.md`, `spec/requirements/`), Gherkin scenario per active requirement, pure core separated from IO/adapters, determinism ports where simulation applies
 - Requirement traceability — guards against intent drift. File-based signals (requirement dirs, tests tagging requirement IDs, a requirement-coverage report) are found with Glob/Grep; the PR→issue link signal lives in git history, so check it with `git log` (closing keywords like `Closes #123`, bare `#123`, or tracker keys). If git history is unavailable, mark the PR-link signal "not inspectable" rather than scoring it absent.
 - Regenerative readiness (components definable by specs/tests, rebuildable without loss)
+
+Apply the **cap rule** from spec-first-artifacts when scoring: strong schemas/property tests without requirement files or executable criteria → cap 2.8 at 60.
 
 **2.9 Progressive context disclosure**
 - AGENTS.md or equivalent agent-specific context file
@@ -185,6 +191,11 @@ Use the category weights from the scoring rubric to compute a weighted average (
 
 Load `references/autonomy-levels.md` and map the overall score to L0-L5.
 
+If category **2.8 Machine-readable intent** is below 51 or spec-first artifacts are absent (no
+requirement files, no executable acceptance criteria per `references/spec-first-artifacts.md`), apply
+the autonomy **cap rule**: recommended level must not exceed **L3** regardless of weighted score.
+Note spec-first gaps in blockers.
+
 ### Step 6: Identify blockers
 
 For the current autonomy level, identify what specifically prevents moving to the next level. Be concrete: name missing files, missing configurations, weak categories.
@@ -206,7 +217,7 @@ Produce a prioritized list of 5-10 recommended actions. For each action:
 - Expected score impact
 
 When the recommended autonomy level is **L2**, load
-`../../generate-roadmap/references/l2-to-l3-hinge.md` and prioritize paired codebase +
+`../generate-roadmap/references/l2-to-l3-hinge.md` and prioritize paired codebase +
 repo-enabler items in the roadmap table.
 
 If Step 7 flagged **practices ahead of codebase**, weight actions toward verification, types,

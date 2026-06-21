@@ -15,6 +15,15 @@ Write `verification-report.md` with the following structure:
 |-----------|-----------|-------------|-----------------|---------------|
 | ... | ... | ... | ... | ... |
 
+## Bug-Surface Classification
+
+| Component | Class (A–E) | Evidence | Recommended depth | Ceremony risk |
+|-----------|-------------|----------|-------------------|---------------|
+| ... | ... | ... | floor / standard / deep | Yes / No — ... |
+
+**Over-instrumented** (Class A + deep formal stack): ...
+**Under-instrumented** (Class B/C + floor only): ...
+
 ## Missing Oracles
 
 | Component | Current oracle | Strength (strong/weak/none) | Gap (incl. oracle rot) | Recommended oracle type |

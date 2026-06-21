@@ -13,6 +13,8 @@ Write `readiness-report.md` at the codebase root using this structure:
 
 **Level: LX — [Level Name]**
 
+**Autonomy cap applied:** [yes/no — if yes, cite spec-first gap per `references/spec-first-artifacts.md`; e.g. "Capped at L3: no requirement files or executable acceptance criteria"]
+
 ## Category Breakdown
 
 | Category | Score | Notes |
@@ -24,7 +26,7 @@ Write `readiness-report.md` at the codebase root using this structure:
 | Typing strength | XX | ... |
 | Deterministic environment and deployment | XX | ... |
 | Architecture decisions | XX | ... |
-| Machine-readable intent | XX | ... |
+| Machine-readable intent | XX | Spec-first: REQ files [y/n], executable criteria [y/n], pure core [y/n], traceability gate [y/n]; cap rule applied [y/n] |
 | Progressive context disclosure | XX | ... |
 | Hidden state and magic | XX | ... |
 | Repository-scale reasoning | XX | ... |

@@ -188,6 +188,22 @@ check_template_coverage "$READINESS" readiness-report.md \
   "$REPO_ROOT/plugins/codebase-ai-readiness/skills/assess-readiness/references/report-template.md"
 
 # ---------------------------------------------------------------------------
+# Reference path resolution (validate-references.py)
+# ---------------------------------------------------------------------------
+REF_OUT="$(python3 "$REPO_ROOT/tests/validators/test_validate_references.py")"
+REF_EXIT=$?
+printf '%s\n' "$REF_OUT"
+while IFS= read -r line; do
+  case "$line" in
+    PASS*) PASS=$((PASS + 1)) ;;
+    FAIL*) FAIL=$((FAIL + 1)) ;;
+  esac
+done <<< "$REF_OUT"
+if [[ "$REF_EXIT" -ne 0 ]]; then
+  : # failures already counted via FAIL lines
+fi
+
+# ---------------------------------------------------------------------------
 echo
 echo "Validator tests: $PASS passed, $FAIL failed"
 [[ "$FAIL" -eq 0 ]]

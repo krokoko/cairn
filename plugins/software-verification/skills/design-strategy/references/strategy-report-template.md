@@ -29,6 +29,15 @@ Write `verification-strategy.md` with the following structure:
 | High | ... | ... | ... |
 | Critical | ... | ... | ... |
 
+## Verification Cost Tiers
+
+| Component | Class (A–E) | Check (T1) | Verify-quick | Verify-full | Opt-out (auditable) |
+|-----------|-------------|------------|--------------|-------------|---------------------|
+| ... | ... | commands/hooks | CI job / script | required / nightly / skip | ... |
+
+**Hook/alias recommendations**: ...
+**Ceremony flags** (verify-full on Class A): ...
+
 ## Shift-Left Recommendations
 
 | Check | Current tier | Target tier | Action | Tool/config |

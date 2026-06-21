@@ -63,7 +63,27 @@ Load `references/decision-framework.md` for classification guidance. Load `refer
 | **Determinism** | Deterministic, Concurrent/distributed, Probabilistic/learned |
 | **Current verification** | List which methods are already applied |
 
-### Step 3: Score verification maturity
+### Step 3: Classify bug-surface
+
+Load `references/bug-surface-routing.md`. For each component from Step 2, assign a primary bug-surface
+class (A–E):
+
+| Class | Name | Route formal/sim tools? |
+|-------|------|------------------------|
+| A | Local invariant | Usually no — ceremony risk |
+| B | Arithmetic / conservation | Yes — property tests, checked ops, bounded proofs |
+| C | Protocol / concurrency | Yes — model check, DST, schedule exploration |
+| D | Untrusted input | Yes — fuzz + sanitizers |
+| E | Probabilistic / learned | Operational oracles, not unit formal stack |
+
+Record evidence (spec language, domain type, failure modes), recommended verification **depth**
+(floor / standard / deep), and **ceremony risk** when maturity tier 4+ formal-method tools exist on
+Class A with no gap.
+
+Use bug-surface to calibrate maturity expectations: Class C at maturity tier 2 with no formal path is a
+critical gap; Class A at maturity tier 4 with full formal stack may be over-investment.
+
+### Step 4: Score verification maturity
 
 Load `references/maturity-model.md` and assign a tier (0-5):
 
@@ -74,9 +94,12 @@ Load `references/maturity-model.md` and assign a tier (0-5):
 - **Tier 4**: Formal methods for critical paths + operational validation
 - **Tier 5**: Evidence pipeline with replay, shadow, canary, automated promotion
 
-Score both the overall codebase and each individual component.
+Score both the overall codebase and each individual component. **Apply Step 3 bug-surface when scoring:**
+Class C/D at maturity tier < 3 → note as under-instrumented in component notes; Class A at maturity
+tier ≥ 4 with no identified gap → note ceremony risk. The maturity tier column and Bug-Surface section
+must be consistent — do not assign tier 4 to a Class A counter without documenting why.
 
-### Step 4: Identify missing oracles
+### Step 5: Identify missing oracles
 
 For each component, answer: "Can we determine if the output is correct?"
 
@@ -116,7 +139,7 @@ be unsafe for autonomous change if that oracle is weak. Flag **oracle rot** — 
 the requirement has drifted, so the oracle no longer asserts the right thing — as a distinct gap from
 "no oracle"; it is more dangerous because it gives false confidence.
 
-### Step 5: Classify correctness feasibility
+### Step 6: Classify correctness feasibility
 
 For each component, determine:
 
@@ -124,7 +147,7 @@ For each component, determine:
 - **Statistical/empirical only**: Learned, stochastic, environment-dependent — requires approximation
 - **Mixed**: Core logic is deterministic (provable) but integration is non-deterministic (empirical)
 
-### Step 6: Determine human review requirements
+### Step 7: Determine human review requirements
 
 Components that require human review:
 - No automated oracle exists
@@ -133,7 +156,7 @@ Components that require human review:
 - Security/compliance boundaries
 - Novel code with no regression baseline
 
-### Step 7: Identify autonomy candidates
+### Step 8: Identify autonomy candidates
 
 Components where AI agents could iterate autonomously:
 - Strong test coverage with reliable CI gating
@@ -142,7 +165,7 @@ Components where AI agents could iterate autonomously:
 - Low blast radius or easy rollback
 - Clear, well-scoped responsibilities
 
-### Step 8: Assess feedback loop completeness
+### Step 9: Assess feedback loop completeness
 
 Evaluate whether verification outputs can be consumed by agents for self-correction.
 
@@ -164,7 +187,7 @@ For each verification method found in Step 1, classify its feedback loop level (
 
 Flag methods at Level 0-1 as gaps: verification exists but agents cannot act on its results.
 
-### Step 9: Assess workflow gate placement
+### Step 10: Assess workflow gate placement
 
 Identify all human review and approval checkpoints in the development workflow:
 
@@ -192,7 +215,7 @@ Identify:
   A gate that only fires client-side is not enforceable — the authoritative gate must be server-side
   (branch protection + required status checks). Flag any check that exists only as a skippable local hook.
 
-### Step 10: Assess shift-left positioning
+### Step 11: Assess shift-left positioning
 
 Evaluate whether checks run at the earliest possible point in the development loop.
 
@@ -212,7 +235,7 @@ For each verification method found in Step 1, classify its current execution tie
 
 Flag checks that run only at T3-T4 but could run at T1-T2 (e.g., type checking only in CI, no pre-commit hooks, no focused test mode).
 
-### Step 11: Assess documentation verification
+### Step 12: Assess documentation verification
 
 Evaluate whether documentation stays synchronized with code through automated checks.
 
@@ -235,7 +258,7 @@ Classify overall documentation verification level (0-3):
 
 Flag Level 0-1 as a risk: stale docs become a fabrication vector for agents relying on them for context.
 
-### Step 12: Assess AgentOps telemetry
+### Step 13: Assess AgentOps telemetry
 
 Evaluate whether verification outputs are observable and measurable at the operational level.
 
@@ -261,7 +284,7 @@ For each telemetry stream, classify the current level (0-3):
 
 Flag critical gaps: verification that cannot be improved because there is no measurement of its effectiveness.
 
-### Step 13: Assess requirement traceability
+### Step 14: Assess requirement traceability
 
 Evaluate whether intent traces to evidence: requirement → acceptance criterion → test → code → result.
 **Load `references/traceability-model.md` before scoring** — it defines the 0-3 maturity levels and the
@@ -283,9 +306,9 @@ Classify the overall level (0-3). Assess the three RTM properties (scope verific
 test sufficiency) and flag the failure each gap allows. Flag Level 0-1 as critical: **intent drift** is
 caught only by slow, fully-human review, which cannot keep pace with agents.
 
-### Step 14: Consolidate verification debt
+### Step 15: Consolidate verification debt
 
-Roll up every gap surfaced in Steps 4-13 (missing/weak oracles, oracle rot, feedback-loop gaps,
+Roll up every gap surfaced in Steps 4-14 (missing/weak oracles, oracle rot, feedback-loop gaps,
 shift-left gaps, doc-verification gaps, telemetry blind spots, traceability gaps) into a single
 ticketable backlog. This is consolidation, not new analysis — collect findings already made.
 
@@ -295,8 +318,8 @@ no/weak oracle or a gap that lets silent regressions ship; Medium = business log
 coverage; Low = utilities/cosmetic. Order the backlog by severity. Note that rows can be exported
 as issues/Jira tickets with a `verification-debt` label.
 
-### Step 15: Write the report
+### Step 16: Write the report
 
 Load `references/report-template.md` for the output structure.
 
-Write `verification-report.md` following the template, including all sections assessed in Steps 1-14 (maturity tier through verification debt).
+Write `verification-report.md` following the template, including all sections assessed in Steps 1-15 (maturity tier through verification debt).

@@ -110,7 +110,31 @@ Recommend how verification evidence should flow through CI/CD:
 
 Check rail coverage (see `references/harness-architecture.md`): the stack should have one pre-merge rail, one boundary rail, one production-proximate rail, and one evidence rail.
 
-### Step 7: Design feedback loop improvements
+### Step 7: Design verification cost tiers
+
+Load `references/verification-cost-tiers.md` and `../assess-verification/references/bug-surface-routing.md`.
+
+For each target component, assign **Check**, **Verify-quick**, and **Verify-full** command sets (or CI
+jobs) matched to bug-surface class and risk class:
+
+| Component | Class | Check (seconds) | Verify-quick (~min) | Verify-full | Skip justification |
+|-----------|-------|-----------------|----------------------|-------------|-------------------|
+| ... | A–E | ... | ... | required / nightly / skip | ... |
+
+Recommend:
+- Post-write or pre-commit hooks for **Check** tier (T1 execution)
+- Pre-commit or CI for **Verify-quick**
+- Required CI check or nightly for **Verify-full** only where class C/D or High/Critical risk
+- Explicit auditable opt-outs for Class A + Low risk (never silent skip)
+
+Flag components where verify-full tools run on every save (blocks agents) or Check tier runs only in
+CI (late feedback).
+
+When bug-surface depth and risk class conflict, use the **higher** requirement (e.g. Low risk + Class C
+→ verify-full for simulation/model-check; High risk + Class A → verify-quick sufficient unless ADR
+documents deeper need).
+
+### Step 8: Design feedback loop improvements
 
 Load `../assess-verification/references/feedback-loop-model.md` for feedback loop maturity levels and assessment criteria.
 
@@ -130,7 +154,7 @@ For each verification method at Level 0-1, recommend how to close the loop:
 
 For each recommendation, specify the concrete config change or tool addition needed.
 
-### Step 8: Design shift-left repositioning
+### Step 9: Design shift-left repositioning
 
 Load `../assess-verification/references/shift-left-model.md` for the tier model.
 
@@ -150,7 +174,7 @@ For each check running later than its ideal tier, recommend how to shift it earl
 
 For each recommendation, specify the concrete tool and config to add.
 
-### Step 9: Design workflow gate optimization
+### Step 10: Design workflow gate optimization
 
 Load `references/gate-design-patterns.md`.
 
@@ -173,7 +197,7 @@ For each recommendation:
 - What risk class it serves
 - Whether the change increases or decreases agent throughput
 
-### Step 10: Design eval framework
+### Step 11: Design eval framework
 
 Load `references/eval-framework.md` and `references/eval-framework-operations.md` for eval components, measurement dimensions, and building strategy.
 
@@ -192,7 +216,7 @@ For each recommended eval task:
 - Success criteria (which checks must pass)
 - Measurement dimensions (correctness, convention, efficiency)
 
-### Step 11: Design generator-evaluator strategy
+### Step 12: Design generator-evaluator strategy
 
 Load `references/generator-evaluator.md` for pattern variants and application guidance.
 
@@ -212,7 +236,7 @@ For each recommended application:
 - How to integrate into existing CI (independent tests merge, disagreements escalate)
 - Cost-management strategy (when to use, when to skip)
 
-### Step 12: Design documentation verification
+### Step 13: Design documentation verification
 
 If `verification-report.md` exists, read the Documentation Verification section. Otherwise, check:
 - Whether API docs are auto-generated from code or manually maintained
@@ -231,7 +255,7 @@ Recommend documentation-as-code practices based on current gaps:
 
 For each recommendation, specify the concrete tool and config needed. Priority: schema-doc sync (prevents fabrication) > example testing (catches drift) > freshness enforcement (process-level).
 
-### Step 13: Produce implementation roadmap
+### Step 14: Produce implementation roadmap
 
 Order recommendations by priority:
 
@@ -241,7 +265,7 @@ Order recommendations by priority:
 
 For each item specify: action, component, effort, dependencies, tools to install.
 
-### Step 14: Design requirement traceability
+### Step 15: Design requirement traceability
 
 Load `references/traceability-design.md`. Read the report's Requirement Traceability section if present;
 otherwise check for stable requirement IDs, executable acceptance criteria (Gherkin/BDD), PR→issue links,
@@ -255,7 +279,7 @@ and a requirement-coverage report. Recommend the next maturity step plus three e
 an agent re-reading the spec. An agent re-reading the spec to "verify" the trace reintroduces the exact
 indeterminism the RTM exists to remove (an agent verifying agents). Make this explicit in the recommendation.
 
-### Step 15: Design safe-evolution strategy
+### Step 16: Design safe-evolution strategy
 
 For components facing breaking or large-scale change (renames, API/schema reshapes, convention
 migrations), load `references/safe-evolution.md` and recommend a staged approach instead of a one-shot
@@ -269,6 +293,6 @@ diff — the failure mode agents default to.
 Recommend this wherever the assessment flagged a large refactor, migration, or cross-cutting rename.
 Tie the gate back to the evidence pipeline (Step 6): each incremental step passes the same checks.
 
-### Step 16: Write the strategy
+### Step 17: Write the strategy
 
-Load `references/strategy-report-template.md`. Write `verification-strategy.md` following the template, covering all sections from Steps 1-15 (component strategies through roadmap, plus traceability and safe-evolution).
+Load `references/strategy-report-template.md`. Write `verification-strategy.md` following the template, covering all sections from Steps 1-16 (component strategies through roadmap, plus traceability and safe-evolution).

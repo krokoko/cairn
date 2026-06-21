@@ -48,7 +48,17 @@ def is_under_root(resolved: Path) -> bool:
         return False
 
 
+def is_cwd_relative_ref(ref: str) -> bool:
+    return ref.startswith(("./", "../")) or ref.startswith("../")
+
+
 def resolve_ref(ref: str, source_file: Path) -> list[Path]:
+    """Resolve a reference the way a reader at source_file would.
+
+    Paths starting with ./ or ../ must resolve from source_file.parent only.
+    Other paths (e.g. references/foo.md from SKILL.md) may also resolve via
+    skill_root fallbacks.
+    """
     if ref.startswith(("http://", "https://", "mailto:", "#")):
         return []
 
@@ -60,11 +70,35 @@ def resolve_ref(ref: str, source_file: Path) -> list[Path]:
             candidates.append(resolved)
 
     add(source_file.parent / ref)
+
+    if is_cwd_relative_ref(ref):
+        return candidates
+
     skill_root = find_skill_root(source_file)
     if skill_root:
         add(skill_root / ref)
         add(skill_root / "references" / ref)
     return candidates
+
+
+def ref_is_internal_link(ref: str) -> bool:
+    """True when ref is meant to point at another file in this repo (not a search example)."""
+    if ref.startswith(("http://", "https://", "mailto:", "#")):
+        return False
+    if is_cwd_relative_ref(ref):
+        return True
+    return ref.startswith("references/") or "references/" in ref
+
+
+def ref_is_broken(ref: str, source_file: Path) -> bool:
+    if not ref_is_internal_link(ref):
+        return False
+    if "*" in ref or "?" in ref:
+        return False
+    candidates = resolve_ref(ref, source_file)
+    if not candidates:
+        return True
+    return not any(path.exists() for path in candidates)
 
 
 def collect_all_resource_files() -> set[Path]:
@@ -106,16 +140,10 @@ def main() -> int:
 
         refs = extract_refs(current.read_text(encoding="utf-8"))
         for ref in refs:
-            if "*" in ref or "?" in ref:
+            if ref_is_broken(ref, current):
+                broken_links.append((current, ref))
                 continue
-            candidates = resolve_ref(ref, current)
-            if not candidates:
-                continue
-            if not any(path.exists() for path in candidates):
-                if "references/" in ref or ref.startswith("references/"):
-                    broken_links.append((current, ref))
-                continue
-            for candidate in candidates:
+            for candidate in resolve_ref(ref, current):
                 if candidate.exists():
                     reachable.add(candidate)
                     if candidate.suffix == ".md" and candidate.resolve() not in visited:

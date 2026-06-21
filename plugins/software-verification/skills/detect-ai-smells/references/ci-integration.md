@@ -15,16 +15,19 @@ Smell-specific gates by pipeline stage:
 | Stage | Gates | Smells caught |
 |-------|-------|---------------|
 | Pre-commit | Empty catch lint, commit message lint, magic number lint, assertion-presence lint | AI004, AI007, AI010, git hygiene |
-| CI - fast | Type check, dead code, import boundaries, version pin check | AI001, AI002, AI003, AI007, AI008 |
-| CI - slow | Mutation testing, branch coverage, duplication detection, silent success scan | AI004, AI005, AI006, AI009, AI010 |
+| CI - fast | Type check, dead code, import boundaries, version pin check, non-empty scanner rules | AI001, AI002, AI003, AI007, AI008, AI011 (scanner vacuity) |
+| CI - slow | Mutation testing, branch coverage, duplication detection, silent success scan, anti-vacuity probes, spec↔code sync, traceability meta-gates | AI004, AI005, AI006, AI009, AI010, AI011 |
 | PR review | PR template check, test-with-source requirement, Docker tag lint | Git hygiene, AI008 |
+
+When formal specs (`*.tla`, invariants) or `(verified=…)` markers exist, run AI011 meta-gates in
+CI - slow (or verify-quick) — not optional. Load `detection-patterns-gates-formal.md`.
 
 ## Enforcement Levels
 
 | Level | Meaning | When appropriate |
 |-------|---------|-----------------|
-| **Blocking** | Fails build, prevents merge | High-severity smells (AI001, AI004) |
-| **Warning** | PR annotation, does not block | Medium-severity (AI002, AI003, AI005, AI007, AI008, AI009, AI010) |
+| **Blocking** | Fails build, prevents merge | High-severity smells (AI001, AI004, AI011 when formal specs or verified markers exist) |
+| **Warning** | PR annotation, does not block | Medium-severity (AI002, AI003, AI005, AI007, AI008, AI009, AI010); AI011 when no formal artifacts on disk |
 | **Informational** | Report only, trend tracked | Low-severity (AI006), new gates in trial period |
 
 ## Feedback Quality Criteria
@@ -72,5 +75,5 @@ Track per gate:
 |-------|-------------|------------|
 | 0 | No AI smell gates | No mutation testing, no import limits, basic lint only |
 | 1 | Partial coverage | Some gates exist (e.g., empty catch rules) but gaps in 4+ categories |
-| 2 | Broad coverage | Gates for 6+ categories, mix of blocking and warning, pinning + fail-fast covered |
+| 2 | Broad coverage | Gates for 7+ categories, mix of blocking and warning, pinning + fail-fast covered |
 | 3 | Fitness function maturity | Trend tracking, per-PR deltas, gate effectiveness measurement, automated update mechanisms for pins |

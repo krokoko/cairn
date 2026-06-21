@@ -12,13 +12,13 @@ user-invocable: true
 
 # Assess AI Smell Detection Gates
 
-Assess whether a codebase has gates in place to catch AI-generated code smells — patterns indicating output was produced for plausibility rather than understanding. Produce an `ai-smells-gates-report.md` with coverage of the 10 AI smell categories, gap analysis, recommendations for missing gates, and human review heuristics for what automation can't catch.
+Assess whether a codebase has gates in place to catch AI-generated code smells — patterns indicating output was produced for plausibility rather than understanding. Produce an `ai-smells-gates-report.md` with coverage of the 11 AI smell categories, gap analysis, recommendations for missing gates, and human review heuristics for what automation can't catch.
 
 ## Workflow
 
 ### Step 1: Load smell taxonomy
 
-Load `references/ai-smells-taxonomy.md` for the 10 AI smell categories and their detection approaches.
+Load `references/ai-smells-taxonomy.md` for the 11 AI smell categories and their detection approaches.
 
 These are the categories of AI-generated quality problems the codebase should be protected against:
 1. Plausible Fabrication
@@ -31,6 +31,7 @@ These are the categories of AI-generated quality problems the codebase should be
 8. Implicit Drift (unpinned references that silently resolve differently over time)
 9. Happy-Path-Only Coverage (success path tested; error/edge/boundary paths unexercised)
 10. Vacuous Tests (tests that execute code but verify nothing falsifiable)
+11. Vacuous Formal Specs (formal specs, invariants, or gate configs that constrain nothing)
 
 ### Step 2: Inventory existing gates
 
@@ -85,9 +86,10 @@ Search for mechanisms that would catch AI smells:
 
 ### Step 3: Map gates to smell categories
 
-Load `references/detection-patterns.md` and `references/detection-patterns-gates.md` for what patterns each gate should catch.
+Load `references/detection-patterns.md`, `references/detection-patterns-gates.md`, and
+`references/detection-patterns-gates-formal.md` for what patterns each gate should catch.
 
-For each of the 10 AI smells, determine which existing gates provide coverage:
+For each of the 11 AI smells, determine which existing gates provide coverage:
 
 | Smell | Covered by | Coverage level |
 |-------|-----------|----------------|
@@ -101,6 +103,7 @@ For each of the 10 AI smells, determine which existing gates provide coverage:
 | AI008: Implicit Drift | ... | ... |
 | AI009: Happy-Path-Only Coverage | ... | ... |
 | AI010: Vacuous Tests | ... | ... |
+| AI011: Vacuous Formal Specs | ... | ... |
 
 Coverage levels:
 - **Full**: Automated gate would block or warn on this smell category
@@ -116,6 +119,8 @@ For AI008 (Implicit Drift): check for both the pin itself AND an automated updat
 For AI009 (Happy-Path-Only Coverage): line coverage alone does NOT count — a suite can hit every line via success-case tests while never exercising an error branch. Require branch coverage or mutation testing plus the presence of error-path tests (`assertRaises`/`toThrow`/`pytest.raises`). Line coverage only, with no error-path assertions, is "Partial" at best.
 
 For AI010 (Vacuous Tests): assertion-presence linting (`eslint-plugin-jest` `expect-expect`, custom AST checks) catches the crudest case — test bodies with no assertion — and is "Partial". Full coverage requires mutation testing, the only gate that catches tests which assert but cannot fail (asserting only on stubbed return values). Distinguish from AI005 (asserts on implementation mechanics) and AI009 (asserts only on the happy path): AI010 is the absence of any falsifiable assertion. A suite with high line coverage but a low mutation kill rate is the signature.
+
+For AI011 (Vacuous Formal Specs): presence of `*.tla`, invariants, or `(verified=…)` markers alone is "Partial" at best. Full coverage requires **anti-vacuity probes** — a known-bad mutation each invariant must reject — plus **presence⇒mandatory** meta-gates so artifacts on disk cannot skip unwired. Empty secret-scanner rulesets, coverage scoped away from the verified core, and hand-written specs with no spec↔code sync gate are vacuous-gate signatures. Distinguish from AI010 (tests with no assertion) and AI008 (unpinned versions): AI011 is a gate or spec that **runs green while checking nothing**. Load `../design-strategy/references/gate-design-patterns.md` for vacuous-gate patterns.
 
 ### Step 4: Assess gate maturity
 
