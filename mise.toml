@@ -2,6 +2,7 @@ min_version = "2026.2.6"
 
 [tools]
 node = "24"
+uv = "latest"
 "npm:markdownlint-cli2" = "0.17"
 "npm:ajv-cli" = "5"
 "pipx:check-jsonschema" = "latest"
