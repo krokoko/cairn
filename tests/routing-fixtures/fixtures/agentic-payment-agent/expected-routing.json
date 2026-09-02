@@ -1,0 +1,26 @@
+{
+  "fixture": "agentic-payment-agent",
+  "archetype": "Agentic application/workflow",
+  "bug_surface": "B",
+  "secondary_bug_surface": "C",
+  "class_c_subtype": "C3",
+  "change_mode": "agent_policy_change",
+  "expected_oracles": [
+    "temporal",
+    "contract",
+    "exact"
+  ],
+  "expected_tools": [
+    "Skylos",
+    "tool-sequence tests",
+    "temporal contracts",
+    "runtime trace conformance"
+  ],
+  "expected_mandatory": [
+    "refund_lte_original_payment",
+    "high_risk_requires_approval"
+  ],
+  "ceremony_risk": false,
+  "verifier_guided_search": "required_for_L5",
+  "oracle_integrity": "sound_required"
+}

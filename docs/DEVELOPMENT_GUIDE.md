@@ -22,18 +22,19 @@ mise install
 | Full CI build | `mise run build` | Lint + validate |
 | Alias | `mise run check` | Same as build |
 | Markdown | `mise run lint:md` | All `**/*.md` + custom SKILL/reference rules |
-| Manifests | `mise run lint:manifests` | JSON Schema via ajv |
+| Manifests | `mise run lint:manifests` | JSON Schema via ajv (marketplaces, plugin manifests) |
 | Cross-refs | `mise run lint:cross-refs` | Claude + Codex marketplaces vs plugin dirs |
 | JSON | `mise run lint:json` | JSON validity of all `.json` files |
 | References | `mise run validate:refs` | Broken links and orphan reference files |
 | Validators | `mise run test:validators` | Report-validator hook scripts + template-drift guard |
+| Routing fixtures | `mise run test:fixtures` | `tests/routing-fixtures/`: layout, schemas, expected tools exist in references (not routing accuracy) |
 | Secrets | `mise run security:secrets` | gitleaks secret scan (runs as part of `build`) |
 | Pre-commit | `mise run pre-commit` | Optional local hook bundle |
 
 Custom markdownlint rules in `tools/`:
 
 - `markdownlint-skill-length.cjs` — SKILL.md hard max 400 lines / 6500 words (fails build); 350-line / 5500-word advisory printed to stderr without failing
-- `markdownlint-reference-length.cjs` — references max 150 lines
+- `markdownlint-reference-length.cjs` — references max 300 lines
 - `markdownlint-frontmatter.cjs` — SKILL frontmatter vs schema
 
 ## Creating a new plugin
@@ -58,7 +59,7 @@ Create `plugins/my-plugin/skills/my-skill/SKILL.md` with YAML frontmatter and a 
 
 ### 4. Add reference documents
 
-Create `plugins/my-plugin/skills/my-skill/references/*.md`. Keep each file under 150 lines. Link them from `SKILL.md` so `tools/validate-references.py` can reach them.
+Create `plugins/my-plugin/skills/my-skill/references/*.md`. Keep each file under 300 lines. Link them from `SKILL.md` so `tools/validate-references.py` can reach them. For cross-skill references within a plugin, use relative paths (e.g. `../../other-skill/references/foo.md`) — bare filenames only resolve within the same `references/` directory.
 
 ### 5. Add hooks (optional)
 

@@ -1,0 +1,109 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://cairn/schemas/verification-evidence.schema.json",
+  "title": "Verification Evidence Record",
+  "description": "Structured assurance evidence linking claims, requirements, oracles, verification runs, and search metadata for proof-carrying PRs and L5 promotion decisions.",
+  "type": "object",
+  "required": ["claim", "verification", "evidence"],
+  "properties": {
+    "claim": {
+      "type": "object",
+      "required": ["id", "statement"],
+      "properties": {
+        "id": { "type": "string", "description": "Stable claim identifier (e.g. PAY-INV-001)" },
+        "statement": { "type": "string", "description": "Human-readable correctness claim" }
+      }
+    },
+    "requirement": {
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "description": "Upstream requirement ID (e.g. REQ-PAY-042)" }
+      }
+    },
+    "component": {
+      "type": "object",
+      "properties": {
+        "path": { "type": "string", "description": "Component path in repository" }
+      }
+    },
+    "change": {
+      "type": "object",
+      "properties": {
+        "commit": { "type": "string" },
+        "pr": { "type": "string" }
+      }
+    },
+    "oracle": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": [
+            "exact", "metamorphic", "differential", "contract", "temporal",
+            "statistical", "replay", "performance", "llm-judge", "human", "behavioral-twin"
+          ]
+        },
+        "authority": {
+          "type": "string",
+          "enum": ["approved-spec", "mined-hypothesis", "agent-generated", "unknown"]
+        },
+        "independence": { "type": "string", "enum": ["high", "medium", "low"] },
+        "agent_mutable": { "type": "boolean" },
+        "integrity": { "type": "string", "enum": ["sound", "degraded", "blocked"] },
+        "scope": {
+          "type": "string",
+          "enum": ["exhaustive-model", "bounded", "sampled", "statistical"]
+        },
+        "provenance": { "type": "string" },
+        "spec_hash": { "type": "string" }
+      }
+    },
+    "verification": {
+      "type": "object",
+      "required": ["tool", "result"],
+      "properties": {
+        "tool": { "type": "string" },
+        "version": { "type": "string" },
+        "mode": { "type": "string", "description": "e.g. model-check, unit-test, fuzz, proof" },
+        "bounds": { "type": "object", "additionalProperties": true },
+        "configuration_hash": { "type": "string" },
+        "result": { "type": "string", "enum": ["pass", "fail", "inconclusive", "timeout"] }
+      }
+    },
+    "evidence": {
+      "type": "object",
+      "description": "Artifacts supporting verification.result (the verdict lives there, not here)",
+      "properties": {
+        "states_explored": { "type": "integer", "minimum": 0 },
+        "counterexamples": { "type": "array", "items": { "type": "object" } },
+        "artifact": { "type": "string", "description": "Path or URI to evidence artifact" },
+        "artifact_hash": { "type": "string" },
+        "runtime_ms": { "type": "integer", "minimum": 0 }
+      }
+    },
+    "search": {
+      "type": "object",
+      "description": "Verifier-guided search metadata when applicable",
+      "properties": {
+        "strategy": {
+          "type": "string",
+          "enum": [
+            "generate-verify-retry", "best-of-n", "counterexample-guided",
+            "beam", "multi-island", "pareto", "adaptive"
+          ]
+        },
+        "candidates_evaluated": { "type": "integer", "minimum": 1 },
+        "selected_candidate": { "type": "string" },
+        "mandatory_passed": { "type": "boolean" }
+      }
+    },
+    "attestation": {
+      "type": "object",
+      "properties": {
+        "format": { "type": "string", "enum": ["in-toto", "slsa", "github-artifact"] },
+        "signer": { "type": "string" },
+        "bundle_uri": { "type": "string" }
+      }
+    }
+  }
+}

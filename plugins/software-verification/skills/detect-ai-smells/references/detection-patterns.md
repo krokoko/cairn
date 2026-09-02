@@ -1,6 +1,6 @@
 # Detection Patterns
 
-What tools and gate configurations catch each AI smell. Load `detection-patterns-gates.md` for AI005–AI010, `detection-patterns-gates-formal.md` for AI011, and the minimum viable gate set in the latter files.
+What tools and gate configurations catch each AI smell. Load `detection-patterns-gates.md` for AI005–AI010, `detection-patterns-gates-formal.md` for AI011, `detection-patterns-gates-oracle.md` for AI012, and the minimum viable gate set in the latter files.
 
 ## AI001: Plausible Fabrication
 

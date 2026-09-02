@@ -21,9 +21,9 @@ Move semantics into specifications and invest in proof-oriented methods.
 
 ### 2. Critical + Concurrent/Distributed
 
-Prioritize protocol modeling, interleaving exploration, and replay.
+Prioritize protocol modeling, interleaving exploration, and replay. Use Class C subroutes (C1–C4).
 
-**Recommended stack**: Formal spec (TLA+), model checking, deterministic schedule exploration of the implementation (Loom/Shuttle), deterministic replay/simulation, runtime verification, integration tests.
+**Recommended stack**: Formal spec (TLA+/P/Quint), model checking, DST (Turmoil/MadSim), schedule exploration (Loom/Shuttle), model↔impl conformance, runtime trace checks, integration tests.
 
 **Typical targets**: Consensus protocols, distributed state machines, queue processors, failover logic.
 
@@ -49,10 +49,22 @@ Rely on alternative oracles and operational validation.
 |-----------|------------------------|-------------|
 | Deterministic library | Logic bugs, edge cases | Property tests, fuzzing, deductive verification |
 | CRUD/API service | Interface, config, regressions | Types, tests, contracts, canaries |
-| Distributed/stateful | Interleavings, partial failure | Formal spec, model checking, replay, chaos |
+| Distributed/stateful | Interleavings, partial failure | Formal spec, model checking, DST, replay, chaos |
 | Safety/security kernel | Correctness of invariants | Proofs, abstract interpretation, SMT |
 | ML-backed | Output quality, drift | Metamorphic, shadow, statistical, human |
 | Data pipeline | Data quality, silent corruption, lineage | Golden datasets, data-quality/schema checks, metamorphic, replay |
 | Infrastructure/IaC | Drift, misconfiguration, blast radius | Policy-as-code, plan validation, IaC scanning, drift detection |
-| Legacy monolith | Regressions during refactor; stable-I/O drift | Approval/characterization tests, golden-trace replay, integration smoke |
+| Legacy monolith | Regressions during refactor; stable-I/O drift | Approval/characterization tests, golden-trace replay, integration smoke, spec mining |
 | Agent-written | Trust, specification drift | Sandboxing, equivalence oracles, progressive delivery |
+| Agentic application/workflow | Tool misuse, policy violations, unsafe side effects | Capability checks, temporal contracts, tool-sequence tests, Skylos, runtime trace conformance |
+
+### Agent-written vs agentic application
+
+| | Agent-written | Agentic application |
+|---|---------------|---------------------|
+| **What** | Code authored by an AI coding agent | Software containing an LLM/agent with tools, memory, decisions |
+| **Verify** | Output correctness vs spec | Shell invariants around nondeterministic core |
+| **Cannot prove** | — | LLM always reasons correctly |
+| **Can verify** | Equivalence, tests, sandbox | `refund <= payment`, approval gates, data isolation, tool policies |
+
+Agentic systems: verify the **deterministic shell** (tools, state machine, guardrails), not LLM reasoning.

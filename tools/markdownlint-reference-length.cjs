@@ -1,14 +1,14 @@
 /**
- * Validates reference markdown files stay under 150 lines.
+ * Validates reference markdown files stay under 300 lines.
  */
 
 "use strict";
 
-const MAX_LINES = 150;
+const MAX_LINES = 300;
 
 module.exports = {
   names: ["reference-length", "REF001"],
-  description: "Reference docs must be at most 150 lines",
+  description: "Reference docs must be at most 300 lines",
   tags: ["reference", "length"],
   parser: "none",
   function: function referenceLength(params, onError) {

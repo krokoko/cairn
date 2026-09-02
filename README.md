@@ -127,9 +127,9 @@ The output includes a numeric score, a category breakdown of the findings, a rec
 
 #### Software verification plugin
 
-This plugin helps to answer the following question: "given this codebase, these components, and these risks, what is the verification strategy that would unlock more autonomy ?".
+This plugin helps to answer the following question: "given this codebase, these components, these risks, and the kind of change being made, what verification architecture lets an AI agent search, change, and prove the software safely?".
 
-The output is a maturity of the current verification strategy, breakdown of components in the codebase with a recommended verification path for each one of them, missing oracles, insights on where exact correctness is possible, where only statistical/empirical validation is realistic, recommendations on which components require human review, which parts are candidate for autonomous agent iteration.
+The output is the maturity of the current verification strategy, a breakdown of components with a recommended verification path for each (routed by bug surface and change type), missing oracles rated for strength **and integrity** (can the agent weaken them?), where exact correctness is possible versus only statistical validation, which components require human review, and which are candidates for autonomous, verifier-guided agent iteration. Cairn prescribes the architecture; it does not execute verifiers.
 
 ## Additional resources
 

@@ -1,0 +1,20 @@
+{
+  "fixture": "rust-counter",
+  "archetype": "Deterministic library",
+  "bug_surface": "A",
+  "class_c_subtype": null,
+  "expected_oracles": [
+    "exact"
+  ],
+  "expected_tools": [
+    "cargo test",
+    "clippy",
+    "types"
+  ],
+  "expected_mandatory": [
+    "build",
+    "unit_tests"
+  ],
+  "ceremony_risk": false,
+  "ceremony_risk_note": "Class A: recommendations must not add formal methods; flag ceremony risk if any are proposed"
+}

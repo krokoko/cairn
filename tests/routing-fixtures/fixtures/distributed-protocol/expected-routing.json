@@ -1,0 +1,23 @@
+{
+  "fixture": "distributed-protocol",
+  "archetype": "Distributed/stateful",
+  "bug_surface": "C",
+  "class_c_subtype": "C3",
+  "expected_oracles": [
+    "temporal",
+    "differential"
+  ],
+  "expected_tools": [
+    "TLA+",
+    "TLC",
+    "Quint",
+    "P",
+    "model-based conformance testing"
+  ],
+  "expected_mandatory": [
+    "model_check",
+    "impl_conformance"
+  ],
+  "ceremony_risk": false,
+  "model_impl_conformance": "required"
+}

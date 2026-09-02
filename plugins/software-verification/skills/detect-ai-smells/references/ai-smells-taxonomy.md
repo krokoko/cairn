@@ -2,7 +2,7 @@
 
 AI smells are surface patterns in model-generated output suggesting content was produced for plausibility rather than understanding. They indicate **comprehension debt** — a gap between what code does and what anyone believes it does.
 
-## The 11 AI Smells
+## The 12 AI Smells
 
 | # | Smell | Definition | Severity | Key Indicator |
 |---|-------|-----------|----------|---------------|
@@ -17,6 +17,52 @@ AI smells are surface patterns in model-generated output suggesting content was 
 | 9 | **Happy-Path-Only Coverage** | Tests and code exercise only the success scenario; error paths, edge cases, and boundaries are untested or unhandled | Medium-High | Tests assert on valid input only; no error-branch/exception tests; no empty/boundary/timeout cases; error branches with no covering test |
 | 10 | **Vacuous Tests** | Tests that execute code but verify nothing falsifiable — they pass regardless of behavior | Medium-High | No assertion at all; assertion only that code does `not throw`; assertions only on stubbed/mock return values; snapshot tests auto-updated without review |
 | 11 | **Vacuous Formal Specs** | Formal specs, invariants, or verification configs that constrain nothing — green gate, zero assurance | High | TLA+ invariant always true; empty scanner ruleset; `(verified=…)` marker with no linked proof; hand-written spec diverged from code with no sync gate |
+| 12 | **Oracle Tampering / Evaluator Gaming** | Change makes implementation appear more correct by weakening, bypassing, or modifying the evaluation mechanism | High | Impl + test/spec/evaluator changed together; assertion removed, bounds reduced, tests skipped |
+
+## AI012: Oracle Tampering / Evaluator Gaming
+
+### Definition
+
+A change makes the implementation appear more correct by weakening, bypassing, modifying, or
+narrowing the mechanism that evaluates correctness. Distinct from AI010 (individually vacuous
+tests) — a test can be non-vacuous while the agent deliberately makes the suite less discriminating.
+
+### Primary indicator
+
+**Implementation code changed + test/spec/evaluator changed** in the same change set, with
+evaluation weakened rather than strengthened.
+
+### Specific indicators
+
+| Indicator | Example |
+|-----------|---------|
+| Assertion removed or weakened | `balance >= 0` → `balance >= -100` |
+| Test skipped / xfail added | `@pytest.mark.skip`, `it.skip` |
+| Snapshot updated without review | Auto-approved snapshot churn |
+| Tolerance widened | `abs(a-b) < 0.01` → `< 1.0` |
+| Timeout lowered | Verifier gives up faster |
+| Fuzz iteration count lowered | `100000` → `100` |
+| Model-check bound reduced | `depth=100` → `10` |
+| Property weakened | Precondition made easier |
+| Precondition strengthened on input | `requires valid_input` → `requires false` |
+| Verification rule disabled | Sanitizer, linter rule turned off |
+| Coverage exclusion added | `# pragma: no cover` on hot path |
+| Sanitizer disabled | ASan/UBSan removed from build |
+| Holdout data exposed | Agent gains access to holdout scenarios |
+| Reference implementation modified | Breaks differential oracle during migration |
+
+### L4/L5 relevance
+
+Oracle tampering is a **first-class autonomy blocker**. At L4/L5, the oracle is the safety net —
+not a human reviewer. Load `../../design-strategy/references/oracle-integrity.md`.
+
+### Distinction from related smells
+
+| Smell | Axis |
+|-------|------|
+| AI010 | Single test asserts nothing falsifiable |
+| AI011 | Formal gate runs green while checking nothing |
+| **AI012** | Evaluation mechanism deliberately made less discriminating alongside impl change |
 
 ## The Pinning Principle
 
@@ -38,6 +84,8 @@ Pinning to an alias (e.g., `gpt-4` instead of `gpt-4-0613`) is not pinning.
 
 AI011 default enforcement is **conditional**: block merge when formal specs or `(verified=…)` markers
 exist on disk; warn when no formal artifacts are present (see `ci-integration.md`).
+AI012 should **block merge** on High/Critical paths when impl + oracle files change without
+an explicit `oracle-change` review label.
 
 ## Compound Risk
 
@@ -52,6 +100,8 @@ Individual smells compound when combined:
 - Vacuous tests + happy-path-only coverage = high reported coverage with near-zero defect-detection power
 - Vacuous formal specs + traceability markers = `(verified=kani)` theater with no proof obligation
 - Vacuous gates + agent autonomy = accelerated false confidence — wrong code ships at machine speed
+- Oracle tampering + verifier-guided search = autonomous shipping of incorrect code at machine speed
+- Oracle tampering + N-of-M consensus = all candidates gamed toward passing weak oracles
 
 Flag files exhibiting 3+ smells simultaneously as high-priority refactoring targets.
 
@@ -109,6 +159,15 @@ Diagnostic question: *"If I introduce a known violation of the stated property, 
 If no, the spec or gate is vacuous. **Anti-vacuity mutations** (required violating edits per
 invariant) are the authoritative fix — stronger than reviewing spec prose by hand.
 
+## The Anti-Tampering Principle
+
+AI012 (Oracle Tampering) is distinct from AI010 and AI011: the test or spec is neither vacuous nor
+absent — it was **deliberately made less discriminating** in the same change as the implementation.
+
+Diagnostic question: *"Did this change make correctness easier to demonstrate without making the software more
+correct?"* Cross-artifact diff analysis (impl + tests + spec + verifier config) is the signal.
+Integrity-protected oracles (`agent_mutable: false`) are the fix.
+
 ## Scoring Formula
 
 ```
@@ -138,3 +197,4 @@ Compound multiplier: 2 smells in same file = ×1.5, 3+ smells = ×2.0.
 | AI009 | Happy-Path-Only Coverage | warning |
 | AI010 | Vacuous Tests | warning |
 | AI011 | Vacuous Formal Specs | error if formal artifacts on disk; else warning |
+| AI012 | Oracle Tampering / Evaluator Gaming | error on High/Critical paths; else warning |

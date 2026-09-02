@@ -67,6 +67,50 @@ tags. Turns incidents and historical failures into durable regression assets.
 Required checks by risk class, rollback policy, approval thresholds, low-confidence
 escalation rules. Converts evidence into action consistently.
 
+**Mandatory vs objectives:** promotion policy applies the rule in `candidate-selection-policy.md`
+(canonical) — hard gates first, ranking metrics only among passing candidates.
+
+## Assurance evidence model (claims → evidence)
+
+Extend the conceptual schemas above into a **claim-centric evidence graph**:
+
+```yaml
+claim:
+  id: PAY-INV-001
+  statement: "same request_id cannot create two payments"
+requirement:
+  id: REQ-PAY-042
+component:
+  path: src/payments/
+change:
+  commit: abc123
+oracle:
+  type: temporal
+  authority: approved-spec
+  agent_mutable: false
+  integrity: sound
+  spec_hash: 8c93...
+verification:
+  tool: quint
+  mode: model-check
+  result: pass
+evidence:
+  states_explored: 42118
+  artifact: verification/quint-result.json
+search:
+  strategy: best-of-n
+  candidates_evaluated: 8
+  selected_candidate: candidate-6
+attestation:
+  format: in-toto
+  signer: sigstore
+```
+
+JSON Schema: `schemas/verification-evidence.schema.json` (when implementing structured evidence).
+
+Attestation proves **what ran**; oracle + verifier prove **what was established**. Both are required
+for L5 promotion decisions.
+
 ## Harness metrics
 
 ### Fast-loop correctness

@@ -1,0 +1,52 @@
+{
+  "claim": {
+    "id": "PAY-INV-001",
+    "statement": "same request_id cannot create two payments"
+  },
+  "requirement": {
+    "id": "REQ-PAY-042"
+  },
+  "component": {
+    "path": "src/payments/"
+  },
+  "change": {
+    "commit": "abc123",
+    "pr": "42"
+  },
+  "oracle": {
+    "type": "temporal",
+    "authority": "approved-spec",
+    "independence": "high",
+    "agent_mutable": false,
+    "integrity": "sound",
+    "scope": "exhaustive-model",
+    "provenance": "REQ-PAY-042",
+    "spec_hash": "8c93a1b2"
+  },
+  "verification": {
+    "tool": "quint",
+    "version": "1.2.0",
+    "mode": "model-check",
+    "bounds": { "depth": 100 },
+    "configuration_hash": "f00ba4",
+    "result": "pass"
+  },
+  "evidence": {
+    "states_explored": 42118,
+    "counterexamples": [],
+    "artifact": "verification/quint-result.json",
+    "artifact_hash": "deadbeef",
+    "runtime_ms": 12400
+  },
+  "search": {
+    "strategy": "best-of-n",
+    "candidates_evaluated": 8,
+    "selected_candidate": "candidate-6",
+    "mandatory_passed": true
+  },
+  "attestation": {
+    "format": "in-toto",
+    "signer": "sigstore",
+    "bundle_uri": "https://example.com/attestations/abc123.bundle"
+  }
+}

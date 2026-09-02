@@ -1,8 +1,11 @@
 # Safe Evolution Strategy
 
 How agents should make breaking or large-scale changes **safely** — incrementally and reversibly —
-instead of the risky one-shot diff an agent reaches for by default. Two complementary patterns:
-**Parallel Change** for interface/shape changes, **Sweep** for applying one rule across many files.
+instead of the risky one-shot diff an agent reaches for by default. Load `change-semantics.md` for
+verification routing by change mode.
+
+Two complementary patterns: **Parallel Change** for interface/shape changes, **Sweep** for applying
+one rule across many files.
 
 ## Parallel Change (expand → migrate → contract)
 
@@ -21,6 +24,34 @@ Use it for: public API/interface changes, renames touching many callers, schema/
 config-shape changes, and any change crossing teams, services, or versions you do not control.
 The old form stays operational through the migration window, so there is no breaking window at all.
 
+### Semantic preservation verification
+
+For behavior-preserving phases (refactor, migration), add **differential equivalence**:
+
+```text
+                    INPUT
+                      │
+              ┌───────┴────────┐
+              ▼                ▼
+          Old program      New program
+              │                │
+              └───────┬────────┘
+                      ▼
+            semantic comparison
+```
+
+| Change type | Equivalence oracle |
+|-------------|-------------------|
+| Refactor | Old vs new on shared test vectors |
+| Library migration | Old library vs new library on replay traces |
+| Language port (e.g. C2Rust) | C reference vs Rust candidate; differential + translation validation |
+| Compiler transform | Alive2-style refinement check |
+
+Gate each Parallel Change phase on:
+1. Existing tests pass
+2. **Equivalence holds** (old path = new path for migrated callers)
+3. Diff review — and oracle integrity (no weakening tests/spec in same PR — AI012)
+
 ## Sweep (one rule, many files, disciplined batches)
 
 Apply a single rule uniformly across many files in disciplined batches, so the codebase moves from
@@ -37,7 +68,7 @@ old convention to new without drift or dangling exceptions. Three execution mode
 1. Write the rule down explicitly before executing.
 2. Sample 3-4 candidate sites manually first to validate the rule.
 3. Execute in small, reviewable batches with checkpoints — not one giant diff.
-4. Gate each batch on passing tests **and** a diff review.
+4. Gate each batch on passing tests, a diff review, **and** equivalence (for behavior-preserving sweeps).
 5. Verify test coverage actually exercises the changed behavior (a green suite that never runs the
    swept paths proves nothing — see the happy-path and oracle-strength concerns).
 
@@ -47,3 +78,6 @@ Big-bang agent edits are the dangerous failure mode: a single huge diff is hard 
 revert, and turns one wrong assumption into a repo-wide regression. Staged evolution keeps every step
 small, independently verifiable, and reversible — which is what lets the verification pipeline (not a
 human reading a massive diff) remain the authoritative gate.
+
+For L4/L5 agent search on refactors/migrations, verifier-guided search with differential oracle as
+mandatory verifier is the recommended architecture.

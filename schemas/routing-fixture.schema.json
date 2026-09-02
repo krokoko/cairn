@@ -1,0 +1,55 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://cairn/schemas/routing-fixture.schema.json",
+  "title": "Verification Routing Fixture Expectations",
+  "description": "Expected Cairn routing output for synthetic fixture profiles used in routing evals.",
+  "type": "object",
+  "required": [
+    "fixture",
+    "archetype",
+    "bug_surface",
+    "expected_oracles",
+    "expected_tools",
+    "expected_mandatory",
+    "ceremony_risk"
+  ],
+  "properties": {
+    "fixture": { "type": "string" },
+    "archetype": { "type": "string" },
+    "bug_surface": { "type": "string", "pattern": "^[A-E]$" },
+    "secondary_bug_surface": {
+      "type": ["string", "null"],
+      "pattern": "^[A-E]$",
+      "description": "Optional secondary class when a component straddles two (e.g. B+D)"
+    },
+    "class_c_subtype": {
+      "type": ["string", "null"],
+      "enum": ["C1", "C2", "C3", "C4", null]
+    },
+    "change_mode": { "type": ["string", "null"] },
+    "expected_oracles": {
+      "type": "array",
+      "items": { "type": "string" },
+      "minItems": 1
+    },
+    "expected_tools": {
+      "type": "array",
+      "description": "Each string must appear (case-insensitive) in the software-verification skill references; tests/routing-fixtures/run.sh enforces this",
+      "items": { "type": "string" },
+      "minItems": 1
+    },
+    "expected_mandatory": {
+      "type": "array",
+      "items": { "type": "string" },
+      "minItems": 1
+    },
+    "ceremony_risk": {
+      "type": "boolean",
+      "description": "true only when the profile is over-instrumented (formal tooling present on Class A with no identified gap) and Cairn is expected to flag it"
+    },
+    "ceremony_risk_note": { "type": "string" },
+    "verifier_guided_search": { "type": "string" },
+    "oracle_integrity": { "type": "string" },
+    "model_impl_conformance": { "type": "string" }
+  }
+}

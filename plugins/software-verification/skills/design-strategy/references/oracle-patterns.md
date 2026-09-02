@@ -85,3 +85,9 @@ A behavioral twin is a high-fidelity clone of an external service (SaaS API, thi
 | "Manual QA passed" | Capture QA criteria as automated checks |
 | "Same as before" | Add snapshot/differential testing |
 | "Meets requirements" | Encode requirements as contracts or schemas |
+
+## Oracle integrity
+
+Strength (discriminating power) is not enough for autonomous agents — evaluate **integrity**
+(can the agent undermine the oracle?). Load `oracle-integrity.md` for the Oracle Integrity Card
+and compact ratings (sound / degraded / blocked). Degraded oracles cap autonomy at L3–L4; agent-mutable oracles are **blocked** and do not count toward L4/L5.

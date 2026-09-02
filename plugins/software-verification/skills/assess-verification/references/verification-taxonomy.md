@@ -19,6 +19,10 @@ Ratings: VH=Very High, H=High, M=Medium, L=Low. Columns: Assurance / Cost / Auto
 | Approval / characterization testing | ApprovalTests, insta, snapshots | M / L / H / M / L | Freezing existing behavior of untested/legacy code before refactor; text/render-heavy output |
 | Regression replay | Captured inputs/outputs, production golden traces | M / L-M / H / H / L | Every bug becomes a permanent test case; replay sanitized production traffic against a candidate |
 | Mutation testing | mutmut, Stryker, cargo-mutants | M / M / H / M / M | Assessing test suite quality and strength |
+| Model-based conformance testing | Quint Connect, P test drivers, TLA+ trace adapters | H / M-H / H / M / H | Bridge formal model and implementation — prevent spec↔code drift |
+| History verification | Jepsen | H / H / M / M / H | Black-box distributed consistency under failure |
+| Translation validation | Alive2, differential on transforms | H / M / H / M / H | Behavior-preserving compiler/refinement checks |
+| Specification mining | Daikon | M / M / M / M / M | Bootstrap invariants in brownfield — hypothesis until approved |
 
 ### Static and formal methods
 
@@ -29,10 +33,14 @@ Ratings: VH=Very High, H=High, M=Medium, L=Low. Columns: Assurance / Cost / Auto
 | Profiling | pprof, perf, py-spy | L(func), M(perf) / L-M / H / H / M | Performance budgets, regression detection |
 | Sanitizers | ASan, TSan, UBSan, MSan | H / L-M / H / H / L-M | Mandatory for native/unsafe code |
 | Contracts (DbC) | icontract, JML, assertions | M-H / M / H / H / M | Interface semantics; first step to formal |
+| Python symbolic / contracts | CrossHair | H / M / H / M / M | Python-native symbolic inputs, counterexamples |
+| TypeScript formal | LemmaScript, lemmafit | H / M-H / M / M / H | TS → Dafny/Lean; verifier-in-agent-loop |
 | Abstract interpretation | Astree, Frama-C/EVA | H / H / H / M / H | Safety-critical embedded, numeric code |
-| Schedule exploration | Loom (exhaustive), Shuttle (randomized), Coyote | H / M-H / H / M / M-H | Concurrent implementation code: explores interleavings of the real code, not a model |
-| Formal spec + model checking | TLA+/TLC, Alloy, Stateright | H-VH / M-H / H / M-L / H | Protocols, distributed state, concurrency |
+| Schedule exploration | Loom, Shuttle, Coyote | H / M-H / H / M / M-H | C1 local concurrency: explores interleavings of the real code, not a model |
+| Deterministic simulation testing | Turmoil, MadSim | H / M-H / H / M / M-H | C2 distributed implementation |
+| Formal spec + model checking | TLA+/TLC, Alloy, Stateright, P, Quint | H-VH / M-H / H / M-L / H | C3 protocol/design |
 | SMT / bounded verification | Kani, Dafny, Z3 | H / M / H / M / H | Bit-precise kernels, arithmetic invariants |
+| Rust proof translation | Hax | H / M-H / M / M / H | Rust → Lean/F*/Rocq/ProVerif |
 | Deductive verification | Dafny, SPARK, Frama-C/WP | H-VH / H / M-H / M / H | Critical algorithms, codecs, memory safety |
 | Theorem proving | Lean, Coq/Rocq | VH / VH / L-M / L / VH | Crypto, verified compilers, protocol cores |
 | Symbolic execution | KLEE, angr, Mythril | M-H / M-H / H / M / H | Security analysis, smart contracts, path coverage |
@@ -44,12 +52,46 @@ Ratings: VH=Very High, H=High, M=Medium, L=Low. Columns: Assurance / Cost / Auto
 |--------|-----------|----------------------|-------------|
 | Agentic manual testing | Playwright, CDP, shell + QA charters | M / M / H / M / L-M | Integration flows, UI validation, exploratory QA |
 | Runtime verification | Monitors, RV-Monitor | M-H / M / H / M / H | Temporal protocols, API usage rules |
+| Runtime spec conformance | PObserve, Quint monitors | H / M-H / H / M / H | Production traces checked against formal monitor |
 | Shadow testing | Traffic mirroring | H / M / H / H / M | Rewrites, replacements, before promotion |
 | Canary / progressive delivery | Argo Rollouts, feature flags | M-H / M / H / H / M | All production-facing releases |
 | Chaos engineering | Chaos Monkey, Litmus | M / M / M / M / M | Distributed systems, failover paths |
-| LLM-as-Judge evaluation | Model scoring against rubrics | M / L-M / H / H / M | Non-deterministic outputs, style, generated content |
+| LLM-as-Judge evaluation | Model scoring against rubrics | M / L-M / H / H / M | Non-deterministic outputs; not final authority when verifier exists |
 | Provenance / attestation | in-toto, SLSA, Sigstore/Cosign | M / M / H / H / M | Packaging signed evidence of what ran on which commit; cross-team/regulated delivery (evidence, not an oracle) |
 | Human review | Code review, approvals | Variable / M / M / M / M | High-risk, ambiguous, low-confidence changes |
+
+### Search and orchestration
+
+| Method | Key tools | Ratings (A/C/Au/S/E) | When to use |
+|--------|-----------|----------------------|-------------|
+| Verifier-guided search | GEPA, OpenEvolve, ShinkaEvolve, lemmafit | H / H / H / M / M | L4/L5 autonomous candidate iteration |
+| Agent integration verification | Skylos | H / M / H / M / M | Static guardrails on agentic tool use |
+
+## Spec continuity lifecycle
+
+Tier 4/5 maturity increasingly requires the **same behavioral specification** at design, CI, and runtime:
+
+```text
+                  REQUIREMENT
+                       │
+                       ▼
+                 Formal model
+                       │
+             ┌─────────┴─────────┐
+             ▼                   ▼
+       Model checking      Implementation
+                                 │
+                                 ▼
+                            CI conformance
+                                 │
+                                 ▼
+                              runtime
+                                 │
+                                 ▼
+                         trace conformance
+```
+
+Tools: P (language + checker + PObserve), Quint (spec + Quint Connect), runtime monitors.
 
 ## Oracle types
 
@@ -65,17 +107,19 @@ Ratings: VH=Very High, H=High, M=Medium, L=Low. Columns: Assurance / Cost / Auto
 | Replay | Historical inputs with validated outputs | Production traces as regression |
 | LLM-as-Judge | Non-deterministic output, human review too slow | Generated docs, UI copy, refactoring quality |
 | Human | Requires domain judgment | UX quality, ambiguous correctness |
-| Behavioral twin | Third-party integrations needing real-behavior verification | Clone of external service exercised via scenarios |
+| Behavioral twin | Third-party integrations needing real-behavior verification | Clone exercised via holdout scenarios |
 
 Attestation/provenance (in-toto, SLSA) is deliberately **not** in this table: it records *what
 ran on which commit with what verdict* and signs it — it packages evidence, it does not adjudicate
 output correctness. Treat it as an evidence rail, not an oracle.
 
-## Oracle strength
+## Oracle strength and integrity
 
-Oracle *type* (above) is only half the picture; rate each oracle's *strength*, because autonomy is
-capped by it. Without an oracle a test only proves the code ran without crashing — not that it did
-the right thing.
+Oracle *type* (above) is only part of the picture; rate each oracle's *strength* and *integrity*,
+because autonomy is capped by both. Without an oracle a test only proves the code ran without
+crashing — not that it did the right thing.
+
+### Strength
 
 | Strength | Characteristics | Examples |
 |----------|-----------------|----------|
@@ -90,7 +134,13 @@ defense: it reveals oracles that pass regardless of whether the code is correct.
 When exact verification is impossible, prefer defining **properties** (validity, invariants,
 performance bounds) over brittle hardcoded values — they catch real bugs without rotting.
 
+### Integrity
+
+Load `../../design-strategy/references/oracle-integrity.md`. Rate sound / degraded / blocked.
+**Agent-mutable oracles do not count for L5**, regardless of strength.
+
 ## Key insight
 
 Property-based testing is the most important bridge method for autonomous construction:
 cheaper than proof, far more scalable than hand-written examples when invariants are crisp.
+For brownfield, combine with specification mining — promote only after human approval.

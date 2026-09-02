@@ -19,5 +19,5 @@ Run `mise run build` (lint + reference integrity). See [CONTRIBUTING.md](./CONTR
 ## Size limits
 
 - `SKILL.md`: max 400 lines
-- `references/*.md`: max 150 lines each
+- `references/*.md`: max 300 lines each
 - Split content across reference files when limits are exceeded

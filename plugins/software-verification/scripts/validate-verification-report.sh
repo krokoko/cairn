@@ -32,7 +32,7 @@ ERRORS=""
 
 # Check for verification-report.md sections
 if [[ "$FILENAME" == "verification-report.md" ]]; then
-  for section in "Verification Maturity" "Component Breakdown" "Missing Oracles" "Exactness Analysis" "Human Review Requirements" "Autonomy Candidates" "Feedback Loop Completeness" "Workflow Gate Assessment" "Shift-Left Assessment" "Documentation Verification" "AgentOps Telemetry" "Requirement Traceability" "Verification Debt"; do
+  for section in "Verification Maturity" "Component Breakdown" "Bug-Surface Classification" "Missing Oracles" "Verifier-Guided Search Readiness" "Exactness Analysis" "Human Review Requirements" "Autonomy Candidates" "Feedback Loop Completeness" "Workflow Gate Assessment" "Shift-Left Assessment" "Documentation Verification" "AgentOps Telemetry" "Requirement Traceability" "Verification Debt"; do
     if ! grep -q "## $section" "$FILE_PATH"; then
       ERRORS="${ERRORS}Missing required section: '## ${section}'. "
     fi
@@ -41,7 +41,7 @@ fi
 
 # Check for verification-strategy.md sections
 if [[ "$FILENAME" == "verification-strategy.md" ]]; then
-  for section in "Component Strategies" "Oracle Strategy" "Evidence Pipeline" "Shift-Left Recommendations" "Feedback Loop Improvements" "Workflow Gate Optimization" "Architecture Fitness Functions" "Eval Framework" "Generator-Evaluator Recommendations" "Documentation Verification" "Requirement Traceability" "Implementation Roadmap"; do
+  for section in "Component Strategies" "Oracle Strategy" "Evidence Pipeline" "Shift-Left Recommendations" "Feedback Loop Improvements" "Workflow Gate Optimization" "Architecture Fitness Functions" "Eval Framework" "Generator-Evaluator and Verifier-Guided Search" "Change Semantics and Safe Evolution" "Documentation Verification" "Requirement Traceability" "Implementation Roadmap"; do
     if ! grep -q "## $section" "$FILE_PATH"; then
       ERRORS="${ERRORS}Missing required section: '## ${section}'. "
     fi

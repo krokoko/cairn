@@ -12,7 +12,11 @@ user-invocable: true
 
 # Software Verification Assessment
 
-Assess the current verification maturity of a codebase. Produce a `verification-report.md` with maturity tier, component breakdown, missing oracles, exactness analysis, human review requirements, autonomy candidates, feedback loop completeness, workflow gate assessment, and shift-left positioning.
+Assess the current verification maturity of a codebase. Produce a `verification-report.md` with
+maturity tier, component breakdown, bug-surface classification, missing oracles (strength and
+integrity), verifier-guided search readiness, exactness analysis, human review
+requirements, autonomy candidates, feedback loop completeness, workflow gate assessment, and
+shift-left positioning.
 
 ## Workflow
 
@@ -58,7 +62,7 @@ Load `references/decision-framework.md` for classification guidance. Load `refer
 
 | Property | Options |
 |----------|---------|
-| **Archetype** | Deterministic library, CRUD/API service, Distributed/stateful, Safety/security kernel, ML-backed, Data pipeline, Infrastructure/IaC, Legacy monolith, Agent-written |
+| **Archetype** | Deterministic library, CRUD/API service, Distributed/stateful, Safety/security kernel, ML-backed, Data pipeline, Infrastructure/IaC, Legacy monolith, Agent-written, Agentic application/workflow |
 | **Criticality** | High (safety, security, money, core data), Medium (business logic), Low (UI, utilities) |
 | **Determinism** | Deterministic, Concurrent/distributed, Probabilistic/learned |
 | **Current verification** | List which methods are already applied |
@@ -72,7 +76,7 @@ class (A–E):
 |-------|------|------------------------|
 | A | Local invariant | Usually no — ceremony risk |
 | B | Arithmetic / conservation | Yes — property tests, checked ops, bounded proofs |
-| C | Protocol / concurrency | Yes — model check, DST, schedule exploration |
+| C | Protocol / concurrency | Yes — model check, DST, schedule exploration (see C1–C4) |
 | D | Untrusted input | Yes — fuzz + sanitizers |
 | E | Probabilistic / learned | Operational oracles, not unit formal stack |
 
@@ -91,8 +95,8 @@ Load `references/maturity-model.md` and assign a tier (0-5):
 - **Tier 1**: Basic tests exist, may be unreliable
 - **Tier 2**: Reliable test suite with CI gating
 - **Tier 3**: Generative testing + contracts/schemas
-- **Tier 4**: Formal methods for critical paths + operational validation
-- **Tier 5**: Evidence pipeline with replay, shadow, canary, automated promotion
+- **Tier 4**: Formal methods + model↔impl conformance + operational validation + oracle integrity
+- **Tier 5**: Full evidence pipeline, spec continuity, verifier-guided search, sound non-mutable oracles
 
 Score both the overall codebase and each individual component. **Apply Step 3 bug-surface when scoring:**
 Class C/D at maturity tier < 3 → note as under-instrumented in component notes; Class A at maturity
@@ -103,7 +107,8 @@ must be consistent — do not assign tier 4 to a Class A counter without documen
 
 For each component, answer: "Can we determine if the output is correct?"
 
-Load `references/verification-taxonomy.md` for oracle types.
+Load `references/verification-taxonomy.md` for oracle types. Load
+`../design-strategy/references/oracle-integrity.md` for integrity dimensions.
 
 | Oracle type | When applicable |
 |-------------|----------------|
@@ -139,6 +144,31 @@ be unsafe for autonomous change if that oracle is weak. Flag **oracle rot** — 
 the requirement has drifted, so the oracle no longer asserts the right thing — as a distinct gap from
 "no oracle"; it is more dangerous because it gives false confidence.
 
+For each oracle on High/Critical paths, also rate **integrity** (sound / degraded / blocked):
+- **Sound**: `agent_mutable=false`, approved authority, high independence, current freshness — L5-eligible
+- **Degraded**: one weak dimension (sampled scope, mined-but-approved, medium independence)
+- **Blocked**: agent-mutable, agent-generated authority, or stale — does not count toward L4/L5; flag AI012 risk
+
+Record compact integrity in the Missing Oracles table; full Oracle Integrity Cards for L4/L5 candidates.
+
+### Step 5b: Assess verifier-guided search readiness
+
+Load `../design-strategy/references/verifier-guided-search.md` and
+`../design-strategy/references/candidate-selection-policy.md`.
+
+The `## Verifier-Guided Search Readiness` section is always present. For components targeting L4/L5
+autonomous iteration, assess (for others, one row `N/A — not an L4/L5 candidate` suffices):
+- Is a **deterministic verifier** available (tests, types, model checker, differential oracle)?
+- Is the verifier **separated** from the generator (server-side CI, not agent-self-judged)?
+- Are **mandatory properties** distinguished from optimization objectives in CI/promotion policy?
+- Can the agent **tamper with the verifier** (same-PR test/spec changes — AI012)?
+- Are approved specs, holdout tests, and verifier configs **outside the agent's write scope**?
+
+These are codebase-side prerequisites. Which search strategy to run (best-of-N, beam, islands) is a
+harness decision — leave it to `/design-strategy`.
+
+Flag "LLM evaluator as final authority" as an L4/L5 blocker when deterministic verifier exists.
+
 ### Step 6: Classify correctness feasibility
 
 For each component, determine:
@@ -162,6 +192,8 @@ Components where AI agents could iterate autonomously:
 - Strong test coverage with reliable CI gating
 - Type-checked boundaries preventing interface errors
 - Property tests or contracts covering key invariants
+- **Sound oracle integrity** on critical paths (not agent-mutable)
+- Verifier-guided search with mandatory-then-objectives selection (for L5)
 - Low blast radius or easy rollback
 - Clear, well-scoped responsibilities
 
