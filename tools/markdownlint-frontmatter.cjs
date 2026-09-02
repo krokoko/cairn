@@ -11,11 +11,10 @@ function loadAllowedProperties() {
   const fallback = new Set([
     "name",
     "description",
-    "context",
-    "model",
+    "license",
+    "compatibility",
+    "metadata",
     "allowed-tools",
-    "argument-hint",
-    "user-invocable",
   ]);
 
   try {
