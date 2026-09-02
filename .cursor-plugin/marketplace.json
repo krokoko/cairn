@@ -1,0 +1,23 @@
+{
+  "name": "cairn",
+  "owner": {
+    "name": "krokoko"
+  },
+  "metadata": {
+    "description": "Plugin marketplace for making codebases ready for autonomous AI development",
+    "version": "0.1.0",
+    "pluginRoot": "plugins"
+  },
+  "plugins": [
+    {
+      "name": "codebase-ai-readiness",
+      "source": "codebase-ai-readiness",
+      "description": "Assess how AI-friendly a codebase is and produce an autonomy maturity map"
+    },
+    {
+      "name": "software-verification",
+      "source": "software-verification",
+      "description": "Design verification strategies that unlock higher levels of autonomous software development"
+    }
+  ]
+}

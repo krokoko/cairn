@@ -22,8 +22,8 @@ mise install
 | Full CI build | `mise run build` | Lint + validate |
 | Alias | `mise run check` | Same as build |
 | Markdown | `mise run lint:md` | All `**/*.md` + custom SKILL/reference rules |
-| Manifests | `mise run lint:manifests` | JSON Schema via ajv |
-| Cross-refs | `mise run lint:cross-refs` | Claude + Codex marketplaces vs plugin dirs |
+| Manifests | `mise run lint:manifests` | JSON Schema via ajv: Claude, Codex, and Agent Plugins manifests plus the three marketplace registries |
+| Cross-refs | `mise run lint:cross-refs` | Claude + Codex + Cursor marketplaces vs plugin dirs; version sync across manifests |
 | JSON | `mise run lint:json` | JSON validity of all `.json` files |
 | References | `mise run validate:refs` | Broken links and orphan reference files |
 | Validators | `mise run test:validators` | Report-validator hook scripts + template-drift guard |
@@ -50,7 +50,7 @@ mkdir -p plugins/my-plugin/skills/my-skill/references
 
 ### 2. Write manifests
 
-Create `plugins/my-plugin/.claude-plugin/plugin.json` and `plugins/my-plugin/.codex-plugin/plugin.json`. See existing plugins for Codex `interface` fields. Use `schemas/plugin.schema.json` and `schemas/codex-plugin.schema.json`.
+Create `plugins/my-plugin/plugin.json` (portable Agent Plugins manifest, `schemas/agent-plugins-plugin.schema.json`), `plugins/my-plugin/.claude-plugin/plugin.json` (`schemas/plugin.schema.json`), and `plugins/my-plugin/.codex-plugin/plugin.json` (`schemas/codex-plugin.schema.json`). See existing plugins for Codex `interface` fields.
 
 ### 3. Write your first skill
 
@@ -64,15 +64,17 @@ Create `plugins/my-plugin/skills/my-skill/references/*.md`. Keep each file under
 
 If your skill produces a structured output file, add a PostToolUse hook. See `docs/DESIGN_GUIDELINES.md`.
 
-### 6. Register in both marketplaces
+### 6. Register in all marketplaces
 
-Add entries to `.claude-plugin/marketplace.json` and `.agents/plugins/marketplace.json`. See existing plugins for the Codex entry shape. Keep `version` in sync across marketplaces and both manifest files.
+Add entries to `.claude-plugin/marketplace.json`, `.agents/plugins/marketplace.json`, and `.cursor-plugin/marketplace.json`. See existing plugins for each entry shape. Keep `version` in sync across marketplaces and all three manifest files (`mise run lint:cross-refs` fails on drift).
 
 ## Testing a plugin
 
 **Claude Code:** `/plugin marketplace add krokoko/cairn` then install the plugin.
 
 **Codex:** Open this repo; install from the Cairn marketplace in the plugin UI.
+
+**Cursor (Agent Plugins):** Import this repository URL in the Cursor Marketplace; Cursor reads `.cursor-plugin/marketplace.json` and each plugin's root `plugin.json`.
 
 Verify each skill follows its workflow, loads references, produces the expected report format, and hooks validate output when applicable.
 

@@ -17,6 +17,10 @@
           "type": "string",
           "pattern": "^\\d+\\.\\d+\\.\\d+(-[a-zA-Z0-9.]+)?(\\+[a-zA-Z0-9.]+)?$",
           "description": "Marketplace version"
+        },
+        "pluginRoot": {
+          "type": "string",
+          "description": "Cursor only: prefix applied to every plugin source path"
         }
       }
     },

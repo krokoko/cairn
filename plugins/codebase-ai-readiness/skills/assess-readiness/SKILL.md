@@ -5,9 +5,8 @@ description: |
   Trigger phrases: "assess readiness", "how AI-friendly is this codebase",
   "autonomy maturity", "readiness score", "AI readiness assessment",
   "how ready is my codebase for AI agents"
-argument-hint: "[path-to-codebase] (defaults to current directory)"
+  Optional argument: [path-to-codebase] (defaults to current directory)
 allowed-tools: Read Bash Glob Grep
-user-invocable: true
 ---
 
 # Codebase AI Readiness Assessment

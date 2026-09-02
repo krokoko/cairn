@@ -5,9 +5,8 @@ description: |
   Trigger phrases: "detect ai smells", "check for ai slop gates", "ai code quality gates",
   "do I have ai smell detection", "ai hygiene checks",
   "what checks catch ai slop", "ai quality gates assessment"
-argument-hint: "[path-to-codebase] (defaults to current directory)"
+  Optional argument: [path-to-codebase] (defaults to current directory)
 allowed-tools: Read Bash Glob Grep
-user-invocable: true
 ---
 
 # Assess AI Smell Detection Gates
