@@ -1,0 +1,12 @@
+{
+  "fixture": "c-to-rust-migration",
+  "archetype": "Legacy monolith",
+  "bug_surface": "B",
+  "secondary_bug_surface": "D",
+  "class_c_subtype": null,
+  "change_mode": "language_port",
+  "expected_oracles": ["differential", "replay"],
+  "expected_tools": ["C2Rust", "differential testing", "characterization tests", "translation validation"],
+  "expected_mandatory": ["semantic_equivalence"],
+  "ceremony_risk": false
+}

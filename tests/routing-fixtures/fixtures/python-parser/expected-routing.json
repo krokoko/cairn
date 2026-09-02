@@ -1,0 +1,10 @@
+{
+  "fixture": "python-parser",
+  "archetype": "Deterministic library",
+  "bug_surface": "D",
+  "class_c_subtype": null,
+  "expected_oracles": ["exact", "metamorphic"],
+  "expected_tools": ["Atheris", "libFuzzer", "Hypothesis", "round-trip"],
+  "expected_mandatory": ["panic_freedom", "round_trip"],
+  "ceremony_risk": false
+}

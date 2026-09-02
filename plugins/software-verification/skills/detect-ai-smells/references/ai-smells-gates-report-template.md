@@ -7,7 +7,7 @@ Write `ai-smells-gates-report.md` with the following structure:
 
 ## Gate Coverage Summary
 
-**Overall coverage**: X/11 smell categories with at least partial automated detection
+**Overall coverage**: X/12 smell categories with at least partial automated detection
 **Enforcement level**: [Blocking / Warning / None] for detected smells
 
 ## Coverage Matrix
@@ -25,6 +25,7 @@ Write `ai-smells-gates-report.md` with the following structure:
 | AI009: Happy-Path-Only Coverage | ... | ... | ... | ... |
 | AI010: Vacuous Tests | ... | ... | ... | ... |
 | AI011: Vacuous Formal Specs | ... | ... | ... | ... |
+| AI012: Oracle Tampering / Evaluator Gaming | ... | ... | ... | ... |
 
 ## Git History Hygiene
 

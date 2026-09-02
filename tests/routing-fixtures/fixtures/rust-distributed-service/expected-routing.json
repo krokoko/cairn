@@ -1,0 +1,11 @@
+{
+  "fixture": "rust-distributed-service",
+  "archetype": "Distributed/stateful",
+  "bug_surface": "C",
+  "class_c_subtype": "C2",
+  "expected_oracles": ["temporal", "replay", "differential"],
+  "expected_tools": ["Turmoil", "MadSim", "integration tests"],
+  "expected_mandatory": ["failover_safety", "no_split_brain"],
+  "ceremony_risk": false,
+  "model_impl_conformance": "recommended_if_C3_spec_exists"
+}

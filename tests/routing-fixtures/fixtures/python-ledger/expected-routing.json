@@ -1,0 +1,12 @@
+{
+  "fixture": "python-ledger",
+  "archetype": "Deterministic library",
+  "bug_surface": "B",
+  "class_c_subtype": null,
+  "change_mode": null,
+  "expected_oracles": ["exact", "metamorphic", "contract"],
+  "expected_tools": ["Hypothesis", "CrossHair", "checked arithmetic"],
+  "expected_mandatory": ["conservation_invariant", "no_overflow"],
+  "ceremony_risk": false,
+  "verifier_guided_search": "recommended_for_L4"
+}

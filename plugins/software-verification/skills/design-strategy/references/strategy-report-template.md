@@ -17,8 +17,8 @@ Write `verification-strategy.md` with the following structure:
 
 ## Oracle Strategy
 
-| Component | Oracle type | Implementation | Properties to check |
-|-----------|-------------|----------------|---------------------|
+| Component | Oracle type | Integrity (sound/degraded/blocked) | Implementation | Properties to check |
+|-----------|-------------|-------------------------------------|----------------|---------------------|
 
 ## Evidence Pipeline
 
@@ -65,10 +65,17 @@ Write `verification-strategy.md` with the following structure:
 
 Measurement: Correctness (>90% pass), Convention (<2 violations), Efficiency (<5 iterations)
 
-## Generator-Evaluator Recommendations
+## Generator-Evaluator and Verifier-Guided Search
 
-| Component | Variant | When to apply | Cost management |
-|-----------|---------|--------------|-----------------|
+| Component | Pattern | Verifier (authoritative) | Mandatory properties | Objectives | Oracle integrity |
+|-----------|---------|------------------------|---------------------|------------|------------------|
+
+## Change Semantics and Safe Evolution
+
+| Component | Change mode | Equivalence strategy | Safe evolution pattern |
+|-----------|-------------|---------------------|------------------------|
+
+Always present. If no change or migration is in scope, one row: `N/A — no change scoped`.
 
 ## Documentation Verification
 

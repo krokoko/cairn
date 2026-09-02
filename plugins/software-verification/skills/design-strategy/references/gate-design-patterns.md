@@ -59,6 +59,12 @@ tool must reject. If the mutation passes, the gate is toothless — fail the met
 Load `../../detect-ai-smells/references/detection-patterns-gates-formal.md` (AI011) for formal-spec vacuity
 detection patterns.
 
+## Candidate selection (mandatory vs objectives)
+
+When CI or search ranks multiple candidates, load `candidate-selection-policy.md` — the canonical
+rule. Gate-design consequence: required checks and informational metrics must be separate CI
+statuses, so a combined score can never trade correctness for speed.
+
 ## Enforcement integrity (agents route around blockers)
 
 Agents are task-oriented: when a local hook blocks them too hard, they tend to bypass it

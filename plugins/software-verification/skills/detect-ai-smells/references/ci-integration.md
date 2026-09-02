@@ -16,18 +16,21 @@ Smell-specific gates by pipeline stage:
 |-------|-------|---------------|
 | Pre-commit | Empty catch lint, commit message lint, magic number lint, assertion-presence lint | AI004, AI007, AI010, git hygiene |
 | CI - fast | Type check, dead code, import boundaries, version pin check, non-empty scanner rules | AI001, AI002, AI003, AI007, AI008, AI011 (scanner vacuity) |
-| CI - slow | Mutation testing, branch coverage, duplication detection, silent success scan, anti-vacuity probes, spec↔code sync, traceability meta-gates | AI004, AI005, AI006, AI009, AI010, AI011 |
-| PR review | PR template check, test-with-source requirement, Docker tag lint | Git hygiene, AI008 |
+| CI - slow | Mutation testing, branch coverage, duplication detection, silent success scan, anti-vacuity probes, spec↔code sync, traceability meta-gates, cross-artifact oracle diff | AI004, AI005, AI006, AI009, AI010, AI011, AI012 |
+| PR review | PR template check, test-with-source requirement, Docker tag lint, `oracle-change` label when impl + test/spec change | Git hygiene, AI008, AI012 |
 
 When formal specs (`*.tla`, invariants) or `(verified=…)` markers exist, run AI011 meta-gates in
 CI - slow (or verify-quick) — not optional. Load `detection-patterns-gates-formal.md`.
+
+On High/Critical paths, run AI012 cross-artifact diff gates when implementation and
+test/spec/evaluator files change in the same PR. Load `detection-patterns-gates-oracle.md`.
 
 ## Enforcement Levels
 
 | Level | Meaning | When appropriate |
 |-------|---------|-----------------|
-| **Blocking** | Fails build, prevents merge | High-severity smells (AI001, AI004, AI011 when formal specs or verified markers exist) |
-| **Warning** | PR annotation, does not block | Medium-severity (AI002, AI003, AI005, AI007, AI008, AI009, AI010); AI011 when no formal artifacts on disk |
+| **Blocking** | Fails build, prevents merge | High-severity smells (AI001, AI004, AI011 when formal specs or verified markers exist; AI012 on High/Critical paths when impl + oracle artifacts change) |
+| **Warning** | PR annotation, does not block | Medium-severity (AI002, AI003, AI005, AI007, AI008, AI009, AI010); AI011 when no formal artifacts on disk; AI012 on Low/Medium paths |
 | **Informational** | Report only, trend tracked | Low-severity (AI006), new gates in trial period |
 
 ## Feedback Quality Criteria

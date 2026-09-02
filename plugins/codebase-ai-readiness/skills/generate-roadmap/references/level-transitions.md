@@ -77,6 +77,8 @@ Treat these as pass/fail gates, not scored categories:
 
 - [ ] Codified, **executable** specifications for all critical behavior (not prose — runnable: BDD/Gherkin, contracts, schemas)
 - [ ] A **strong oracle on every critical path** (machine-checkable and deterministic — see the verification plugin's oracle analysis; weak/brittle oracles do not count)
+- [ ] **Oracle integrity**: critical-path oracles are not agent-mutable and gates detect oracle tampering (see the verification plugin's oracle integrity assessment)
+- [ ] **Deterministic verifier is authoritative** where agents iterate: server-side, not an LLM evaluator; CI separates required checks from optimization metrics
 - [ ] A **reliable simulation/staging environment** that mirrors production closely enough to trust pre-merge validation
 - [ ] Telemetry rich enough to detect **silent failures** — wrong-but-not-crashing behavior — not just exceptions and downtime
 - [ ] Progressive delivery with **automated rollback** triggered by that telemetry

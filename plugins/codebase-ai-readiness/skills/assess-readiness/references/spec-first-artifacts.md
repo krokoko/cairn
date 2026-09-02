@@ -57,6 +57,10 @@ grep -rn '@REQ-\|REQ-[0-9]\|traceability:' test/ tests/ spec/ 2>/dev/null | head
 |------------------|---------------------|
 | Absent | Cap recommended level at **L3** regardless of test volume (assess-readiness skill applies this cap) |
 | Partial (IDs, some BDD) | **L3** bounded iteration feasible on documented surfaces |
-| Systematic (REQ + scenario + traceability) | Unlocks **L4** when verification plugin confirms oracle strength |
+| Systematic (REQ + scenario + traceability) | Unlocks **L4** when verification plugin confirms oracle **strength and integrity** (non-mutable, sound oracles on critical paths) |
+
+At **L5**, the software-verification plugin must confirm that a deterministic, server-side verifier is
+authoritative, that critical-path oracles are sound and not agent-mutable, and that gates detect
+oracle tampering (weakening tests or specs alongside implementation changes).
 
 Report spec-first findings under **Machine-readable intent** and in **Blockers** when capping autonomy.

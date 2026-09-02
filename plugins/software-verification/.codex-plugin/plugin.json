@@ -1,7 +1,7 @@
 {
   "name": "software-verification",
-  "version": "0.5.0",
-  "description": "Design verification strategies that unlock higher levels of autonomous software development.",
+  "version": "0.6.0",
+  "description": "Design verification architecture for safe autonomous agent search, change, and proof.",
   "author": {
     "name": "Alain Krok",
     "url": "https://github.com/krokoko/cairn"
@@ -20,8 +20,8 @@
   "hooks": "./hooks/hooks.json",
   "interface": {
     "displayName": "Software Verification",
-    "shortDescription": "Assess verification maturity and design per-component verification strategies.",
-    "longDescription": "Inventory oracles, classify components, detect AI smell gates, and produce verification reports and implementation roadmaps.",
+    "shortDescription": "Verification architecture for safe autonomous agent search and change.",
+    "longDescription": "Assess verification maturity, oracle integrity, verifier-guided search readiness, and AI smell gates; design per-component evidence architecture and implementation roadmaps.",
     "developerName": "Cairn",
     "category": "Verification",
     "capabilities": ["Read", "Bash", "Grep", "Glob"],

@@ -42,9 +42,13 @@ run = "python3 tools/validate-references.py"
 description = "Test the report-validator hook scripts"
 run = "bash tests/validators/run.sh"
 
+[tasks."test:fixtures"]
+description = "Routing fixtures: layout, schema, and expected-tool terms exist in references (not routing accuracy)"
+run = "bash tests/routing-fixtures/run.sh"
+
 [tasks.validate]
 description = "Run validation checks"
-depends = ["validate:refs", "test:validators", "security:secrets"]
+depends = ["validate:refs", "test:validators", "test:fixtures", "security:secrets"]
 
 [tasks.build]
 description = "Lint and validate (CI entrypoint)"

@@ -1,18 +1,21 @@
 # Hybrid Verification Strategies
 
+Load `change-semantics.md` when routing by change type (refactor, migration, feature).
+
 ## Archetype-to-stack mapping
 
 | Archetype | Recommended stack | Why this mix works |
 |-----------|-------------------|-------------------|
 | Deterministic library | Types + unit tests + property tests + fuzzing + sanitizers + selective SMT/deductive | Semantics are local, input-heavy; generative methods dominate |
 | CRUD/API service | Contracts/schemas + types + linters + unit/integration/regression + canaries + runtime SLOs | Most failures are interface, config, regression; proofs rarely justify ROI |
-| Distributed/stateful | Formal spec + model checking + schedule exploration + deterministic replay + integration/system tests + runtime verification + canaries + chaos | Interleavings and partial failures are the hard part |
+| Distributed/stateful | Formal spec + model checking + DST (Turmoil/MadSim) + schedule exploration + model↔impl conformance + replay + chaos | Interleavings and partial failures — use C1–C4 routing |
 | Safety/security kernel | Contracts + deductive verification + SMT proofs + abstract interpretation + theorem proving + operational checks | Failure cost justifies proof investment; runtime catches spec mismatches |
 | ML-backed | Metamorphic + differential evaluation + statistical thresholds + shadow testing + canaries + human escalation | Exact outputs unavailable; alternative oracles and operational validation dominate |
 | Data pipeline | Schema/contract checks + golden datasets + data-quality assertions + metamorphic relations + replay + lineage tracking | Failures are silent data corruption, not crashes; correctness lives in the data, not the code path |
-| Infrastructure/IaC | Policy-as-code + plan validation + IaC scanning + drift detection + progressive rollout + post-apply checks | Blast radius is large and reversibility low; verify before apply and detect drift after |
-| Legacy monolith | Approval/characterization tests + golden-trace replay + integration smoke + baseline telemetry, then strangler-edge contracts | Freeze observable behavior before refactoring; the risk is silent regression, not greenfield design |
-| Agent-written | Equivalence oracle + held-out validation + sandboxing + progressive delivery + telemetry + risk-based human approval | Mirrors strongest pattern for autonomous iteration |
+| Infrastructure/IaC | Policy-as-code + plan validation + IaC scanning + drift detection + progressive rollout | Blast radius is large and reversibility low; verify before apply and detect drift after |
+| Legacy monolith | Characterization tests + golden-trace replay + spec mining + integration smoke + strangler contracts | Freeze observable behavior before refactoring; the risk is silent regression, not greenfield design |
+| Agent-written | Equivalence oracle + held-out validation + sandboxing + progressive delivery + verifier-guided search | Autonomous iteration with deterministic authority |
+| Agentic application/workflow | Static capability checks (Skylos) + temporal contracts + tool-sequence tests + behavioral twins + protected holdouts + runtime trace conformance | Verify deterministic shell around LLM |
 
 ## Detailed recommendations per archetype
 
@@ -21,7 +24,8 @@
 1. **Start with**: Strong types, comprehensive unit tests
 2. **Add next**: Property-based tests for core invariants (round-trips, associativity, ordering)
 3. **Add for native code**: Fuzzing (libFuzzer/AFL) + sanitizers (ASan, UBSan)
-4. **For highest assurance**: SMT-backed verification (Kani, Dafny) on critical functions
+4. **For highest assurance**: SMT-backed verification (Kani, Dafny, CrossHair) on critical functions
+5. **For agent search**: Verifier-guided search with property tests as mandatory verifier
 
 ### CRUD/API service
 
@@ -32,10 +36,10 @@
 
 ### Distributed/stateful
 
-1. **Start with**: Write a formal spec (TLA+ or Alloy) of the protocol
-2. **Add next**: Model check the spec (TLC, Apalache, Stateright)
-3. **Add for implementation**: Schedule exploration of the real code (Loom/Shuttle), deterministic replay/simulation testing
-4. **Add for production**: Runtime monitors for temporal properties, chaos experiments
+1. **Start with**: Formal spec (TLA+, P, or Quint) — C3
+2. **Add next**: Model check the spec; Quint Connect / P test drivers for impl conformance
+3. **Add for implementation**: DST (Turmoil/MadSim) — C2; schedule exploration (Loom/Shuttle) — C1
+4. **Add for production**: Jepsen-style history checks — C4; runtime monitors (PObserve)
 
 ### Safety/security kernel
 
@@ -68,14 +72,47 @@
 ### Legacy monolith
 
 1. **Start with**: Approval/characterization tests that freeze current observable behavior of the code you intend to change
-2. **Add next**: Golden-trace replay — capture sanitized production traffic, normalize nondeterministic fields, replay against the candidate
-3. **Add for refactor safety**: Integration smoke tests and baseline telemetry to detect drift
+2. **Add next**: Golden-trace replay — capture sanitized production traffic, normalize nondeterministic fields, replay against the candidate; specification mining (Daikon) for candidate invariants
+3. **Add for refactor safety**: Differential equivalence per `change-semantics.md`; integration smoke tests and baseline telemetry to detect drift
 4. **Always include**: Strangler-edge contract tests as behavior moves out of the monolith
-5. **Sequencing note**: freeze behavior *first*; do not begin deep refactors until a characterization net and golden traces are green
+5. **Sequencing note**: freeze behavior *first*; do not begin deep refactors until a characterization net and golden traces are green. Promote mined invariants only after human approval
 
 ### Agent-written
 
 1. **Start with**: Sandbox execution, equivalence oracle (compare output to reference)
-2. **Add next**: Held-out validation against known-good examples
+2. **Add next**: Held-out validation against known-good examples; verifier-guided search (`verifier-guided-search.md`)
 3. **Add for deployment**: Progressive delivery with automated rollback
-4. **Always include**: Risk-based human approval for high-blast-radius changes
+4. **Always include**: Risk-based human approval for high-blast-radius changes; oracle integrity protection (AI012); mandatory-then-objectives selection
+
+### Agentic application/workflow
+
+Software where an LLM/agent invokes tools, mutates state, or makes decisions.
+
+```text
+                      LLM (nondeterministic)
+                              │
+                              ▼
+              deterministic shell (tools, memory, approvals)
+                              │
+                              ▼
+                    safety invariants (verify these)
+```
+
+**Cannot prove:** LLM always reasons correctly.
+
+**Can verify:**
+- `refund <= original_payment`
+- `production_deploy => approval_exists`
+- Customer data isolation
+- `delete_resource => backup_exists`
+- High-risk action => human approval
+- Tool schema conformance, dangerous sink reachability
+
+**Recommended stack:**
+1. **Start with**: Static integration checks (Skylos), tool schema validation, capability allowlists
+2. **Add next**: Temporal contracts on state machine; tool-sequence tests
+3. **Add for deployment**: Behavioral twins with holdout scenarios; runtime trace conformance (PObserve)
+4. **Always include**: Protected holdouts; human approval for high-blast-radius tool actions
+
+Distinguish from **Agent-written** (code authored by agent) — this archetype is about **runtime
+agent behavior** inside the product.

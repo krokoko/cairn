@@ -24,7 +24,7 @@
       "name": "software-verification",
       "source": "./plugins/software-verification",
       "tags": ["autonomy", "verification", "testing", "agents"],
-      "version": "0.5.0"
+      "version": "0.6.0"
     }
   ]
 }

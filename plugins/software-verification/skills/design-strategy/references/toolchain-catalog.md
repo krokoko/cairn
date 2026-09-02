@@ -10,11 +10,13 @@ Tools organized by language ecosystem and verification category. Load `toolchain
 | Linting | ruff, pylint, flake8 |
 | Testing | pytest, unittest |
 | Property testing | Hypothesis |
+| Symbolic / contracts | CrossHair |
 | Approval / snapshot testing | approvaltests, syrupy |
 | BDD / executable specs | behave, pytest-bdd, radish |
 | Mutation testing | mutmut, cosmic-ray |
 | Test impact analysis | pytest-testmon |
 | Fuzzing | Atheris (libFuzzer wrapper), python-afl |
+| Specification mining | Daikon |
 | Sanitizers | ASan/UBSan via C extensions, valgrind |
 | Profiling | py-spy, cProfile, scalene, memray |
 | Contracts | icontract, deal, dpcontracts |
@@ -29,6 +31,7 @@ Tools organized by language ecosystem and verification category. Load `toolchain
 | Linting | ESLint, biome |
 | Testing | Jest, Vitest, Mocha |
 | Property testing | fast-check |
+| Formal / spec verification | LemmaScript, lemmafit (TS → Dafny/Lean; verifier-in-agent-loop) |
 | Approval / snapshot testing | Jest snapshots, jest-image-snapshot |
 | BDD / executable specs | Cucumber.js, Jest-Cucumber, CodeceptJS |
 | Mutation testing | Stryker |
@@ -69,8 +72,10 @@ Tools organized by language ecosystem and verification category. Load `toolchain
 | Mutation testing | cargo-mutants |
 | Test impact analysis | cargo-nextest (partition/filter), rust-test-impact (experimental) |
 | Fuzzing | cargo-fuzz (libFuzzer), afl.rs |
-| Schedule exploration | Loom (exhaustive interleavings), Shuttle (randomized PCT) |
+| Schedule exploration (C1) | Loom (exhaustive interleavings), Shuttle (randomized PCT) |
+| DST — distributed sim (C2) | Turmoil, MadSim |
 | Formal verification | Kani (bounded model checking), Verus |
+| Proof translation | Hax (Rust → Lean/F*/Rocq/ProVerif) |
 | Sanitizers | ASan, MSan, TSan, UBSan via RUSTFLAGS |
 | Profiling | flamegraph, perf, cargo-flamegraph |
 | Coverage | cargo-tarpaulin, llvm-cov |

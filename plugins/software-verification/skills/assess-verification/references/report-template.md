@@ -17,18 +17,26 @@ Write `verification-report.md` with the following structure:
 
 ## Bug-Surface Classification
 
-| Component | Class (A–E) | Evidence | Recommended depth | Ceremony risk |
-|-----------|-------------|----------|-------------------|---------------|
-| ... | ... | ... | floor / standard / deep | Yes / No — ... |
+| Component | Class (A–E) | C subtype (C1–C4) | Evidence | Recommended depth | Ceremony risk |
+|-----------|-------------|-------------------|----------|-------------------|---------------|
+| ... | ... | ... | ... | floor / standard / deep | Yes / No — ... |
 
 **Over-instrumented** (Class A + deep formal stack): ...
 **Under-instrumented** (Class B/C + floor only): ...
 
 ## Missing Oracles
 
-| Component | Current oracle | Strength (strong/weak/none) | Gap (incl. oracle rot) | Recommended oracle type |
-|-----------|---------------|-----------------------------|------------------------|------------------------|
-| ... | ... | ... | ... | ... |
+| Component | Current oracle | Strength | Integrity (sound/degraded/blocked) | Gap (incl. rot, AI012) | Recommended oracle type |
+|-----------|---------------|----------|-------------------------------------|------------------------|------------------------|
+| ... | ... | strong/weak/none | ... | ... | ... |
+
+## Verifier-Guided Search Readiness
+
+| Component | Deterministic verifier? | Server-side & authoritative? | Mandatory/objectives split in CI? | Oracle tampering risk (AI012) | L4/L5 ready? |
+|-----------|------------------------|------------------------------|-----------------------------------|------------------------------|--------------|
+| ... | ... | ... | ... | ... | ... |
+
+If no component targets L4/L5, keep the section with one row: `N/A — not an L4/L5 candidate`.
 
 ## Exactness Analysis
 

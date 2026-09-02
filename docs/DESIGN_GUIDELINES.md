@@ -57,7 +57,7 @@ plugins/<plugin-name>/
 ### Size limits
 
 - **SKILL.md**: Maximum 400 lines. If your skill needs more, split it into multiple skills or move knowledge into reference documents.
-- **Reference documents**: Maximum 150 lines each. Keep them focused on one topic.
+- **Reference documents**: Maximum 300 lines each. Keep them focused on one topic.
 
 ### YAML frontmatter
 
@@ -101,6 +101,7 @@ Reference documents contain domain knowledge that skills need. They are loaded o
 - Use tables for structured data (scoring criteria, tool comparisons, decision matrices).
 - Keep content actionable: the agent should be able to directly apply what it reads.
 - Avoid narrative. Prefer structured formats: tables, lists, decision trees.
+- Cross-skill links within the same plugin must use relative paths (e.g. `../../design-strategy/references/foo.md`). Bare filenames resolve only within the same `references/` directory.
 
 ## Hooks
 

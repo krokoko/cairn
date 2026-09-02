@@ -109,6 +109,7 @@ grep -rLn 'assert \|assertRaises\|assertEqual\|pytest.raises' test/ tests/ --inc
 ```
 
 Load `detection-patterns-gates-formal.md` for AI011 (vacuous formal specs).
+Load `detection-patterns-gates-oracle.md` for AI012 (oracle tampering).
 
 ## Minimum Viable Gate Set
 
@@ -123,3 +124,4 @@ For teams starting from zero, recommend in priority order:
 8. Branch coverage + error-path test requirement (catches AI009)
 9. Assertion-presence lint + mutation testing (catches AI010)
 10. Anti-vacuity probes + presence⇒mandatory meta-gates (catches AI011 — see `detection-patterns-gates-formal.md`)
+11. Cross-artifact diff gate for impl + oracle changes (catches AI012 — see `detection-patterns-gates-oracle.md`)

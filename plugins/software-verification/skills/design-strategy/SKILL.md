@@ -37,10 +37,11 @@ Load `references/toolchain-catalog.md` and `references/toolchain-catalog-ecosyst
 
 For each target component:
 
-1. **Identify archetype**: Deterministic lib, CRUD service, distributed/stateful, safety kernel, ML-backed, data pipeline, infrastructure/IaC, legacy monolith, agent-written
-2. **Look up recommended stack**: From the hybrid strategies reference
-3. **Diff current vs recommended**: What already exists? What is missing?
-4. **Produce specific recommendations**:
+1. **Identify archetype**: Deterministic lib, CRUD service, distributed/stateful, safety kernel, ML-backed, data pipeline, infrastructure/IaC, legacy monolith, agent-written, agentic application/workflow
+2. **Identify change mode**: Load `references/change-semantics.md` — feature, bug fix, refactor, migration, perf optimization, etc. When the strategy is not scoped to a change, record `N/A` and skip change-mode routing
+3. **Look up recommended stack**: From the hybrid strategies reference
+4. **Diff current vs recommended**: What already exists? What is missing?
+5. **Produce specific recommendations**:
    - Which tools/libraries to add
    - Which files to create or modify
    - Estimated effort (small/medium/large)
@@ -48,7 +49,7 @@ For each target component:
 
 ### Step 4: Design oracle strategy
 
-Load `references/oracle-patterns.md`.
+Load `references/oracle-patterns.md` and `references/oracle-integrity.md`.
 
 For each component, recommend the best oracle type:
 
@@ -63,7 +64,7 @@ For each component, recommend the best oracle type:
 | UI components | Snapshot + visual regression + human |
 
 For each recommendation, specify:
-- The oracle type
+- The oracle type and integrity requirements (`agent_mutable: false` for L5)
 - How to implement it (specific library, pattern, or technique)
 - What properties or relations to check
 - How to handle cases where no oracle exists yet
@@ -216,25 +217,29 @@ For each recommended eval task:
 - Success criteria (which checks must pass)
 - Measurement dimensions (correctness, convention, efficiency)
 
-### Step 12: Design generator-evaluator strategy
+### Step 12: Design verifier-guided search and generator-evaluator strategy
 
-Load `references/generator-evaluator.md` for pattern variants and application guidance.
+Load `references/verifier-guided-search.md` (primary for L4/L5), `references/generator-evaluator.md`
+(dual-agent when no deterministic verifier), and `references/candidate-selection-policy.md`.
 
-For high-criticality components, recommend whether generator-evaluator patterns apply:
+For high-criticality components, recommend search architecture:
 
-| Variant | Apply when | Cost |
+| Pattern | Apply when | Cost |
 |---------|-----------|------|
-| Generator + Test-Writer | New features with clear specs | 2x |
-| Generator + Critic | Security-sensitive or complex changes | 1.5x |
-| Generator + Mutant | Assessing test adequacy | 2-3x |
-| N-of-M Consensus | Critical, well-specified components | Nx |
+| Verifier-guided search | Deterministic verifier exists; L4/L5 target | Variable |
+| Generate → Verify → Retry | Simple agent correction loops | Low–medium |
+| Best-of-N + verifier | Independent implementations | N× |
+| Counterexample-guided | Informative verifier feedback | Medium |
+| Generator + Test-Writer | No verifier; clear specs | 2x |
+| Generator + Critic | No verifier; security-sensitive | 1.5x |
+| N-of-M Consensus | Filter by verifier first, then compare | Nx |
 
-For each recommended application:
+For each recommendation:
 - Which component/change type it applies to
-- Which variant to use
-- How to separate generator and evaluator perspectives
-- How to integrate into existing CI (independent tests merge, disagreements escalate)
-- Cost-management strategy (when to use, when to skip)
+- Which verifier is authoritative (must be deterministic when available)
+- Mandatory properties vs optimization objectives
+- Oracle integrity protections (AI012)
+- How to integrate into CI (server-side verifier, not agent-self-judged)
 
 ### Step 13: Design documentation verification
 
@@ -282,8 +287,7 @@ indeterminism the RTM exists to remove (an agent verifying agents). Make this ex
 ### Step 16: Design safe-evolution strategy
 
 For components facing breaking or large-scale change (renames, API/schema reshapes, convention
-migrations), load `references/safe-evolution.md` and recommend a staged approach instead of a one-shot
-diff — the failure mode agents default to.
+migrations), load `references/safe-evolution.md` and `references/change-semantics.md`.
 
 - **Parallel Change** for interface/shape changes: expand (add new form alongside old) → migrate
   callers incrementally → contract (remove old). No breaking window; each phase ships reversibly.
@@ -292,6 +296,9 @@ diff — the failure mode agents default to.
 
 Recommend this wherever the assessment flagged a large refactor, migration, or cross-cutting rename.
 Tie the gate back to the evidence pipeline (Step 6): each incremental step passes the same checks.
+
+For brownfield legacy components, also load `references/specification-mining.md` when explicit
+invariants are missing.
 
 ### Step 17: Write the strategy
 
