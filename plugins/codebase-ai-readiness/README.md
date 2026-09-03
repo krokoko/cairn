@@ -6,7 +6,8 @@ Assess how AI-friendly a codebase is and produce an autonomy maturity map.
 
 This plugin reviews an existing codebase and evaluates it across 15 categories that determine how safely and effectively AI agents can operate. It produces:
 
-- **Overall score** (0-100)
+- **Overall score** (0-100), computed from binary signal verdicts (PASS / FAIL / N/A) with evidence per signal
+- **Level gates** showing per-level pass percentages (a level unlocks at 80%)
 - **Category breakdown** with per-category scores
 - **Recommended autonomy level** (L0-L5)
 - **Collaboration effectiveness** with optional **alignment note** when agent practices and codebase score diverge
@@ -17,7 +18,7 @@ This plugin reviews an existing codebase and evaluates it across 15 categories t
 
 ### `/assess-readiness`
 
-Performs a full assessment of the codebase. Examines structure, documentation, tests, CI (including test impact analysis), typing, setup, architecture decisions, machine-readable intent (schemas, contracts, executable acceptance criteria, requirement traceability), progressive context disclosure, workflow artifacts, collaboration effectiveness metrics, hidden state, repository-scale reasoning, failure mode legibility, and feedforward surfaces (including non-bypassable hooks). Outputs `readiness-report.md` with an alignment note when practices and score diverge.
+Performs a full assessment of the codebase. Grounds on a prior report when one exists so verdicts stay stable across runs. Examines structure, documentation, tests, CI (including test impact analysis), typing, setup, architecture decisions, machine-readable intent (schemas, contracts, executable acceptance criteria, requirement traceability), progressive context disclosure, workflow artifacts, collaboration effectiveness metrics, hidden state, repository-scale reasoning, failure mode legibility (including operational legibility for deployed services), feedforward surfaces (including non-bypassable hooks and code-health scanners), and repository hygiene (pinned dependencies, dependency update automation, secret scanning, branch protection via `gh`). Outputs `readiness-report.md` with a signal evidence table and an alignment note when practices and score diverge.
 
 ### `/generate-roadmap`
 

@@ -23,6 +23,7 @@ Search for `readiness-report.md` in the codebase root. If it exists, read it and
 - Current autonomy level
 - Category scores
 - Existing blockers
+- Signal evidence table (each FAIL row is a candidate gap; each NOT INSPECTABLE row needs access, not code)
 
 If no report exists, inform the user: "No readiness report found. Run `/assess-readiness` first to generate a baseline assessment."
 
@@ -73,6 +74,10 @@ For each recommended action, specify:
 - **Impact**: Expected score improvement for the category
 - **Dependencies**: Other actions that should happen first
 - **Details**: Specific files to create/modify, tools to install, configs to add
+
+Prefix the Action with **[auto]** when it is a pure file addition an agent can apply without judgment
+(instruction file skeleton, `.env.example`, pre-commit config, PR/issue templates, `dependabot.yml`,
+lockfile commit). Batch these first: they close the most level-gate requirements per hour.
 
 Order actions by: (1) unblock the next level first, (2) alignment-driven priority when the
 report flags a mismatch (see Step 3), (3) highest impact/effort ratio, (4) foundational actions

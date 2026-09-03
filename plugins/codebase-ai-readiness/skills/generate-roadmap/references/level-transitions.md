@@ -1,6 +1,9 @@
 # Level Transitions
 
-Requirements for advancing from one autonomy level to the next.
+Requirements for advancing from one autonomy level to the next. These lists are also the **level
+gates** used by `assess-readiness`: a level unlocks when at least 80% of its requirements pass and
+every lower level is unlocked (see the assess skill's `autonomy-levels.md`). Requirements marked
+*(services)* are N/A for libraries and CLIs and drop out of the denominator.
 
 ## L0 to L1: Human only -> Assisted
 
@@ -17,6 +20,7 @@ Requirements for advancing from one autonomy level to the next.
 - CI pipeline exists and runs on PRs
 - Test suite exists with at least basic coverage
 - Linting or formatting enforced in CI
+- Dependencies pinned with a committed lockfile
 - Agents can submit PRs that get reviewed
 
 **Gating categories:** CI reliability, Testable boundaries
@@ -29,6 +33,10 @@ Requirements for advancing from one autonomy level to the next.
 - Clear module boundaries that scope agent changes
 - Integration tests cover critical paths
 - Required checks block merge on failure
+- Pre-commit hooks give per-file feedback before CI
+- README and instruction file updated within 180 days
+- Dependency update automation and secret scanning configured
+- Structured logging and health checks *(services)*
 
 **Gating categories:** Typing strength, Testable boundaries, CI reliability
 
@@ -46,6 +54,8 @@ Load `l2-to-l3-hinge.md` for the paired codebase + repo-enabler checklist.
 - Deterministic environment and deployment (reproducible environment, infrastructure as code)
 - Architecture decisions are documented
 - CI is the authority for merge decisions
+- Essential CI feedback measured under 10 minutes
+- Error tracking, tracing, and runbooks *(services)*
 - Strong feedforward surfaces: instruction file with >10 rules, module boundary enforcement, pre-commit hooks
 - Compound engineering in practice: corrections feed back into durable surfaces
 - Workflow artifacts for in-flight work (plans or specs) linked from agent entry docs

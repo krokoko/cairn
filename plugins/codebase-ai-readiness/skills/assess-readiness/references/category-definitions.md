@@ -20,6 +20,8 @@ Load `category-definitions-agent.md` for feedforward, compound engineering, and 
 | README with setup instructions | Root README.md |
 | API docs + ADRs | `docs/api/`, docstrings, `docs/adr/`, `docs/decisions/` |
 | Changelog | `CHANGELOG.md`, conventional commits config |
+| Documentation freshness | `git log -1 --format=%cs -- README.md AGENTS.md CONTRIBUTING.md`; updated within 180 days |
+| Generated docs | Doc build in CI (`mkdocs`, `typedoc`, `sphinx`, `docs/generated/`); API reference not hand-maintained |
 
 ### Testable boundaries
 | Signal | Where to check |
@@ -37,6 +39,10 @@ Load `category-definitions-agent.md` for feedforward, compound engineering, and 
 | Flakiness signals | `retry:`, `flaky` annotations, timeout overrides |
 | Shift-left checks | `.pre-commit-config.yaml`, `.husky/`, `lefthook.yml`, watch mode configs |
 | Test impact analysis | pytest-testmon, Jest `--onlyChanged`, Launchable — run only affected tests (essential at agent test volume) |
+| Measured feedback time | Recent run durations (`gh run list --json name,createdAt,updatedAt`); essential checks under 10 minutes |
+| Branch protection verified | `gh api repos/{owner}/{repo}/branches/<default>/protection` or `.../rulesets`; NOT INSPECTABLE without access |
+| Dependency update automation | `.github/dependabot.yml`, `renovate.json` |
+| Secret and code scanning in CI | gitleaks/trufflehog job, CodeQL or Semgrep workflow; hosted secret scanning via `gh api` when accessible |
 
 ### Typing strength
 | Signal | Where to check |
@@ -54,6 +60,9 @@ Load `category-definitions-agent.md` for feedforward, compound engineering, and 
 | Infrastructure as Code | `cdk.json`, `*.tf`, `Pulumi.yaml`, `template.yaml` (SAM), `*.bicep` |
 | Deployment codified | IaC in version control, not manually provisioned (no click-ops) |
 | IaC tested | `cdk synth`, `terraform plan` in CI, infrastructure unit tests |
+| Dependencies pinned | Committed lockfile (`package-lock.json`, `pnpm-lock.yaml`, `uv.lock`, `poetry.lock`, `go.sum`, `Cargo.lock`) |
+| Release automation | Release workflow, generated release notes, regular tag cadence (`git tag --sort=-creatordate`) |
+| Hygienic `.gitignore` | Excludes `.env*`, build output, IDE and OS files — agents do not commit secrets or noise |
 
 ### Architecture decisions
 | Signal | Where to check |

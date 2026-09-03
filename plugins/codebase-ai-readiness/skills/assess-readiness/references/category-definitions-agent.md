@@ -9,6 +9,13 @@ Continues `category-definitions.md`. Agent workflow and failure-legibility categ
 | Structured errors | Error classes or codes, not just string messages |
 | Fail-fast patterns | Validation at boundaries, early returns on bad input |
 | Agent-targeted remediation | Lint/CI errors include fix instructions, not just failure names |
+| Structured logging | Logging library with structured fields; secret/PII redaction in the log path |
+| Health checks | Health/readiness endpoints on deployed services (N/A for libraries and CLIs) |
+| Error tracking and tracing | Error-tracking or OpenTelemetry SDK in dependencies; request/trace id propagation (N/A for libraries) |
+| Alerting and runbooks | Alert rules versioned in repo; `docs/runbooks/` or runbook links from README (N/A for libraries) |
+
+Deployed-service signals let an agent triage an incident from the repo alone. The verification
+plugin's telemetry references go deeper on what to instrument.
 
 ### Feedforward surfaces
 
@@ -21,17 +28,20 @@ Continues `category-definitions.md`. Agent workflow and failure-legibility categ
 | Non-bypassable hooks | Agent config denies `git commit --no-verify` etc.; branch protection requires checks server-side |
 | Templates and generators | `plop`, `hygen`, cookiecutter, file templates for common patterns |
 | Security scanners pre-commit | Semgrep, bandit, gitleaks, detect-secrets in pre-commit config |
+| Code-health scanners | Complexity (radon, gocyclo, eslint `complexity`), dead code (knip, vulture, deadcode), duplication (jscpd, PMD CPD), unused deps (depcheck, deptry, `go mod tidy` in CI), TODO-with-ticket lint |
 
 ### Compound engineering readiness
 
 | Signal | Where to check |
 |--------|----------------|
 | Instruction file with iterative growth | `CLAUDE.md`, `AGENTS.md` — rule count, last modified date |
-| Custom skills or workflows | `.claude/skills/`, agent skill directories, workflow configs |
+| Instruction file validated | CI job or hook runs the commands documented in the instruction file; stale commands fail the build |
+| Custom skills or workflows | `.claude/skills/`, `.agents/skills/`, other agent skill directories, workflow configs |
 | Workflow artifacts (feature context) | `docs/requirements/`, `docs/specs/`, `docs/design/`, `docs/plans/`, `docs/exec-plans/`, `docs/reviews/`, `docs/learnings/` — file count and recency |
 | Hooks enforce past corrections | Pre-commit/post-tool hooks beyond basic formatting |
 | Regression tests from past bugs | Test commit messages referencing issues; bug-driven test patterns |
 | Evidence of maintenance | Recent instruction file updates; hook configs matching current tooling |
+| Agent-authored commits | `git log --grep=Co-authored-by -i` trailers naming an agent — evidence agents already contribute here |
 | Collaboration measurement enablers | PR templates, agent labels, documented review rubric — see `collaboration-metrics.md` |
 
 ### Context engineering friendliness
