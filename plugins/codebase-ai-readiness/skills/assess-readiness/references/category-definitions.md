@@ -13,6 +13,7 @@ Load `category-definitions-agent.md` for feedforward, compound engineering, and 
 | Separation of concerns | Routes vs logic vs data in distinct directories |
 | Architectural isolation | WASM, sandboxed containers, process separation, stable/experimental split |
 | Mechanically-enforced boundaries | Custom linters, structural tests, or dependency-direction checks in CI |
+| No circular dependencies | `madge --circular`, import-cycle lint, `go vet`; cycles absent or failing the build |
 
 ### Documentation
 | Signal | Where to check |
@@ -20,7 +21,7 @@ Load `category-definitions-agent.md` for feedforward, compound engineering, and 
 | README with setup instructions | Root README.md |
 | API docs + ADRs | `docs/api/`, docstrings, `docs/adr/`, `docs/decisions/` |
 | Changelog | `CHANGELOG.md`, conventional commits config |
-| Documentation freshness | `git log -1 --format=%cs -- README.md AGENTS.md CONTRIBUTING.md`; updated within 180 days |
+| Documentation freshness | Per file: `git log -1 --format=%cs -- README.md` (and instruction file, CONTRIBUTING); FAIL only when a doc untouched 180+ days also names commands or paths that no longer exist |
 | Generated docs | Doc build in CI (`mkdocs`, `typedoc`, `sphinx`, `docs/generated/`); API reference not hand-maintained |
 
 ### Testable boundaries
@@ -30,18 +31,18 @@ Load `category-definitions-agent.md` for feedforward, compound engineering, and 
 | Test-to-source ratio | Count test files vs source files (>0.5 is good) |
 | Integration test separation | Separate directories or markers for integration tests |
 | DI / interfaces | Constructor injection, interface types, trait objects |
+| Doubles at seams | Mocks and stubs injected at boundaries, not monkey-patched internals |
 
 ### CI reliability
 | Signal | Where to check |
 |--------|----------------|
 | CI config exists | `.github/workflows/`, `.gitlab-ci.yml`, `Jenkinsfile` |
-| Multiple checks + coverage | Count jobs/steps; `codecov.yml`, branch protection rules |
+| Multiple checks + coverage | Count jobs/steps; `codecov.yml` |
+| Required checks block merge | `gh api repos/{owner}/{repo}/branches/<default>/protection` or `.../rulesets`; NOT INSPECTABLE without access |
 | Flakiness signals | `retry:`, `flaky` annotations, timeout overrides |
 | Shift-left checks | `.pre-commit-config.yaml`, `.husky/`, `lefthook.yml`, watch mode configs |
 | Test impact analysis | pytest-testmon, Jest `--onlyChanged`, Launchable — run only affected tests (essential at agent test volume) |
-| Measured feedback time | Recent run durations (`gh run list --json name,createdAt,updatedAt`); essential checks under 10 minutes |
-| Branch protection verified | `gh api repos/{owner}/{repo}/branches/<default>/protection` or `.../rulesets`; NOT INSPECTABLE without access |
-| Dependency update automation | `.github/dependabot.yml`, `renovate.json` |
+| Measured feedback time | Recent run durations (`gh run list --json name,startedAt,updatedAt`); essential checks under 10 minutes |
 | Secret and code scanning in CI | gitleaks/trufflehog job, CodeQL or Semgrep workflow; hosted secret scanning via `gh api` when accessible |
 
 ### Typing strength
@@ -61,6 +62,7 @@ Load `category-definitions-agent.md` for feedforward, compound engineering, and 
 | Deployment codified | IaC in version control, not manually provisioned (no click-ops) |
 | IaC tested | `cdk synth`, `terraform plan` in CI, infrastructure unit tests |
 | Dependencies pinned | Committed lockfile (`package-lock.json`, `pnpm-lock.yaml`, `uv.lock`, `poetry.lock`, `go.sum`, `Cargo.lock`) |
+| Dependency update automation | `.github/dependabot.yml`, `renovate.json` |
 | Release automation | Release workflow, generated release notes, regular tag cadence (`git tag --sort=-creatordate`) |
 | Hygienic `.gitignore` | Excludes `.env*`, build output, IDE and OS files — agents do not commit secrets or noise |
 

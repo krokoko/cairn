@@ -31,15 +31,15 @@ Takes an existing readiness report and generates a detailed improvement plan to 
 | Structure and modularity | Directory organization, module boundaries, naming, architectural isolation |
 | Documentation | README, API docs, ADRs, changelogs |
 | Testable boundaries | Test coverage, isolation, fixtures |
-| CI reliability | Pipeline existence, check count, flakiness |
+| CI reliability | Pipeline existence, check count, flakiness, measured feedback time, required checks, scanning |
 | Typing strength | Annotations, strict mode, escape hatches |
-| Deterministic environment and deployment | Containers, reproducible envs, seed data, Infrastructure as Code |
+| Deterministic environment and deployment | Containers, reproducible envs, seed data, Infrastructure as Code, pinned and auto-updated dependencies, release automation |
 | Architecture decisions | ADRs, design docs, ownership |
 | Machine-readable intent | Schemas, contracts, property tests, specs |
 | Progressive context disclosure | Agent context files, layered docs, cross-linking |
 | Hidden state and magic | Env var docs, config schemas, explicit defaults |
 | Repository-scale reasoning | Naming consistency, predictable patterns |
-| Failure mode legibility | Error handling, structured errors, fail-fast |
+| Failure mode legibility | Error handling, structured errors, fail-fast, operational legibility for services |
 | Feedforward surfaces | Instruction files, strict types, boundary linters, non-bypassable pre-commit hooks |
 | Compound engineering readiness | Iterative instruction growth, custom skills, workflow artifacts, regression-from-bugs |
 | Context engineering friendliness | File size distribution, layered docs, retrieval-friendly naming |

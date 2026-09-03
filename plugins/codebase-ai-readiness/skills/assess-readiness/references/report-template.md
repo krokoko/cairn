@@ -15,6 +15,7 @@ Write `readiness-report.md` at the codebase root using this structure:
 
 **Gate-derived:** LX (highest level with ≥80% of gating requirements passing)
 **Score-derived:** LY [if they differ by more than one step, name the signals causing the gap]
+**Provisional:** yes/no [yes when a NOT INSPECTABLE requirement would change the level]
 
 **Autonomy cap applied:** [yes/no — if yes, cite spec-first gap per `references/spec-first-artifacts.md`; e.g. "Capped at L3: no requirement files or executable acceptance criteria"]
 

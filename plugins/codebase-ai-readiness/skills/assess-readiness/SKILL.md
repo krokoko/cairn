@@ -18,7 +18,7 @@ Produce an autonomy maturity map for the target codebase. The output is a `readi
 
 ### Step 0: Ground on the prior report
 
-If `readiness-report.md` already exists in the target root, read its **Signal evidence** table first. Keep each prior verdict unless the evidence has changed; record changed verdicts for the **Changes since last assessment** section. See `references/scoring-rubric.md`.
+If `readiness-report.md` already exists in the target root, read its **Signal evidence** table first. Still run every check; when a check finds the same evidence, reuse the prior verdict and wording verbatim, and change a verdict only when the evidence differs. Record changed verdicts for the **Changes since last assessment** section. See `references/scoring-rubric.md`.
 
 ### Step 1: Discover the codebase
 
@@ -33,7 +33,7 @@ Use Glob and Grep to understand the project:
 - Find containerization (`Dockerfile`, `docker-compose.yml`, `.devcontainer/`, `flake.nix`, `mise.toml`)
 - Find Infrastructure as Code (`cdk.json`, `cdktf.json`, `terraform/`, `*.tf`, `Pulumi.yaml`, `template.yaml` (SAM), `*.bicep`, `cloudformation/`)
 - Find schemas and contracts (`*.proto`, `openapi.*`, `*.schema.json`, `swagger.*`)
-- Detect applications in monorepos (`workspaces` in `package.json`, `apps/`, `packages/`, `services/`, several manifests): app-scoped signals are checked per app and recorded as `n/m apps`
+- Detect monorepo workspaces (`workspaces` in `package.json`, `apps/`, `services/`, several manifests; `packages/` entries are usually libraries): app-scoped signals are checked per deployable app and recorded as `n/m apps`
 - Find agent context files (`AGENTS.md`, `CLAUDE.md`, `.cursorrules`, `.cursor/rules/`)
 - Find execution plans (`docs/plans/`, `docs/exec-plans/`, `PLANS.md`)
 - Find workflow artifacts: requirements/specs (`docs/requirements/`, `docs/specs/`, `requirements/`), design (`docs/design/`, `design/`), review learnings (`docs/reviews/`, `docs/learnings/`) — load `references/workflow-artifacts.md`
@@ -43,14 +43,14 @@ Use Glob and Grep to understand the project:
 - Find templates and generators (`plop`, `hygen`, cookiecutter, `.template` files)
 - Find agent skills and workflows (`.claude/skills/`, agent skill directories)
 - Find agent hooks (agent hook configs, `hooks.json`, post-tool-use automation)
-- Inspect live state with `git` and `gh`, marking a signal NOT INSPECTABLE when the command is unavailable or denied: doc freshness (`git log -1 --format=%cs -- README.md`), release cadence (`git tag --sort=-creatordate`), agent co-authorship (`git log --grep=Co-authored-by -i`), branch protection (`gh api repos/{owner}/{repo}/branches/<default>/protection` or `.../rulesets`), CI duration (`gh run list --json name,createdAt,updatedAt`)
+- Inspect live state with `git` and `gh`, marking a signal NOT INSPECTABLE when the command is unavailable or denied: doc freshness (`git log -1 --format=%cs -- README.md`), release cadence (`git tag --sort=-creatordate`), agent co-authorship (`git log --grep=Co-authored-by -i`), branch protection (`gh api repos/{owner}/{repo}/branches/<default>/protection` or `.../rulesets`), CI duration (`gh run list --json name,startedAt,updatedAt`)
 - Measure file size distribution: count lines across source files deterministically (glob source files + `wc -l`, excluding vendored/generated/build dirs), not by eyeballing a few. Report the share of files under 300 lines (the "good" target in category 2.15) and flag outliers over 500 lines. The two thresholds are distinct: 300 is the per-file comprehension target; 500 marks a file large enough to warrant splitting.
 
 ### Step 2: Assess each category
 
 Evaluate 15 categories. Load `references/category-definitions.md` and `references/category-definitions-agent.md` for detailed signals. Also load `references/agent-contributor-model.md` for the framing principles.
 
-For **every signal** record a verdict — PASS, FAIL, N/A, or NOT INSPECTABLE — with one line of evidence naming the file, config key, command output, or reason (`references/scoring-rubric.md`). The bullets below summarize the signals; the reference tables are the checklist.
+For **every signal** record a verdict — PASS, FAIL, N/A, or NOT INSPECTABLE — with one line of evidence naming the file, config key, command output, or reason (`references/scoring-rubric.md`). The denominator for each category is exactly the rows of its table in the two category-definitions files; the category-specific references define what PASS looks like for those rows. The bullets below are summaries, not extra signals.
 
 **2.1 Structure and modularity**
 - Directory organization clarity
@@ -67,7 +67,7 @@ For **every signal** record a verdict — PASS, FAIL, N/A, or NOT INSPECTABLE �
 - API documentation (generated or manual)
 - Architecture Decision Records
 - CHANGELOG or commit convention
-- Documentation freshness (README, instruction file, CONTRIBUTING updated within 180 days) and generated docs
+- Documentation freshness (a doc untouched for 180+ days that names commands or paths that no longer exist) and generated docs
 
 **2.3 Testable boundaries**
 - Test file count vs source file count (ratio)
@@ -83,7 +83,7 @@ For **every signal** record a verdict — PASS, FAIL, N/A, or NOT INSPECTABLE �
 - Evidence of flakiness (retry configs, `flaky` labels)
 - Shift-left checks present (pre-commit hooks, focused test scripts, watch mode configs)
 - Test impact analysis (run only affected tests: pytest-testmon, Jest `--onlyChanged`, Launchable) — keeps feedback fast as agent-generated test volume grows
-- Measured feedback time (essential checks under 10 minutes), branch protection verified via API, dependency update automation, secret and code scanning in CI
+- Measured feedback time (essential checks under 10 minutes), required checks verified via `gh api`, secret and code scanning in CI
 
 **2.5 Typing strength**
 - Type annotations coverage
@@ -98,7 +98,7 @@ For **every signal** record a verdict — PASS, FAIL, N/A, or NOT INSPECTABLE �
 - Single-command setup documented
 - Infrastructure as Code (AWS CDK, Terraform, Pulumi, CloudFormation, Bicep)
 - Deployment codified in version control (not manually provisioned)
-- Dependencies pinned with a committed lockfile; release automation and tag cadence; hygienic `.gitignore`
+- Dependencies pinned with a committed lockfile; dependency update automation; release automation and tag cadence; hygienic `.gitignore`
 
 **2.7 Architecture decisions**
 - ADR directory exists with entries
@@ -149,7 +149,7 @@ Apply the **cap rule** from spec-first-artifacts when scoring: strong schemas/pr
 - Failures are loud and early (fail-fast patterns)
 - Logging is structured and actionable
 - Lint/CI error messages contain agent-targeted remediation instructions (what to fix, not just what failed)
-- Operational legibility for deployed services (N/A for libraries and CLIs): structured logging with redaction, health checks, error tracking and tracing, alert rules and runbooks in repo
+- Operational legibility for deployed services (N/A for libraries and CLIs): log redaction, health checks, error tracking and tracing, alert rules and runbooks in repo
 
 **2.13 Feedforward surfaces**
 
@@ -159,7 +159,7 @@ Load `references/feedforward-surfaces.md` for detailed scoring signals.
 - Strict type checking with few escape hatches
 - Module boundary enforcement via linter or structural tests
 - Pre-commit hooks running type checker + linter + formatter per-file
-- Non-bypassable hooks (agent config denies `--no-verify`; branch protection enforces checks server-side)
+- Non-bypassable hooks (agent config denies `--no-verify`; the server-side gate is scored under 2.4)
 - Templates and generators for common file patterns
 - Security scanners in pre-commit or per-file hooks
 - Code-health scanners: complexity, dead code, duplication, unused dependencies, TODO-with-ticket lint
@@ -198,7 +198,7 @@ Weighted average over applicable categories using the rubric weights, renormaliz
 
 ### Step 5: Determine autonomy level
 
-Load `references/autonomy-levels.md`. The level is set by **gates**: map each requirement in `../generate-roadmap/references/level-transitions.md` to its signal verdicts; a level unlocks when ≥80% of its requirements pass and every lower level is unlocked. Recommend the highest unlocked level, then apply caps. Fill the **Level gates** table with per-level pass percentages. Use the score-to-level table only as a sanity check and explain any gap of more than one step.
+Load `references/autonomy-levels.md`. The level is set by **gates**: map each requirement in `../generate-roadmap/references/level-transitions.md` to its signal verdicts; a level unlocks when ≥80% of its applicable requirements pass (round up) and every lower level is unlocked; NOT INSPECTABLE requirements count as not passed and make the level provisional if they would change it. Recommend the highest unlocked level, then apply caps. Fill the **Level gates** table with per-level pass percentages. Use the score-to-level table only as a sanity check and explain any gap of more than one step.
 
 If category **2.8 Machine-readable intent** is below 51 or spec-first artifacts are absent (no
 requirement files, no executable acceptance criteria per `references/spec-first-artifacts.md`), apply

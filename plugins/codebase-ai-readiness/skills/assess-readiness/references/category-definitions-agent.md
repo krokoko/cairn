@@ -25,7 +25,7 @@ plugin's telemetry references go deeper on what to instrument.
 | Strict type checking | `tsconfig.json` strict, `mypy.ini` strict — escape hatch count |
 | Module boundary enforcement | eslint-plugin-boundaries, deptry, madge, ArchUnit, structural tests |
 | Pre-commit hooks per-file | `.pre-commit-config.yaml`, `.husky/`, `lefthook.yml` — what they run |
-| Non-bypassable hooks | Agent config denies `git commit --no-verify` etc.; branch protection requires checks server-side |
+| Non-bypassable hooks | Agent config denies `git commit --no-verify` etc. (server-side required checks are scored under CI reliability) |
 | Templates and generators | `plop`, `hygen`, cookiecutter, file templates for common patterns |
 | Security scanners pre-commit | Semgrep, bandit, gitleaks, detect-secrets in pre-commit config |
 | Code-health scanners | Complexity (radon, gocyclo, eslint `complexity`), dead code (knip, vulture, deadcode), duplication (jscpd, PMD CPD), unused deps (depcheck, deptry, `go mod tidy` in CI), TODO-with-ticket lint |

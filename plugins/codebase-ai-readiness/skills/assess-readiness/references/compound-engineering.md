@@ -28,38 +28,22 @@ sessions (requirements, design notes, plans, review learnings). Load
 includes both: surfaces that compound over time *and* versioned dirs where feature decisions
 live in-repo—not only in chat or issue comments.
 
-## Scoring signals
+## Pass profiles
 
-### Strong compound readiness (score 76-100)
-- Instruction file with >10 project-specific rules showing iterative growth
-- Custom skills or workflows for repeated tasks (code generation, review, deployment)
-- Hooks enforce conventions discovered through past mistakes
-- Tests encode past bugs as regression checks
-- Evidence of recent updates to instruction files (growing, not stale)
-- Workflow artifact dirs present with recent feature-scoped docs (see `workflow-artifacts.md`)
-- First-pass acceptance rate tracked or improvable (see `collaboration-metrics.md`)
+The denominator for this category is the **Compound engineering readiness** table in
+`category-definitions-agent.md`. Decide PASS or FAIL per row with these profiles:
 
-### Moderate compound readiness (score 51-75)
-- Instruction file exists with some useful rules but gaps visible
-- At least one custom workflow or skill
-- Some hooks, but many conventions rely on human memory
-- Tests exist but don't systematically capture past incidents
-- Documentation updated occasionally
-
-### Weak compound readiness (score 26-50)
-- Minimal instruction file (generic or copied from template)
-- No custom skills or packaged workflows
-- Pre-commit hooks present but minimal
-- No versioned plans, specs, or design docs for in-flight work
-- Knowledge lives in PR comments, Slack, or developer memory
-- New agents start from scratch each session
-
-### Absent compound readiness (score 0-25)
-- No instruction files, no agent context
-- No hooks or automation beyond basic formatter
-- No evidence of institutional knowledge codification
-- Each agent session rediscovers the same constraints
-- Lessons learned exist only in human memory or ephemeral channels
+| Signal | PASS when | FAIL when |
+|--------|-----------|-----------|
+| Instruction file with iterative growth | >10 rules and git history shows additions after corrections | Static, generic, or absent |
+| Instruction file validated | CI or a hook executes the documented commands | Commands never exercised |
+| Custom skills or workflows | At least one packaged skill for a repeated task | None |
+| Workflow artifacts (feature context) | Two or more artifact types with dated, feature-scoped files (see `workflow-artifacts.md`) | None, or templates only |
+| Hooks enforce past corrections | A hook beyond formatting encodes a project rule | Formatting only, or none |
+| Regression tests from past bugs | Tests reference issues or incidents | No traceable bug-driven tests |
+| Evidence of maintenance | Hooks match current tooling; instruction file touched since the last tooling change | Broken or bypassed hooks; instruction file predates current tooling |
+| Agent-authored commits | Trailers naming an agent appear in history | None |
+| Collaboration measurement enablers | PR template or labels for agent-assisted work | None |
 
 ## The compounding effect
 
@@ -77,7 +61,7 @@ Convention → Hook → Convention enforced automatically
 
 Codified knowledge rots. Rules contradict, skills become stale, hooks block forgotten
 requirements. Compound readiness includes evidence of maintenance:
-- Instruction files updated within last 30 days (not stale)
+- Instruction file touched since the last tooling change (untouched for 180+ days while tooling moved is the smell; age alone is not)
 - Hooks that match current tooling (not broken or bypassed)
 - Tests that still test relevant behavior (not testing removed features)
 

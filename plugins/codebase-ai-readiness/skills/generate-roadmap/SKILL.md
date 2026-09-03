@@ -40,7 +40,7 @@ collaboration effectiveness recommendations, alignment note (if any).
 
 ### Step 3: Identify gaps
 
-For each category, compare the current score to what is needed for the target level. Load `references/improvement-actions.md` and `references/improvement-actions-agent.md` for common actions. Load `references/implementation-phases.md` for the strategic phasing model and prioritization principles.
+Start from the **Level gates** and **Signal evidence** tables: the primary gap list is every requirement of the target level's gate that FAILs (see `references/level-transitions.md`), with the signal rows that would flip it. Then compare category scores to what the target level typically shows. Load `references/improvement-actions.md` and `references/improvement-actions-agent.md` for common actions. Load `references/implementation-phases.md` for the strategic phasing model and prioritization principles.
 
 If the report's alignment note indicates **codebase ahead of practices**, prioritize repo
 enablers from `references/l2-to-l3-hinge.md` and collaboration actions from
@@ -48,7 +48,7 @@ enablers from `references/l2-to-l3-hinge.md` and collaboration actions from
 types, CI, and testable-boundaries actions before expanding agent workflows.
 
 Focus on:
-- Categories that are below the threshold for the target level
+- Failing gate requirements for the target level first; then categories weak for that level
 - Categories with the highest weight in the scoring rubric (testable boundaries, CI reliability, machine-readable intent, structure)
 - Quick wins: actions that have high impact relative to effort
 - Sequence actions according to the 5-phase model (semantics -> fast loop -> deep evidence -> reality loop -> human repositioning)

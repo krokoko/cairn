@@ -20,11 +20,17 @@ The level is set by **gates**, not by the score. Load
 `../../generate-roadmap/references/level-transitions.md`; each transition lists minimum
 requirements, and each requirement maps to one or more signal verdicts.
 
-1. Starting from L1, a level is **unlocked** when at least **80%** of its transition requirements
-   pass and every lower level is unlocked.
-2. The recommended level is the highest unlocked level.
-3. Apply the caps below (spec-first cap, oracle ceiling). Caps only lower the level.
-4. Report per-level pass percentages in the **Level gates** table so the reader sees how far the
+1. Starting from L1, a level is **unlocked** when at least **80%** of its applicable transition
+   requirements pass (round up: 3 of 3, 4 of 5, 5 of 6) and every lower level is unlocked.
+   Requirements marked *(services)* are N/A for libraries and CLIs and leave the denominator.
+2. A requirement whose signals are NOT INSPECTABLE counts as **not passed** for gate purposes;
+   the 20% slack exists to absorb it. If access would change the level, mark the level
+   **provisional** and name the requirement in Blockers.
+3. The recommended level is the highest unlocked level.
+4. Apply the caps, which only lower the level: the spec-first cap (2.8 below 51 or spec-first
+   artifacts absent caps at L3), the oracle ceiling below, and the L5 hard prerequisites in
+   `level-transitions.md` (all required).
+5. Report per-level pass percentages in the **Level gates** table so the reader sees how far the
    next gate is.
 
 ## Score-to-level mapping (sanity check)

@@ -22,8 +22,11 @@
 
 ## Signal verdicts
 
-Every signal row in `category-definitions.md`, `category-definitions-agent.md`, and the
-category-specific references is a binary check, not an impression. Record one verdict per signal:
+The **denominator** for a category is exactly the rows of its table in `category-definitions.md`
+or `category-definitions-agent.md`. The category-specific references (`feedforward-surfaces.md`,
+`compound-engineering.md`, `context-engineering.md`, `spec-first-artifacts.md`,
+`workflow-artifacts.md`) define the PASS profile for those rows; they add no rows. The skill's
+bullets are summaries. Each row is a binary check, not an impression. Record one verdict per row:
 
 | Verdict | Meaning | Evidence required |
 |---------|---------|-------------------|
@@ -38,7 +41,8 @@ Rules:
 - N/A means inapplicable, never "did not check". Typical N/A: IaC, health checks, tracing, alerting, and
   rollout signals for libraries and CLIs; monorepo signals for single-app repos; database signals without persistence.
 - A signal that exists only on paper (empty test dir, linter configured but never run) is FAIL. Note the partial evidence.
-- NOT INSPECTABLE signals are excluded from the denominator and listed under Blockers as "verify with access".
+- NOT INSPECTABLE signals are excluded from the category denominator and listed under Blockers as
+  "verify with access". Inside **level gates** they count as not passed (see `autonomy-levels.md`).
 
 ## Category score
 
@@ -72,9 +76,15 @@ overall_score = sum(category_score[i] * weight[i]) / sum(weight[i])   over appli
 Round to nearest integer. Range 0-100. The overall score is informative; the autonomy level is set
 by level gates (see `autonomy-levels.md`).
 
+Weights are per category, so one row is worth `weight / applicable rows` of the overall score.
+Categories with more rows dilute each row; this is deliberate — the weight expresses how much the
+category matters, not how many ways it can be checked.
+
 ## Grounding on a prior report
 
-If `readiness-report.md` already exists, read its Signal evidence table before assessing. Keep a
-prior verdict unless the evidence changed (file added or removed, config changed, git history moved).
-Record every changed verdict with old and new evidence in the report's **Changes since last
-assessment** section. Re-deriving every verdict from scratch reintroduces run-to-run drift.
+If `readiness-report.md` already exists, read its Signal evidence table before assessing. Still
+run every check. When a check finds the same evidence as before, reuse the prior verdict and its
+wording verbatim; change a verdict only when the evidence differs (file added or removed, config
+changed, git history moved). Record every changed verdict with old and new evidence in the report's
+**Changes since last assessment** section. Grounding removes wording and judgment drift; it is not
+permission to skip checks.
