@@ -12,9 +12,13 @@ user-invocable: true
 
 # Codebase AI Readiness Assessment
 
-Produce an autonomy maturity map for the target codebase. The output is a `readiness-report.md` file containing a numeric score, category breakdown, workflow artifact summary, collaboration effectiveness assessment (including an alignment note when practices and score diverge), recommended autonomy level, blockers, and a prioritized roadmap.
+Produce an autonomy maturity map for the target codebase. The output is a `readiness-report.md` file containing a numeric score, level gates, category breakdown, workflow artifact summary, collaboration effectiveness assessment (including an alignment note when practices and score diverge), recommended autonomy level, blockers, a prioritized roadmap, and a signal evidence table with one PASS / FAIL / N/A verdict per signal.
 
 ## Workflow
+
+### Step 0: Ground on the prior report
+
+If `readiness-report.md` already exists in the target root, read its **Signal evidence** table first. Still run every check; when a check finds the same evidence, reuse the prior verdict and wording verbatim, and change a verdict only when the evidence differs. Record changed verdicts for the **Changes since last assessment** section. See `references/scoring-rubric.md`.
 
 ### Step 1: Discover the codebase
 
@@ -29,6 +33,7 @@ Use Glob and Grep to understand the project:
 - Find containerization (`Dockerfile`, `docker-compose.yml`, `.devcontainer/`, `flake.nix`, `mise.toml`)
 - Find Infrastructure as Code (`cdk.json`, `cdktf.json`, `terraform/`, `*.tf`, `Pulumi.yaml`, `template.yaml` (SAM), `*.bicep`, `cloudformation/`)
 - Find schemas and contracts (`*.proto`, `openapi.*`, `*.schema.json`, `swagger.*`)
+- Detect monorepo workspaces (`workspaces` in `package.json`, `apps/`, `services/`, several manifests; `packages/` entries are usually libraries): app-scoped signals are checked per deployable app and recorded as `n/m apps`
 - Find agent context files (`AGENTS.md`, `CLAUDE.md`, `.cursorrules`, `.cursor/rules/`)
 - Find execution plans (`docs/plans/`, `docs/exec-plans/`, `PLANS.md`)
 - Find workflow artifacts: requirements/specs (`docs/requirements/`, `docs/specs/`, `requirements/`), design (`docs/design/`, `design/`), review learnings (`docs/reviews/`, `docs/learnings/`) — load `references/workflow-artifacts.md`
@@ -38,11 +43,14 @@ Use Glob and Grep to understand the project:
 - Find templates and generators (`plop`, `hygen`, cookiecutter, `.template` files)
 - Find agent skills and workflows (`.claude/skills/`, agent skill directories)
 - Find agent hooks (agent hook configs, `hooks.json`, post-tool-use automation)
+- Inspect live state with `git` and `gh`, marking a signal NOT INSPECTABLE when the command is unavailable or denied: doc freshness (`git log -1 --format=%cs -- README.md`), release cadence (`git tag --sort=-creatordate`), agent co-authorship (`git log --grep=Co-authored-by -i`), branch protection (`gh api repos/{owner}/{repo}/branches/<default>/protection` or `.../rulesets`), CI duration (`gh run list --json name,startedAt,updatedAt`)
 - Measure file size distribution: count lines across source files deterministically (glob source files + `wc -l`, excluding vendored/generated/build dirs), not by eyeballing a few. Report the share of files under 300 lines (the "good" target in category 2.15) and flag outliers over 500 lines. The two thresholds are distinct: 300 is the per-file comprehension target; 500 marks a file large enough to warrant splitting.
 
 ### Step 2: Assess each category
 
 Evaluate 15 categories. Load `references/category-definitions.md` and `references/category-definitions-agent.md` for detailed signals. Also load `references/agent-contributor-model.md` for the framing principles.
+
+For **every signal** record a verdict — PASS, FAIL, N/A, or NOT INSPECTABLE — with one line of evidence naming the file, config key, command output, or reason (`references/scoring-rubric.md`). The denominator for each category is exactly the rows of its table in the two category-definitions files; the category-specific references define what PASS looks like for those rows. The bullets below are summaries, not extra signals.
 
 **2.1 Structure and modularity**
 - Directory organization clarity
@@ -59,6 +67,7 @@ Evaluate 15 categories. Load `references/category-definitions.md` and `reference
 - API documentation (generated or manual)
 - Architecture Decision Records
 - CHANGELOG or commit convention
+- Documentation freshness (a doc untouched for 180+ days that names commands or paths that no longer exist) and generated docs
 
 **2.3 Testable boundaries**
 - Test file count vs source file count (ratio)
@@ -74,6 +83,7 @@ Evaluate 15 categories. Load `references/category-definitions.md` and `reference
 - Evidence of flakiness (retry configs, `flaky` labels)
 - Shift-left checks present (pre-commit hooks, focused test scripts, watch mode configs)
 - Test impact analysis (run only affected tests: pytest-testmon, Jest `--onlyChanged`, Launchable) — keeps feedback fast as agent-generated test volume grows
+- Measured feedback time (essential checks under 10 minutes), required checks verified via `gh api`, secret and code scanning in CI
 
 **2.5 Typing strength**
 - Type annotations coverage
@@ -88,6 +98,7 @@ Evaluate 15 categories. Load `references/category-definitions.md` and `reference
 - Single-command setup documented
 - Infrastructure as Code (AWS CDK, Terraform, Pulumi, CloudFormation, Bicep)
 - Deployment codified in version control (not manually provisioned)
+- Dependencies pinned with a committed lockfile; dependency update automation; release automation and tag cadence; hygienic `.gitignore`
 
 **2.7 Architecture decisions**
 - ADR directory exists with entries
@@ -138,6 +149,7 @@ Apply the **cap rule** from spec-first-artifacts when scoring: strong schemas/pr
 - Failures are loud and early (fail-fast patterns)
 - Logging is structured and actionable
 - Lint/CI error messages contain agent-targeted remediation instructions (what to fix, not just what failed)
+- Operational legibility for deployed services (N/A for libraries and CLIs): log redaction, health checks, error tracking and tracing, alert rules and runbooks in repo
 
 **2.13 Feedforward surfaces**
 
@@ -147,15 +159,18 @@ Load `references/feedforward-surfaces.md` for detailed scoring signals.
 - Strict type checking with few escape hatches
 - Module boundary enforcement via linter or structural tests
 - Pre-commit hooks running type checker + linter + formatter per-file
-- Non-bypassable hooks (agent config denies `--no-verify`; branch protection enforces checks server-side)
+- Non-bypassable hooks (agent config denies `--no-verify`; the server-side gate is scored under 2.4)
 - Templates and generators for common file patterns
 - Security scanners in pre-commit or per-file hooks
+- Code-health scanners: complexity, dead code, duplication, unused dependencies, TODO-with-ticket lint
 
 **2.14 Compound engineering readiness**
 
 Load `references/compound-engineering.md` and `references/workflow-artifacts.md` for detailed scoring signals.
 
 - Instruction file with evidence of iterative growth (>10 rules, recently updated)
+- Instruction file validated: a CI job or hook runs the commands it documents
+- Agent co-authored commits in git history
 - Custom skills or packaged workflows for repeated tasks
 - Workflow artifact directories (plans, specs, design, review notes) with recent, feature-scoped content
 - Hooks that enforce conventions discovered through past mistakes
@@ -175,21 +190,15 @@ Load `references/context-engineering.md` for detailed scoring signals.
 
 ### Step 3: Score each category
 
-Load `references/scoring-rubric.md` for scoring criteria.
-
-Assign each category a score from 0-100:
-- 0-25: Absent or minimal
-- 26-50: Basic, inconsistent
-- 51-75: Good, mostly consistent
-- 76-100: Excellent, systematic
+Load `references/scoring-rubric.md`. Category score = round(100 × PASS / (PASS + FAIL)) over the category's signals. N/A and NOT INSPECTABLE are excluded from the denominator. Do not assign scores by impression; the interpretation bands (0-25 absent, 26-50 basic, 51-75 good, 76-100 excellent) are for reading the result.
 
 ### Step 4: Calculate overall score
 
-Use the category weights from the scoring rubric to compute a weighted average (0-100).
+Weighted average over applicable categories using the rubric weights, renormalized when a category has no applicable signals (0-100).
 
 ### Step 5: Determine autonomy level
 
-Load `references/autonomy-levels.md` and map the overall score to L0-L5.
+Load `references/autonomy-levels.md`. The level is set by **gates**: map each requirement in `../generate-roadmap/references/level-transitions.md` to its signal verdicts; a level unlocks when ≥80% of its applicable requirements pass (round up) and every lower level is unlocked; NOT INSPECTABLE requirements count as not passed and make the level provisional if they would change it. Recommend the highest unlocked level, then apply caps. Fill the **Level gates** table with per-level pass percentages. Use the score-to-level table only as a sanity check and explain any gap of more than one step.
 
 If category **2.8 Machine-readable intent** is below 51 or spec-first artifacts are absent (no
 requirement files, no executable acceptance criteria per `references/spec-first-artifacts.md`), apply
@@ -228,4 +237,5 @@ collaboration tracking from the hinge repo-enabler table.
 
 Write `readiness-report.md` in the codebase root. Load `references/report-template.md` for the
 required sections and tables. Write the **Alignment note** under **Collaboration effectiveness**
-after completing Step 7.
+after completing Step 7. Include the **Level gates** table, the full **Signal evidence** table
+(one row per signal), and **Changes since last assessment** when Step 0 found a prior report.

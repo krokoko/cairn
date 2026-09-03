@@ -23,6 +23,7 @@ Search for `readiness-report.md` in the codebase root. If it exists, read it and
 - Current autonomy level
 - Category scores
 - Existing blockers
+- Signal evidence table (each FAIL row is a candidate gap; each NOT INSPECTABLE row needs access, not code)
 
 If no report exists, inform the user: "No readiness report found. Run `/assess-readiness` first to generate a baseline assessment."
 
@@ -39,7 +40,7 @@ collaboration effectiveness recommendations, alignment note (if any).
 
 ### Step 3: Identify gaps
 
-For each category, compare the current score to what is needed for the target level. Load `references/improvement-actions.md` and `references/improvement-actions-agent.md` for common actions. Load `references/implementation-phases.md` for the strategic phasing model and prioritization principles.
+Start from the **Level gates** and **Signal evidence** tables: the primary gap list is every requirement of the target level's gate that FAILs (see `references/level-transitions.md`), with the signal rows that would flip it. Then compare category scores to what the target level typically shows. Load `references/improvement-actions.md` and `references/improvement-actions-agent.md` for common actions. Load `references/implementation-phases.md` for the strategic phasing model and prioritization principles.
 
 If the report's alignment note indicates **codebase ahead of practices**, prioritize repo
 enablers from `references/l2-to-l3-hinge.md` and collaboration actions from
@@ -47,7 +48,7 @@ enablers from `references/l2-to-l3-hinge.md` and collaboration actions from
 types, CI, and testable-boundaries actions before expanding agent workflows.
 
 Focus on:
-- Categories that are below the threshold for the target level
+- Failing gate requirements for the target level first; then categories weak for that level
 - Categories with the highest weight in the scoring rubric (testable boundaries, CI reliability, machine-readable intent, structure)
 - Quick wins: actions that have high impact relative to effort
 - Sequence actions according to the 5-phase model (semantics -> fast loop -> deep evidence -> reality loop -> human repositioning)
@@ -73,6 +74,10 @@ For each recommended action, specify:
 - **Impact**: Expected score improvement for the category
 - **Dependencies**: Other actions that should happen first
 - **Details**: Specific files to create/modify, tools to install, configs to add
+
+Prefix the Action with **[auto]** when it is a pure file addition an agent can apply without judgment
+(instruction file skeleton, `.env.example`, pre-commit config, PR/issue templates, `dependabot.yml`,
+lockfile commit). Batch these first: they close the most level-gate requirements per hour.
 
 Order actions by: (1) unblock the next level first, (2) alignment-driven priority when the
 report flags a mismatch (see Step 3), (3) highest impact/effort ratio, (4) foundational actions

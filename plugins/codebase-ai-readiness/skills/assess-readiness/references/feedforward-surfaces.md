@@ -36,37 +36,21 @@ deterministically and cheaply before they compound.
 | Pre-commit hooks | All of the above, on every change | `.pre-commit-config.yaml`, `.husky/`, `lefthook.yml` |
 | Bypass guards | Agents skipping hooks (`git commit --no-verify`) | Agent config denying bypass commands; server-side branch protection + required checks |
 
-## Scoring signals
+## Pass profiles
 
-### Strong feedforward (score 76-100)
-- Instruction file with >10 actionable rules specific to the project
-- Strict type checking with <5% escape hatches
-- Module boundary enforcement via linter or structural tests
-- Pre-commit hooks run type checker + linter + formatter on every change
-- Hooks are non-bypassable: agent config denies skip commands, CI enforces server-side
-- Templates exist for common file types (components, services, tests)
-- Architecture docs specify which module depends on what
+The denominator for this category is the **Feedforward surfaces** table in
+`category-definitions-agent.md`. Decide PASS or FAIL per row with these profiles:
 
-### Moderate feedforward (score 51-75)
-- Instruction file exists but is generic or incomplete
-- Type checking enabled but not strict, or with many escape hatches
-- Linter configured but only enforces style, not architecture
-- Pre-commit hooks exist but only run formatter
-- Some templates, but ad-hoc file creation is common
-
-### Weak feedforward (score 26-50)
-- No instruction file, but README covers conventions
-- Linter exists but runs only in CI (not per-file)
-- Types used but not enforced (no strict mode)
-- No module boundary enforcement
-- No pre-commit hooks
-
-### Absent feedforward (score 0-25)
-- No instruction file, no agent context
-- No linter or type checking
-- No pre-commit hooks
-- No templates or conventions documented
-- Agents must infer all conventions from code patterns
+| Signal | PASS when | FAIL when |
+|--------|-----------|-----------|
+| Instruction files with project rules | >10 actionable, project-specific rules | Missing, generic, or copied from a template |
+| Strict type checking | Strict mode on; escape hatches in <5% of files | Not strict, or escape hatches common |
+| Module boundary enforcement | A linter or structural test fails the build on a forbidden import | Boundaries only in docs, or absent |
+| Pre-commit hooks per-file | Type checker + linter + formatter run on changed files | No hooks, or formatter only |
+| Non-bypassable hooks | Agent config denies skip commands such as `--no-verify` | Any agent can bypass locally (server-side gate is scored under CI reliability) |
+| Templates and generators | Templates or generators for the common file kinds | Ad-hoc file creation |
+| Security scanners pre-commit | A scanner runs on every commit | Only in CI, or none |
+| Code-health scanners | Complexity or dead-code checks fail the build | None configured |
 
 ## Key principle
 

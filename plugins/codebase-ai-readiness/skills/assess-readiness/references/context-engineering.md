@@ -58,40 +58,18 @@ be optimized for these access patterns.
 | Unique identifiers | Functions, types, files with distinctive names | Generic names (utils.ts, helpers.py, common.go) |
 | Searchable patterns | Predictable file patterns per module | Ad-hoc organization |
 
-## Scoring signals
+## Pass profiles
 
-### Strong context friendliness (score 76-100)
-- 90%+ of files under 300 lines
-- Layered documentation from root to module level
-- Clear entry points and module exports
-- Consistent naming without synonyms
-- Agent context file with progressive disclosure design
-- Structured headings in all documentation
-- No generic filenames (utils, helpers, misc, common)
+The denominator for this category is the **Context engineering friendliness** table in
+`category-definitions-agent.md`. Decide PASS or FAIL per row with these profiles:
 
-### Moderate context friendliness (score 51-75)
-- Most files under 500 lines, some outliers
-- Root README and some module-level docs
-- Entry points identifiable but not explicitly marked
-- Mostly consistent naming with occasional drift
-- Some agent context file present
-- Documentation partially structured
-
-### Weak context friendliness (score 26-50)
-- Many files >500 lines, some >1000
-- Only root README, no layered docs
-- Entry points ambiguous
-- Naming inconsistencies across modules
-- No agent context file
-- Documentation unstructured or missing headings
-
-### Poor context friendliness (score 0-25)
-- Files routinely >1000 lines
-- No documentation beyond minimal README
-- No clear entry points
-- Inconsistent naming pervasive
-- No agent context
-- Flat or chaotic directory structure
+| Signal | PASS when | FAIL when |
+|--------|-----------|-----------|
+| File size distribution | 90%+ of source files under 300 lines and none over 2000 (measured, see the skill's Step 1) | Many files over 500 lines |
+| Layered documentation | Root README, architecture doc, and module-level docs all exist and link downward | Only a root README |
+| Clear entry points | Entry files identifiable; public API exported explicitly | Ambiguous entry points; everything public |
+| Retrieval-friendly naming | No generic filenames (utils, helpers, misc, common); one term per concept | Generic names or synonyms common |
+| Structured headings | Docs use a heading hierarchy | Flat text |
 
 ## Key principle
 
