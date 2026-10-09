@@ -27,6 +27,7 @@ domain or audience differs (readiness vs verification).
 
 ```text
 plugins/<plugin-name>/
+  plugin.json                 # Portable Agent Plugins manifest (agent-plugins.org): $schema, name, version, description, author, ...
   .claude-plugin/
     plugin.json               # Claude manifest: name, version, description, author, keywords, license
   .codex-plugin/
@@ -45,10 +46,14 @@ plugins/<plugin-name>/
 
 ## Plugin manifest (`plugin.json`)
 
+Three manifests describe the same plugin. The root `plugin.json` follows the [Agent Plugins specification](https://github.com/agentplugins/agent-plugins-spec) (v1.0.0) and is what spec-conformant clients such as Cursor load. Its schema is closed: only `$schema`, `name`, `version`, `description`, `author`, `homepage`, `repository`, `license`, `keywords`, and `extensions` are allowed, and `$schema` must be `https://agent-plugins.org/schemas/1.0.0/plugin.schema.json`. Skills are discovered from `skills/` by convention; hooks are not part of the spec and stay Claude-only. Keep `name` and `version` identical across all three manifests (`mise run lint:cross-refs` enforces this).
+
+Common fields:
+
 - `name`: Required. Kebab-case identifier (`^[a-z][a-z0-9-]*$`), max 64 characters.
 - `version`: Semantic version (e.g., `0.1.0`).
 - `description`: Max 500 characters. Explain what the plugin does in one sentence.
-- `author`: Object with required `name` (and optional `email`).
+- `author`: Object with `name` (required by the Claude and Codex schemas) and optional `email` and `url`.
 - `keywords`: Array of search terms.
 - `license`: SPDX identifier (e.g., `Apache-2.0`).
 
@@ -69,13 +74,12 @@ name: my-skill-name
 description: |
   What this skill does and when to invoke it. Include trigger phrases
   that users or agents might use: "assess readiness", "check my codebase"
-argument-hint: "[optional-arg-description]"
+  Optional argument: [optional-arg-description]
 allowed-tools: Read Bash Glob Grep
-user-invocable: true
 ---
 ```
 
-Required fields: `name`, `description`.
+Required fields: `name`, `description`. Only fields from the [Agent Skills specification](https://agentskills.io/specification) are allowed (`name`, `description`, `license`, `compatibility`, `metadata`, `allowed-tools`). The Agent Skills reference validator (`skills-ref`) and Anthropic's skill packaging tools reject unknown keys, and Agent Plugins clients must skip non-conformant skills, so client-specific keys such as `argument-hint` or `user-invocable` are rejected by the linter. Describe arguments in the description instead.
 
 ### Markdown body
 

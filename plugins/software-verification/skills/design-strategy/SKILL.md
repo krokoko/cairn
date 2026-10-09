@@ -5,9 +5,8 @@ description: |
   Trigger phrases: "design verification strategy", "what verification do I need",
   "verification plan", "how to verify this component",
   "unlock autonomy for this module", "what tests should I add"
-argument-hint: "[component-name-or-path] (defaults to full codebase)"
+  Optional argument: [component-name-or-path] (defaults to full codebase)
 allowed-tools: Read Bash Glob Grep
-user-invocable: true
 ---
 
 # Design Verification Strategy

@@ -25,14 +25,15 @@ Key constraints:
 - `SKILL.md`: max 400 lines, YAML frontmatter with `name` and `description`
 - Reference docs: max 150 lines each, one topic per file; link from `SKILL.md`
 - Plugin names: kebab-case; each plugin is self-contained
-- Register in **both** `.claude-plugin/marketplace.json` and `.agents/plugins/marketplace.json`
+- Register in **all** marketplaces: `.claude-plugin/marketplace.json`, `.agents/plugins/marketplace.json`, `.cursor-plugin/marketplace.json`
+- Ship a root `plugin.json` ([Agent Plugins](https://agent-plugins.org/) manifest) next to the Claude and Codex manifests
 
 ## Pull request checklist
 
 - [ ] `mise run build` passes locally
 - [ ] New skills documented in plugin `README.md` and root `README.md` if user-facing
 - [ ] Report-producing skills have hook validation and a report template reference
-- [ ] Versions match across marketplace entries and `plugin.json` / `.codex-plugin/plugin.json`
+- [ ] Versions match across marketplace entries and `plugin.json` / `.claude-plugin/plugin.json` / `.codex-plugin/plugin.json`
 
 ## License
 

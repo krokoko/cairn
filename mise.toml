@@ -18,12 +18,14 @@ description = "Validate JSON manifests against schemas"
 run = [
   "ajv validate -s schemas/marketplace.schema.json -d .claude-plugin/marketplace.json --all-errors --errors=text",
   "ajv validate -s schemas/codex-marketplace.schema.json -d .agents/plugins/marketplace.json --all-errors --errors=text",
+  "ajv validate -s schemas/marketplace.schema.json -d .cursor-plugin/marketplace.json --all-errors --errors=text",
   "ajv validate -s schemas/plugin.schema.json -d 'plugins/**/.claude-plugin/plugin.json' --all-errors --errors=text",
   "ajv validate -s schemas/codex-plugin.schema.json -d 'plugins/**/.codex-plugin/plugin.json' --all-errors --errors=text",
+  "ajv validate --spec=draft2020 -s schemas/agent-plugins-plugin.schema.json -d 'plugins/*/plugin.json' --all-errors --errors=text",
 ]
 
 [tasks."lint:cross-refs"]
-description = "Validate marketplace and plugin cross-references"
+description = "Validate marketplace and plugin cross-references (Claude, Codex, Cursor/Agent Plugins) and version sync"
 run = "node tools/validate-cross-refs.cjs"
 
 [tasks."lint:json"]

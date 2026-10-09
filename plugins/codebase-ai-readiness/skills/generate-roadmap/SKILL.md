@@ -5,9 +5,8 @@ description: |
   Trigger phrases: "generate roadmap", "what should I improve",
   "how to reach the next level", "autonomy improvement plan",
   "what are my next steps for AI readiness"
-argument-hint: "[target-level] (L1-L5, defaults to next level above current)"
+  Optional argument: [target-level] (L1-L5, defaults to next level above current)
 allowed-tools: Read Bash Glob Grep
-user-invocable: true
 ---
 
 # Generate AI Readiness Roadmap

@@ -11,7 +11,8 @@
   <br />
 
   <a href="./LICENSE"><img alt="License: Apache-2.0" src="https://img.shields.io/badge/License-Apache_2.0-blue.svg" /></a>
-  <img alt="Works with Claude Code, Cursor, Codex" src="https://img.shields.io/badge/works%20with-Claude%20Code%20%7C%20Cursor%20%7C%20Codex-8A2BE2" />
+  <img alt="Works with Claude Code, Codex, Cursor, and any Agent Plugins client" src="https://img.shields.io/badge/works%20with-Claude%20Code%20%7C%20Codex%20%7C%20Cursor%20%7C%20Agent%20Plugins-8A2BE2" />
+  <a href="https://agent-plugins.org/"><img alt="Agent Plugins 1.0.0" src="https://img.shields.io/badge/Agent%20Plugins-1.0.0-0D9488.svg" /></a>
 </div>
 
 **Cairn** is an open-source toolkit of AI agent plugins that measure and improve how ready your codebase is for autonomous AI coding agents — charting a path from AI-assisted coding to verified, end-to-end autonomy.
@@ -22,7 +23,7 @@
 
 AI coding agents can now generate code faster than humans can review it. The bottleneck has shifted from writing code to **trusting it**: can an agent change this codebase safely, without a human reading every line? Most codebases were built for human workflows (implicit knowledge, inconsistent tests, fragile CI, unclear ownership, and little machine-readable intent) and agents amplify those weaknesses at machine speed.
 
-Cairn treats autonomy as something you **measure and earn**, not switch on. Install the plugins in any AI assistant that supports the plugin standard (Claude Code, Cursor, Codex), run a skill, and get back concrete, committable reports.
+Cairn treats autonomy as something you **measure and earn**, not switch on. Install the plugins in Claude Code, Codex, Cursor, or any client that implements the [Agent Plugins](https://agent-plugins.org/) specification, run a skill, and get back concrete, committable reports.
 
 ## What you get
 
@@ -63,9 +64,9 @@ Add the plugins
 
 Claude-specific PostToolUse hooks are not wired into Codex manifests; skills and references work the same.
 
-**Cursor:**
+**Cursor** (and other [Agent Plugins](https://agent-plugins.org/) clients):
 
-Install plugins from a marketplace that indexes this repo, or copy skills into your project's agent configuration per Cursor's plugin documentation.
+Import this repository URL in the Cursor Marketplace. Each plugin ships a root `plugin.json` that follows the vendor-neutral Agent Plugins specification, so any client that implements it can load the skills without changes. Hooks are not part of that specification and only run in Claude Code.
 
 ### Usage
 

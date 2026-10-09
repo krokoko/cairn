@@ -5,9 +5,8 @@ description: |
   Trigger phrases: "assess verification", "verification maturity",
   "how is my testing", "verification strategy assessment",
   "what is my verification coverage", "audit my tests"
-argument-hint: "[path-to-codebase] (defaults to current directory)"
+  Optional argument: [path-to-codebase] (defaults to current directory)
 allowed-tools: Read Bash Glob Grep
-user-invocable: true
 ---
 
 # Software Verification Assessment
