@@ -1,19 +1,34 @@
 # AI Smell Detection Gates Report Template
 
-Write `ai-smells-gates-report.md` with the following structure:
+Write `ai-smells-gates-report.md` with this structure. Replace examples with actual findings.
+Use `../../assess-verification/references/evidence-semantics.md` for ledger states. A proposed gate
+is a recommendation, not inspected execution evidence; justify inapplicable categories.
 
 ```markdown
 # AI Smell Detection Gates Report
 
+## Evidence Scope
+
+**Source revision**: [commit plus relevant working-tree changes]
+**Assessment date**: [ISO date]
+**Inspected scope**: [paths, categories, environments, exclusions]
+**Evidence basis**: [configuration and run artifacts inspected; inaccessible settings/history]
+
+## Evidence Ledger
+
+| Claim / check | Artifact / revision | Environment | Observation | Execution | Conclusion | Limits |
+|---------------|---------------------|-------------|-------------|-----------|------------|--------|
+| [scoped gate claim] | [config/run and revision] | [actual environment] | configuration_only | unknown | unknown | [execution/qualification not inspected] |
+
 ## Gate Coverage Summary
 
-**Overall coverage**: X/11 smell categories with at least partial automated detection
-**Enforcement level**: [Blocking / Warning / None] for detected smells
+**Overall coverage**: [counts of qualified/partial/configured/none/unknown/not-applicable categories]
+**Enforcement level**: [observed blocking/warning/informational/unknown, with evidence]
 
 ## Coverage Matrix
 
-| Smell | Gate exists? | Tool/mechanism | Enforcement | Feedback quality |
-|-------|-------------|----------------|-------------|------------------|
+| Smell | Scoped claim / gate | Coverage status | Enforcement / feedback | Evidence / limits |
+|-------|---------------------|-----------------|------------------------|-------------------|
 | AI001: Plausible Fabrication | ... | ... | ... | ... |
 | AI002: Cargo-Cult Patterns | ... | ... | ... | ... |
 | AI003: Architecture Astronaut | ... | ... | ... | ... |
@@ -53,7 +68,7 @@ Write `ai-smells-gates-report.md` with the following structure:
 1. ...
 
 ### New gates to introduce
-1. ...
+1. [Proposed gate, failure addressed, qualification controls, scope/limits, completion evidence]
 
 ### Strengthen existing gates
 1. ...

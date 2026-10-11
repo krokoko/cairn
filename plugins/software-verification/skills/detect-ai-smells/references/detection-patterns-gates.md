@@ -7,7 +7,7 @@ Continues `detection-patterns.md`. Smell categories AI005–AI010, minimum viabl
 
 | Gate type | Tools | What it catches |
 |-----------|-------|-----------------|
-| Mutation testing | `stryker`, `mutmut`, `cargo-mutants` | Tests that pass regardless of code changes |
+| Mutation testing | `stryker`, `mutmut`, `cargo-mutants` | Sensitivity gaps for selected behavior-changing mutations |
 | Coverage quality metrics | Mutation score vs line coverage | High coverage but low mutation kill rate |
 | Test naming conventions | Custom lint rules | Tests describing "how" instead of "what" |
 
@@ -16,7 +16,7 @@ Continues `detection-patterns.md`. Smell categories AI005–AI010, minimum viabl
 | Gate type | Tools | What it catches |
 |-----------|-------|-----------------|
 | Duplication detection | `jscpd`, `cpd`, `dupfinder`, SonarQube | Copy-paste code blocks |
-| DRY metric enforcement | Code Climate, custom thresholds | Repeated structures that should be abstracted |
+| Duplication signals | Code Climate, custom thresholds | Repeated structures to investigate; abstraction may increase coupling |
 
 ## AI007: Local Reasoning Violations
 
@@ -30,7 +30,8 @@ Continues `detection-patterns.md`. Smell categories AI005–AI010, minimum viabl
 | Magic string detection | Custom semgrep, SonarQube string duplication | Repeated string literals across files |
 | Config scatter detection | Custom grep/semgrep | Same value hard-coded in multiple locations |
 
-**Hard-coding principle:** Inline values are common in AI output. If a value appears in 3+ files, it should live in one config source. Check: domain knowledge (named constant), environment variance (config/env), existing config home (use consistently).
+**Hard-coding principle:** Repeated values merit review, not automatic extraction. Check whether they
+represent the same domain rule, environment setting, or coincidentally equal independent concepts.
 
 **Detection patterns:**
 ```bash
@@ -90,15 +91,14 @@ grep -rn 'raise \|throw \|return null\|return \[\]\|except\|catch' src/ | grep -
 | Gate type | Tools | What it catches |
 |-----------|-------|-----------------|
 | Assertion-presence lint | `eslint-plugin-jest` (`expect-expect`), `flake8-pytest-style`, custom AST checks | Test bodies with no assertion at all or only a `not throws` |
-| Mutation testing | `stryker`, `mutmut`, `cargo-mutants` | Tests that kill no mutants — pass regardless of behavior |
+| Mutation testing | `stryker`, `mutmut`, `cargo-mutants` | Tests insensitive to the selected relevant mutations |
 | Mock-return assertion detection | Custom AST/semgrep | Assertions made only against stubbed/mock return values |
 | Snapshot hygiene | Review gate, `--ci` snapshot mode | Auto-updated snapshots committed without review |
 
-**Vacuity principle:** the diagnostic is "can this test go red if the code is wrong?" Line coverage is
-the trap — vacuous tests inflate coverage while detecting no defects. Mutation testing is the
-authoritative gate; assertion-presence lint is the cheap pre-commit approximation. Distinct from AI005
-(asserts on the wrong thing — implementation mechanics) and AI009 (asserts correctly but only on the
-success path).
+**Vacuity principle:** ask whether the test rejects a relevant violation of its claim. Assertion lint
+is a heuristic; known-bad controls, old-versus-fixed regressions, and mutation provide complementary
+sensitivity evidence. A surviving mutant may be equivalent or irrelevant; a timeout is inconclusive.
+`not throws` may be a valid bounded claim. None of these checks establishes current business intent.
 
 **Detection patterns:**
 ```bash
@@ -112,7 +112,7 @@ Load `detection-patterns-gates-formal.md` for AI011 (vacuous formal specs).
 
 ## Minimum Viable Gate Set
 
-For teams starting from zero, recommend in priority order:
+For teams starting from zero, select relevant candidates by failure consequence and cost:
 1. Type checking (catches AI001)
 2. Empty catch lint rules + silent success masking (catches AI004)
 3. Mutation testing (catches AI005, AI009)

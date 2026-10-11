@@ -1,0 +1,89 @@
+{
+  "version": 1,
+  "cases": {
+    "configured-only": {
+      "criteria": {
+        "configuration_not_execution": "Distinguishes configured tests from inspected successful execution.",
+        "unknown_remote_state": "Keeps unavailable hosting protection/run reliability unknown.",
+        "no_unearned_high_autonomy": "Does not recommend L4/L5 from configuration presence."
+      }
+    },
+    "oracle-rot": {
+      "criteria": {
+        "stale_meaning": "Flags obsolete expected discount despite a fresh green run.",
+        "mutation_limit": "Explains mutation sensitivity does not establish current intent.",
+        "independent_review": "Recommends reviewing/replacing the oracle against approved revision 2."
+      }
+    },
+    "skipped-acceptance": {
+      "criteria": {
+        "linked_not_executed": "Distinguishes valid requirement mapping from skipped execution.",
+        "no_false_pass": "Does not call the acceptance requirement verified/passing.",
+        "gap_preserved": "Retains execution and assertion gaps in debt/recommendations."
+      }
+    },
+    "stale-run": {
+      "criteria": {
+        "revision_mismatch": "Identifies run r1 as stale for source r2.",
+        "no_current_success": "Does not use that receipt as current successful evidence.",
+        "refresh_scoped_evidence": "Calls for execution on the changed revision and acknowledges the visible counterexample risk."
+      }
+    },
+    "model-and-adapter": {
+      "criteria": {
+        "local_scope": "Limits successful campaign evidence to the local model and sampled sequences.",
+        "provider_gap": "Identifies missing adapter/provider correspondence and idempotency-key evidence.",
+        "no_deployed_proof": "Does not claim deployed integration correctness or exhaustive schedule coverage."
+      }
+    },
+    "mixed-surfaces": {
+      "criteria": {
+        "surface_separation": "Produces separate recommendations for core and provider adapter.",
+        "adapter_ceiling": "Keeps the unverified high-consequence adapter at a lower supported ceiling.",
+        "no_global_transfer": "Does not transfer core evidence to provider behavior or grant blanket permissions."
+      }
+    },
+    "missing-recovery": {
+      "criteria": {
+        "recovery_prerequisite": "Lists recovery as missing even when other controls/aggregate score appear strong.",
+        "no_l5": "Caps the recommendation below L5.",
+        "diagnostic_score": "Treats prior score as diagnostic and scopes current evidence."
+      }
+    },
+    "equivalent-mutant": {
+      "criteria": {
+        "equivalence": "Recognizes the supplied integer mutation as behavior-preserving or explicitly checks that possibility.",
+        "no_blanket_weakness": "Does not diagnose weak assertions merely because this mutant survives.",
+        "bounded_interpretation": "Separates this survivor from the broader adequacy of the sampled tests."
+      }
+    },
+    "roadmap-stale-baseline": {
+      "criteria": {
+        "baseline_freshness": "Identifies the r1 provider report/run as stale for r3 and REQ-PAY/2; does not carry the 94/100 or L4 forward as current provider readiness. Unchanged core evidence may be reused only with attribution and bounded scope.",
+        "critical_gate_sequence": "Prioritizes approved executable 24-hour retry/conflict semantics, current provider correspondence and recovery/escalation evidence before increasing adapter autonomy; a proposed L5 target does not mark missing gates met.",
+        "observable_completion": "Defines action dependencies and observable completion evidence for the adapter, including negative/retry cases and recovery limitations, without inventing completed runs or promising score increments."
+      }
+    },
+    "strategy-provider-migration": {
+      "criteria": {
+        "change_matched_portfolio": "Proposes complementary checks for tenant/key identity, conflicting payloads, timeout after commit or restart, and v1/v2 overlap. Distinguishes bounded local-model results from current provider evidence.",
+        "reviewed_oracle_lifecycle": "Specifies independent approved payment expectations and current provider contract/fidelity evidence, semantic-review ownership or invalidation, and keeps proposed evidence separate from completed execution.",
+        "persistent_effect_evolution": "Uses a staged migration with coexistence/rollback-compatibility checks and explicitly handles durable charges that application rollback cannot undo; does not treat rollback alone as recovery of payment side effects."
+      }
+    },
+    "smell-gate-scope": {
+      "criteria": {
+        "bounded_gate_qualification": "Recognizes qualified detection of pass-only exception handlers from the completed allowed/violating controls, while retaining silent-default handling as an uncovered part of AI004 and unknown remote enforcement.",
+        "fresh_run_stale_meaning": "Finds obsolete discount and catalog-failure expectations despite fresh green runs, full branch coverage and the mutation score; recommends independent semantic review against requirement revision 2.",
+        "authorship_and_category_limits": "Does not infer code authorship or whole-category protection from the supplied patterns, coverage, or one qualified gate; keeps configuration, execution and review evidence distinct."
+      }
+    },
+    "qualified-local-component": {
+      "criteria": {
+        "qualified_maturity": "Assigns the finite local component demonstrated Tier 4 (Qualified) or higher only if all additional tier criteria are explicitly supported; does not cap it below Tier 4 merely for lacking property tests, fuzzing, formal tools, deployed evidence, or an external provider.",
+        "evidence_qualification": "Grounds the qualified oracle in independently approved current truth-table expectations, artifact/revision-bound semantic review, completed relevant negative controls, repeated supported-environment runs and inspected enforcement.",
+        "bounded_positive_claim": "Keeps the positive result within the four Status values and declared local environments, retains the missing continuing-maintenance process as a Tier 5 gap, and does not convert verification maturity into blanket autonomous permission."
+      }
+    }
+  }
+}

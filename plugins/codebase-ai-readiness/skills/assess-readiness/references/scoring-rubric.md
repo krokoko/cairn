@@ -1,5 +1,8 @@
 # Scoring Rubric
 
+**Rubric ID**: `readiness-scoring/2` (codebase-ai-readiness 0.5). Record this ID beside the
+provisional score and assessed weight; historical scores may use different evidence treatment.
+
 ## Category weights
 
 | Category | Weight | Rationale |
@@ -22,6 +25,12 @@
 
 ## Scoring tiers
 
+These bands organize observed readiness signals; they are not calibrated probabilities or
+universal thresholds. Cite relevant artifacts and distinguish inspected runs from configuration.
+Use `unknown` for unavailable evidence, `0` for observed absence, and explain justified
+inapplicability. Do not infer branch protection, CI reliability or oracle adequacy from files alone.
+Counts and coverage guide investigation; reward the relevant behavior or enforced constraint.
+
 ### 0-25: Absent or minimal
 
 - No evidence of the category, or only trivial/accidental presence
@@ -30,7 +39,7 @@
 ### 26-50: Basic, inconsistent
 
 - Some evidence exists but coverage is patchy or inconsistent
-- Example (testing): Some test files exist but cover <30% of modules, no CI integration
+- Example (testing): Some relevant checks exist, but critical boundaries lack tests or CI integration
 
 ### 51-75: Good, mostly consistent
 
@@ -40,12 +49,16 @@
 ### 76-100: Excellent, systematic
 
 - Comprehensive, consistent, enforced by tooling or policy
-- Example (testing): High coverage, property tests for key invariants, required CI checks
+- Example (testing): Critical claims have reviewed, sensitive checks and completed evidence; required CI enforcement is verified
 
 ## Score calculation
 
 ```
-overall_score = sum(category_score[i] * weight[i]) for i in categories
+assessed_weight = sum(weight[i]) for scored, applicable categories
+provisional_score = sum(category_score[i] * weight[i]) / assessed_weight
 ```
 
-Round to nearest integer. Range: 0-100.
+Round to nearest integer (0-100). Report assessed weight and all excluded unknown/inapplicable
+categories. If assessed weight is zero, report score `unknown`. Partial evidence can inflate a
+normalized score; call it provisional and never use it to satisfy an unknown prerequisite.
+Apply `autonomy-prerequisites.md` independently of the score.

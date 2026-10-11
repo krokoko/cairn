@@ -5,15 +5,50 @@ Write `readiness-report.md` at the codebase root using this structure:
 ```markdown
 # AI Readiness Report
 
+## Evidence Scope
+
+**Source revision**: [commit and relevant dirty changes, or explain unavailable identity]
+**Assessment date**: [date]
+**Inspected scope**: [paths, components, dependencies and exclusions]
+**Evidence basis**: [artifacts/runs inspected and inaccessible evidence]
+
+## Evidence Ledger
+
+| Claim / check | Artifact / revision | Environment | Observation | Execution | Conclusion | Limits |
+|---------------|---------------------|-------------|-------------|-----------|------------|--------|
+| [claim and check] | [cited artifact/run and revision] | [environment] | [allowed observation] | [allowed execution] | [allowed conclusion] | [bounds, exclusions and review status] |
+
 ## Overall Score
 
-**Score: XX/100**
+**Score:** [provisional XX/100 or unknown]
+**Rubric:** readiness-scoring/2
+**Assessed weight:** [share of category weights scored; excluded categories and reasons]
 
 ## Recommended Autonomy Level
 
-**Level: LX — [Level Name]**
+**Level:** [exactly L0–L5; no higher than the lowest assessed surface recommendation]
+**Summary scope:** [all assessed surfaces and dependencies; exclusions remain outside the recommendation]
+**Decision boundary:** [recommendation only; operating permissions remain external]
 
-**Autonomy cap applied:** [yes/no — if yes, cite spec-first gap per `references/spec-first-artifacts.md`; e.g. "Capped at L3: no requirement files or executable acceptance criteria"]
+**Autonomy cap applied:** [yes/no and evidence; include unknown intent/oracles and unmet L5 gates]
+
+## Surface Autonomy
+
+| Surface | Provisional level | Evidence ceiling | Recommended level | Operating scope | Blockers |
+|---------|-------------------|------------------|-------------------|-----------------|----------|
+| [surface and dependencies] | [L0–L5 or unknown] | [L0–L5 or unknown] | [L0–L5] | [change classes/human decisions] | [ceiling rationale and gaps, or reason none] |
+
+## Autonomy Prerequisites
+
+| Surface | Prerequisite | Status | Evidence / gap |
+|---------|--------------|--------|----------------|
+| [surface] | L4-INTENT | [status] | [reviewed executable intent for the proposed operating scope or gap] |
+| [surface] | L4-ORACLES | [status] | [current adequate critical-path oracle evidence for that scope or gap] |
+| [surface] | L5-INTENT | [status] | [cited evidence or gap] |
+| [surface] | L5-ORACLES | [status] | [cited evidence or gap] |
+| [surface] | L5-ENVIRONMENT | [status] | [cited evidence or gap] |
+| [surface] | L5-DETECTION | [status] | [cited evidence or gap] |
+| [surface] | L5-RECOVERY | [status] | [cited evidence or gap] |
 
 ## Category Breakdown
 
@@ -26,7 +61,7 @@ Write `readiness-report.md` at the codebase root using this structure:
 | Typing strength | XX | ... |
 | Deterministic environment and deployment | XX | ... |
 | Architecture decisions | XX | ... |
-| Machine-readable intent | XX | Spec-first: REQ files [y/n], executable criteria [y/n], pure core [y/n], traceability gate [y/n]; cap rule applied [y/n] |
+| Machine-readable intent | XX / unknown | Reviewed claims, executable criteria, links, completed evidence and semantic review; cap rule and gaps |
 | Progressive context disclosure | XX | ... |
 | Hidden state and magic | XX | ... |
 | Repository-scale reasoning | XX | ... |
@@ -56,6 +91,8 @@ Write `readiness-report.md` at the codebase root using this structure:
 
 **Infrastructure:** [PR templates, labels, review rubric, learning docs — present or missing]
 
+**Maintenance outcome:** [representative task, scope, effort, unexpected edits, regressions and boundary violations; or not measured with a proposed exercise]
+
 **Recommendations:**
 
 1. ...
@@ -69,7 +106,12 @@ Write `readiness-report.md` at the codebase root using this structure:
 
 ## Roadmap
 
-| Priority | Action | Category | Effort | Impact |
-|----------|--------|----------|--------|--------|
-| 1 | ... | ... | ... | ... |
+| Priority | Action | Category | Effort | Failure addressed | Acceptance criterion |
+|----------|--------|----------|--------|-------------------|----------------------|
+| 1 | ... | ... | ... | ... | ... |
 ```
+
+Replace placeholders with substantive findings. Use `evidence-scope.md` for state vocabulary
+and positive-result constraints. Use `autonomy-prerequisites.md` for canonical gate IDs,
+status values and ceiling rules; repeat both L4 and all five L5 rows for each assessed surface.
+Category scores may be `unknown` or justified `not applicable`; do not invent zeroes.

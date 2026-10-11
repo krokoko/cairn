@@ -1,0 +1,23 @@
+{
+  "source_revision": "smell-gate-scope-r2",
+  "tool": "empty-except/1",
+  "environment": "CPython 3.12 AST parser",
+  "source_scope": [
+    "checkout.py"
+  ],
+  "completed": true,
+  "violations": [],
+  "controls": [
+    {
+      "path": "gate_controls/allowed.py",
+      "exit_code": 0,
+      "expected_exit_code": 0
+    },
+    {
+      "path": "gate_controls/violating.py",
+      "exit_code": 1,
+      "expected_exit_code": 1
+    }
+  ],
+  "controls_completed": true
+}

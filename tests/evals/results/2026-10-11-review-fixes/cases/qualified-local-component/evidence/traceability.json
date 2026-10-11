@@ -1,0 +1,24 @@
+{
+  "source_revision": "qualified-local-component-r4",
+  "requirement": "REQ-TERMINAL/4",
+  "source": [
+    "terminal.py:is_terminal"
+  ],
+  "assertions": [
+    "TerminalTable.test_queued",
+    "TerminalTable.test_running",
+    "TerminalTable.test_done",
+    "TerminalTable.test_cancelled"
+  ],
+  "expected_inventory": [
+    "TerminalTable.test_queued",
+    "TerminalTable.test_running",
+    "TerminalTable.test_done",
+    "TerminalTable.test_cancelled"
+  ],
+  "execution_artifact": "evidence/current-runs.json",
+  "semantic_review_artifact": "evidence/oracle-review.json",
+  "sensitivity_artifact": "evidence/sensitivity-controls.json",
+  "partial_claims": [],
+  "scope": "Only the four approved enum values and supported Python environments"
+}

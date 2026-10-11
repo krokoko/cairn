@@ -1,0 +1,11 @@
+{
+  "source_revision": "equivalent-mutant-r2",
+  "environment": "Python integer inputs",
+  "test_failures": 0,
+  "survivors": [
+    {
+      "original": "return value + 0",
+      "mutated": "return 0 + value"
+    }
+  ]
+}

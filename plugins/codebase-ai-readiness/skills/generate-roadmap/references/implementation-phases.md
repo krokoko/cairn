@@ -14,10 +14,11 @@ If you cannot state the property, you cannot automate its verification.
 
 ### Phase 2: Industrialize the fast loop
 
-Every change should trigger static checks, tests, regression replay, property tests,
-and sanitizers. Output should be uniform evidence, not just console text.
+Route changes to relevant checks: static analysis, tests, replay, properties and sanitizers
+where applicable. Retain expected checks, source/environment identity, completion and limits
+in structured evidence. Distinguish skipped/missing execution from a successful result.
 
-**Actions**: CI branch protection, required checks, coverage thresholds, linting in CI,
+**Actions**: CI branch protection, required checks, reviewed coverage gaps, linting in CI,
 property-based tests for stable invariants, structured test output.
 **Unlocks**: Agents can iterate freely and get fast, deterministic feedback.
 
@@ -56,7 +57,7 @@ Use these to guide prioritization within any roadmap:
 2. **Property-based testing before heavy proofs** — cheapest way to make a component verifiable
 3. **Make CI evidence-driven** — structured evidence feeds decisions, not informal norms
 4. **Formal methods only where justified** — protocols, allocators, codecs, security boundaries
-5. **Shadow/canary as verification, not just release** — bridge from "model says okay" to "reality confirms"
+5. **Shadow/canary as scoped evidence** — compare actual observations with claims and retain environment limits
 6. **Instrument the harness itself** — track flakiness, solver timeouts, label drift, human override rates
 
 ## Property-based testing as the bridge method

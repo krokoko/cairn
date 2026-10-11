@@ -1,6 +1,8 @@
 # Level Transitions
 
-Requirements for advancing from one autonomy level to the next.
+Requirements for advancing an assessed surface. Load
+`../../assess-readiness/references/autonomy-prerequisites.md` for the shared ceilings and L5
+gate contract. A transition requires evidence; a score or completed planning document is insufficient.
 
 ## L0 to L1: Human only -> Assisted
 
@@ -24,7 +26,7 @@ Requirements for advancing from one autonomy level to the next.
 ## L2 to L3: Reviewed -> Bounded iteration
 
 **Minimum requirements:**
-- Tests are reliable (flake rate < 5%)
+- Critical tests complete reliably; measured flakiness and retry behavior are within a justified budget
 - Type checking is enforced (strict mode)
 - Clear module boundaries that scope agent changes
 - Integration tests cover critical paths
@@ -42,11 +44,11 @@ Load `l2-to-l3-hinge.md` for the paired codebase + repo-enabler checklist.
 
 **Minimum requirements:**
 - Property-based tests or contracts cover critical invariants
-- Coverage is tracked and enforced above a threshold
+- Critical claims have relevant, sensitive checks; coverage gaps and thresholds are reviewed in context
 - Deterministic environment and deployment (reproducible environment, infrastructure as code)
 - Architecture decisions are documented
 - CI is the authority for merge decisions
-- Strong feedforward surfaces: instruction file with >10 rules, module boundary enforcement, pre-commit hooks
+- Strong feedforward surfaces: relevant maintained instructions, qualified boundary checks, pre-commit hooks
 - Compound engineering in practice: corrections feed back into durable surfaces
 - Workflow artifacts for in-flight work (plans or specs) linked from agent entry docs
 - First-pass acceptance estimated or tracked; iteration cycles decreasing on bounded tasks
@@ -57,10 +59,10 @@ Load `l2-to-l3-hinge.md` for the paired codebase + repo-enabler checklist.
 
 **Minimum requirements:**
 - Machine-readable specifications for all critical behavior
-- Oracles exist for all critical paths (exact, property, statistical, or LLM-as-judge)
+- Adequate, reviewed oracles cover critical paths under explicit assumptions
 - Evidence pipeline: structured verification evidence feeds merge/deploy decisions
 - Progressive delivery with automated rollback
-- Human review limited to exceptions and architecture changes
+- Humans govern intent, oracle changes and high-consequence exceptions
 - All hidden state documented and config validated
 - Consistent naming and patterns across entire repository
 - Structured errors with actionable messages everywhere
@@ -69,18 +71,8 @@ Load `l2-to-l3-hinge.md` for the paired codebase + repo-enabler checklist.
 - Mature compound engineering: feedback flywheel operational, first-pass acceptance high
 - Excellent context friendliness: files sized for agent windows, layered docs, retrieval-optimized naming
 
-**Gating categories:** Machine-readable intent (must be 90+), Feedforward surfaces (must be 85+), all other categories 75+
-
-**Hard prerequisites (all required — L5 is gated by the weakest, not the average):**
-At L5 humans leave the code-review loop entirely, so the safety net is the oracle, not a reviewer.
-Treat these as pass/fail gates, not scored categories:
-
-- [ ] Codified, **executable** specifications for all critical behavior (not prose — runnable: BDD/Gherkin, contracts, schemas)
-- [ ] A **strong oracle on every critical path** (machine-checkable and deterministic — see the verification plugin's oracle analysis; weak/brittle oracles do not count)
-- [ ] A **reliable simulation/staging environment** that mirrors production closely enough to trust pre-merge validation
-- [ ] Telemetry rich enough to detect **silent failures** — wrong-but-not-crashing behavior — not just exceptions and downtime
-- [ ] Progressive delivery with **automated rollback** triggered by that telemetry
-
-If any prerequisite is missing, the codebase is not L5-ready regardless of score: agents would ship
-defects faster than the (now absent) human reviewer could have caught them. Recommend staying at L4
-and closing the missing prerequisite first.
+**Hard prerequisites:** apply all five canonical IDs from
+`../../assess-readiness/references/autonomy-prerequisites.md`, with their evidence and status
+rules. All must be `met` for the surface to reach L5. Missing, unknown or inapplicable gates
+cap at L4 or below; weak/unknown critical-path oracles can lower the ceiling further.
+Do not add category-score thresholds as substitutes for these gates.

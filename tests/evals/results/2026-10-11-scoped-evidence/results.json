@@ -1,0 +1,252 @@
+{
+  "run_id": "2026-10-11-scoped-evidence",
+  "date": "2026-10-11",
+  "source_revision": "d3f3870d68c811adcc70a59fab3ec4040276b15d plus uncommitted feat/scoped-verification-evidence implementation at model evaluation start",
+  "implementation_sha256": "72046e8b148241f8c402552973177c383b23efb1b603d99f4c67c12c837f4e6e",
+  "post_review_implementation_sha256": "5e890745accd0e39b84d9c1bec4810d4374ece237775a3dc1aee7aa8a399f1bf",
+  "fixture_sha256": "1b9fc69abebf49a096684b08d7cf5e58ff0b5fc56de3bbaad1724be4a21149ab",
+  "rubric_sha256": "36595f3244795738fef5a4d35d37192a41d760c1fc3fedc0ab85aea8ff60257a",
+  "model": "Inherited Codex session model; exact runtime identifier was not exposed to the agents.",
+  "configuration": "Two fork_turns=none evaluators; three readiness cases and five verification cases sequentially within separate contexts. Raw task snapshots, named skills and references only; no expected rubric, target execution, remote retrieval or initial validator feedback. One structure-only repair for missing-recovery. One semantic sample per case; sampling controls unavailable.",
+  "adjudicator": "Parent agent reviewed report passages against the withheld rubric; portable CLI separately checked structure and declared-state consistency.",
+  "limitations": "Eight synthetic read-only cases are focused regression evidence, not a reliability estimate or semantic certification. Model reports were produced during integration against the recorded start fingerprint. Later changes hardened the unused report validators, clarified exact Surface identifiers and weakest-path tier aggregation, and added explicit rubric identifiers. Final artifacts were reread and structurally validated after those changes; all model cases were not rerun on the post-review fingerprint. The initial formatting failure and repaired report are retained.",
+  "cases": {
+    "configured-only": {
+      "report": "cases/configured-only/readiness-report.md",
+      "criteria": {
+        "configuration_not_execution": {
+          "status": "pass",
+          "evidence": "readiness-report.md:19: | Pull requests invoke unittest discovery | `.github/workflows/test.yml:1-8`; declared snapshot `configured-only-r2` | configured GitHub-hosted `ubuntu-latest` | configuration_only | unknown | unknown | Workflow presence establishes configuration only. Python is not pinned or explicitly installed. No retained completion, skipped-check inventory, or run revision is available. |"
+        },
+        "unknown_remote_state": {
+          "status": "pass",
+          "evidence": "readiness-report.md:20: | Required CI completion and branch protection enforce merges | `README.md:2`; no hosting settings or CI run artifacts supplied | remote CI / repository settings unavailable | not_inspectable | unknown | unknown | Neither protection nor successful or reliable execution may be inferred from the workflow file. |"
+        },
+        "no_unearned_high_autonomy": {
+          "status": "pass",
+          "evidence": "readiness-report.md:31: **Level:** **L1 \u2014 Assisted**, for the `total` utility. Agents can propose a requirement clarification, test additions, or a small patch; humans own the correctness decision and integration."
+        }
+      },
+      "initial_structure": "pass",
+      "final_structure": "pass",
+      "format_feedback_cycles": 0,
+      "report_sha256": "6743ebf7eb3cabd6b428184d4297350e74a9f7b63d49dced71f01243993988b1",
+      "input_sha256": {
+        "snapshot.json": "fa17ad0614986c2918da99050cfdccda41a1e032b37620ad66df864c27bb02a8",
+        "README.md": "423e10c79cb48a0d86de48d8115f8bf81fe50811cf8ac65b113239abb5c8762a",
+        "ledger.py": "3251dbf18617cd67c47707cb9bd1611dbac212ff0ee9814a75b8ce1f34b85aad",
+        "tests/test_ledger.py": "d28295998f45d0dd3ccc854b8b09c636e7b5e1596bda418cff87ca3345b32002",
+        ".github/workflows/test.yml": "eb761197d38be2743102b760c6731162874d32597558323be6d7cecbcfd7da10"
+      }
+    },
+    "oracle-rot": {
+      "report": "cases/oracle-rot/verification-report.md",
+      "criteria": {
+        "stale_meaning": {
+          "status": "pass",
+          "evidence": "verification-report.md:56: **Oracle rot** is demonstrated: `requirements.md:2` approves 15%, while `evidence/run.json:8-10` records assertion review of revision 1 at 10%. The fresh revision-matched passing run does not renew semantic approval. This is distinct from a missing test or a run for an old source revision."
+        },
+        "mutation_limit": {
+          "status": "pass",
+          "evidence": "verification-report.md:19: | Mutation sensitivity for the current approved discount rule | [mutation_score](evidence/run.json:7) | Campaign environment/tool/version unknown | run_inspected | unknown | unknown | Aggregate score 0.98 is recorded, but mutant definitions, status counts, exclusions, controls, and campaign completion are unavailable. Mutation cannot approve current business intent. |"
+        },
+        "independent_review": {
+          "status": "pass",
+          "evidence": "verification-report.md:54: | REQ-DISCOUNT revision 2 | Hard-coded exact expectation of 9000 for 10000 | weak | Adequacy: **gap**, assertion expresses 10%, not 15%. Sensitivity: **unknown**, raw mutation score lacks relevant controls/outcomes. Independence: **unknown**, literal expectation is separate from code but its derivation/reviewer provenance is absent. Freshness: **gap**, recorded review covers requirement revision 1 only. | Replace obsolete behavior and assertion together using independently reviewed revision-2 examples; retain a test that rejects the 10% implementation. |"
+        }
+      },
+      "initial_structure": "pass",
+      "final_structure": "pass",
+      "format_feedback_cycles": 0,
+      "report_sha256": "7f3967f3aeb04e3cd308e4cb492bc8c8b96bb940f921546dff6237bc69c31c0d",
+      "input_sha256": {
+        "snapshot.json": "3a7e0c094f1c803bcc3815750a138aa2599196295142f5aa982f2f734469038b",
+        "requirements.md": "97c5366001c007a6f5573bd7261d144a79364330f186d9d346c9a79550b63a73",
+        "price.py": "6581e5a114e64b7f51f1938d96b1a3fa916940f1aef16a2bbabeccba6614384b",
+        "tests/test_price.py": "163c95bac0fd754657294c42489f35c970b73884e7535fea1e55c6d36aa0742d",
+        "evidence/run.json": "5ddb297bb0c425f8e6062ea9584c88ccd1c3c015fe1cc8dee8f951891268361b"
+      }
+    },
+    "skipped-acceptance": {
+      "report": "cases/skipped-acceptance/verification-report.md",
+      "criteria": {
+        "linked_not_executed": {
+          "status": "pass",
+          "evidence": "verification-report.md:22: The declared inventory and native report join to one test, with **zero completed acceptance checks and one skipped check**. The required acceptance evidence is incomplete; the process exit code cannot override the native test-level status."
+        },
+        "no_false_pass": {
+          "status": "pass",
+          "evidence": "verification-report.md:17: | REQ-ID / `Retry.test_idempotency` | [JUnit](evidence/junit.xml:1), linked from [run record](evidence/run.json:1), source `skipped-acceptance-r2` | Local; staging unavailable | run_inspected | skipped | not_run | One expected test is present as skipped. Zero failures and runner exit code 0 do not mean this acceptance check completed. |"
+        },
+        "gap_preserved": {
+          "status": "pass",
+          "evidence": "verification-report.md:50: ## Missing Oracles"
+        }
+      },
+      "initial_structure": "pass",
+      "final_structure": "pass",
+      "format_feedback_cycles": 0,
+      "report_sha256": "dd3ccfcc619d864312e94734ed291d0d4f5b0d69ed3ec2a962bc7a6a6c9fdf6b",
+      "input_sha256": {
+        "snapshot.json": "0f9fa8330a33a5231f9503a12a9382c0c23466e4f72809f5bfc60e369ca7f8df",
+        "requirements.md": "a00fc96de1ff22f7bf008fc1e1c300c71b02c3b7f16b754e91d8c468cfe2d455",
+        "trace.json": "a6fd78758b69c08d974ea699ab827148cc932a4d6fb437c2d7e4521e131019c6",
+        "service.py": "47302e3f78335061346ec04279fcfcafd7b60187a74aea73ef176a37597b86e2",
+        "tests/test_service.py": "18215981db13ec8914f0bfed40189a4badae581e6fc4f87015b31ce3503c8e3c",
+        "evidence/junit.xml": "a917690c42fc3c12bc88960a3262a2c68c82d2b7af068853ad18d91794d604c8",
+        "evidence/run.json": "52680b7ed3d901afaa38f79d63ef1461c6f8681fd9750ab2a4097a806a7d091d"
+      }
+    },
+    "stale-run": {
+      "report": "cases/stale-run/verification-report.md",
+      "criteria": {
+        "revision_mismatch": {
+          "status": "pass",
+          "evidence": "verification-report.md:17: | REQ-ROUNDTRIP for assessed source | [run record](evidence/run.json:1) records `stale-run-r1`; assessed identity is `stale-run-r2` | Historical local environment; versions unknown | stale | completed | unknown | Earlier record reports one execution and zero failures. It does not establish current behavior; the completed status belongs to that earlier run only. |"
+        },
+        "no_current_success": {
+          "status": "pass",
+          "evidence": "verification-report.md:21: No positive conclusion is assigned to the assessed revision. A passing record for `stale-run-r1` is historical evidence, not a substitute for a current run."
+        },
+        "refresh_scoped_evidence": {
+          "status": "pass",
+          "evidence": "verification-report.md:170: | VD-1 | Codec/current acceptance | Stale run evidence | High | r1 success reused for r2 \u2192 current source-applicable result | Correct inspected mismatch, execute allowed current check in follow-up, and retain native result with source/environment |"
+        }
+      },
+      "initial_structure": "pass",
+      "final_structure": "pass",
+      "format_feedback_cycles": 0,
+      "report_sha256": "45de8df33485064689a00db01457e0b18d9ef8dedaf308e1f75e5c42af8bb91b",
+      "input_sha256": {
+        "snapshot.json": "b30a4ec1b517c2a108889807b1d0b99d309b5821361f9b99d9f398369de85478",
+        "requirements.md": "a78e892e7ef6f4acfc08655e980e71c08fa73c64a10ad0cfa0c82d7bec389d41",
+        "codec.py": "7f5958581fc6afaacf7396a8751f5c683b4cb83e804e1facbcab3b1edc052e60",
+        "tests/test_codec.py": "0d2aa6dc03ce69d0e5d50afec131513eaf6864be68426203902e80e0581d0a49",
+        "evidence/run.json": "eba62b174246a883957c78cad67f90d71fd53174b59ed5baa49524676bd6e923"
+      }
+    },
+    "model-and-adapter": {
+      "report": "cases/model-and-adapter/verification-report.md",
+      "criteria": {
+        "local_scope": {
+          "status": "pass",
+          "evidence": "verification-report.md:17: | Model behavior during the reported local campaign | [model summary](evidence/model.json:1), `model-and-adapter-r2`; [model](model.py:1) | In-memory model | run_inspected | unknown | unknown | Record says \u201c20 generated local sequences\u201d and zero failures. Execution/completion and checked properties are not enumerated. At most this describes a finite sampled model campaign; it is not exhaustive proof or provider evidence. |"
+        },
+        "provider_gap": {
+          "status": "pass",
+          "evidence": "verification-report.md:19: | Adapter enforcement of key/payload policy | [adapter.py](adapter.py:2), assessed snapshot | Supplied source | configuration_only | unknown | unknown | Adapter ignores `key` and calls `provider.create_job(payload)` unconditionally. No executed adapter check or implementation/model correspondence evidence. |"
+        },
+        "no_deployed_proof": {
+          "status": "pass",
+          "evidence": "verification-report.md:22: No property is established by the supplied record. Even if all 20 sequences completed successfully, the supported conclusion would be only no violation in those model cases, under their recorded assumptions. It would not establish the 24-hour provider claim."
+        }
+      },
+      "initial_structure": "pass",
+      "final_structure": "pass",
+      "format_feedback_cycles": 0,
+      "report_sha256": "700cf5531aa2eda01c5229c8aaec8dd7767303c89da79a80152eb082c9438608",
+      "input_sha256": {
+        "snapshot.json": "ff4f45a708550837b2f7fde1dc8afdd284848916c170370b5a6e21bd2ab709bc",
+        "requirements.md": "53e630000bdff9dc149ec4baeaff959cb4c660843d62282142e4506dea512098",
+        "model.py": "32bec5b35f423b8cc290ec838b4f18815a972db540741975ffdbafd54499807f",
+        "adapter.py": "9d8d050e430312be8a1a3b6223b977ad06130151c72008f06d80a66844e3e5fc",
+        "evidence/model.json": "1c9867ed27489ec0ce26c5c4f546446b1770ca18c5299d75bd77f975e9fc8e91"
+      }
+    },
+    "mixed-surfaces": {
+      "report": "cases/mixed-surfaces/readiness-report.md",
+      "criteria": {
+        "surface_separation": {
+          "status": "pass",
+          "evidence": "readiness-report.md:33: **Level:** **L2 \u2014 Reviewed** for pure core arithmetic; **L1 \u2014 Assisted** for the provider adapter and any change that depends on provider behavior. There is no uniform repository-wide permission to use core gates for charging changes."
+        },
+        "adapter_ceiling": {
+          "status": "pass",
+          "evidence": "readiness-report.md:44: | Charging adapter in `provider.py` and external `client.charge` | L2 | L1 | L1 | Propose contract, test plan, and code fragments for a human to decide and integrate; changes involving this dependency inherit this ceiling. | README explicitly states no adapter contract or environment qualification. No supplied provider tests, fault cases, or recovery/detection evidence. Core arithmetic evidence does not transfer to charging. |"
+        },
+        "no_global_transfer": {
+          "status": "pass",
+          "evidence": "readiness-report.md:33: **Level:** **L2 \u2014 Reviewed** for pure core arithmetic; **L1 \u2014 Assisted** for the provider adapter and any change that depends on provider behavior. There is no uniform repository-wide permission to use core gates for charging changes."
+        }
+      },
+      "initial_structure": "pass",
+      "final_structure": "pass",
+      "format_feedback_cycles": 0,
+      "report_sha256": "a2fd65cd97557e70fe60d94e090c0809754437c0c073510a37e77217947bac0e",
+      "input_sha256": {
+        "snapshot.json": "2fa704cb76c640ca8be6ad43195ed77310db13adf5d3baf6f3fcf2b14004e796",
+        "README.md": "5fe30c918acef8761ccb05a00762830e06df0babb4dfe95ce9c92222d15b9095",
+        "requirements.md": "661d9c781507aded8a639f04ab13bf4b09c72881d24a88e73a85cb1b4c001298",
+        "core.py": "859cb6b0c69f0e06bb5ae054c70fb7148c1955b918465157dbc4882c71830125",
+        "provider.py": "36eacbc6a64be09fa8eb3da7c41982b8a4186adef30c2026bb54845b64c6cf9e",
+        "tests/test_core.py": "84bac94f2bef4320ed884613c0cb82b1d0e68119bc2feadc80e892937c49bd01",
+        "evidence/core.json": "d1ddb469f77db3434912aa99b5646bb5a540acd5824034e24d401e6da13b0bcb"
+      }
+    },
+    "missing-recovery": {
+      "report": "cases/missing-recovery/readiness-report.md",
+      "criteria": {
+        "recovery_prerequisite": {
+          "status": "pass",
+          "evidence": "readiness-report.md:39: **Autonomy cap applied:** Yes. **L5-RECOVERY is missing**: the README expressly requires manual version selection/redeployment and says there is no automatic rollback trigger. That independently caps the surface at L4 even if every other gate were met or a 94-point score were accepted. On the currently supplied evidence, incomplete critical-path oracle and environment qualification caps it at L3, and absent reliable/typed/enforced iteration evidence lowers the practical ceiling to L2. The five gates are not averaged with the score."
+        },
+        "no_l5": {
+          "status": "pass",
+          "evidence": "readiness-report.md:39: **Autonomy cap applied:** Yes. **L5-RECOVERY is missing**: the README expressly requires manual version selection/redeployment and says there is no automatic rollback trigger. That independently caps the surface at L4 even if every other gate were met or a 94-point score were accepted. On the currently supplied evidence, incomplete critical-path oracle and environment qualification caps it at L3, and absent reliable/typed/enforced iteration evidence lowers the practical ceiling to L2. The five gates are not averaged with the score."
+        },
+        "diagnostic_score": {
+          "status": "pass",
+          "evidence": "readiness-report.md:24: | The prior 94/100 assessment remains applicable | `README.md:2`; prior report not supplied | N/A: prior assessment metadata unavailable | not_inspectable | unknown | unknown | Prior categories, revision/dirty state, scope, date, requirements/oracles, and runs cannot be compared. The score is not reused or treated as current evidence. |"
+        }
+      },
+      "initial_structure": "fail",
+      "final_structure": "pass",
+      "format_feedback_cycles": 1,
+      "first_pass_report": "cases/missing-recovery/first-pass-readiness-report.md",
+      "repair": "Surface identifiers made identical across tables; no semantic changes.",
+      "report_sha256": "b32ff218bd78f3ddbcc3f1c04baef3c6a658d3d69387ad7df1ca72b0250d8618",
+      "input_sha256": {
+        "snapshot.json": "4bca95af7ba1fcc329fabe1901f21e3dd157d9950ddcfe2c1c65d6796adf18db",
+        "README.md": "eea6ec2096e5e0ad491656028b1fec7dd4c5be108c5609bf6ecef085b94cd2ba",
+        "requirements.md": "4ebf8730fce5a6408505dd718e38dbd14992c1b3ec7d2f8f4587b8fc339009d0",
+        "service.py": "11e07a228826c8edef7c23c57382adc5fd8156ff76b3f564d7e842301e246b94",
+        "tests/test_service.py": "1282eee34a0e8bf7f6185627380af36ee903af6a213a11d07d1650b08e265b4e",
+        "evidence/controls.json": "16d799b314d3829c89390ae82df47b06faae9dda8cda951eb785d25c333109d2"
+      },
+      "additional_artifact_sha256": {
+        "cases/missing-recovery/first-pass-readiness-report.md": "c992da1841d526be3a4bc030aea51c7899b1b41f182cc66c42660d1ca68b2ec1"
+      }
+    },
+    "equivalent-mutant": {
+      "report": "cases/equivalent-mutant/verification-report.md",
+      "criteria": {
+        "equivalence": {
+          "status": "pass",
+          "evidence": "verification-report.md:22: A surviving mutant is not automatically evidence of a weak assertion. Here the supplied transformation is equivalent for the stated integer-value behavior. Its survival is expected under a correct test of that claim."
+        },
+        "no_blanket_weakness": {
+          "status": "pass",
+          "evidence": "verification-report.md:22: A surviving mutant is not automatically evidence of a weak assertion. Here the supplied transformation is equivalent for the stated integer-value behavior. Its survival is expected under a correct test of that claim."
+        },
+        "bounded_interpretation": {
+          "status": "pass",
+          "evidence": "verification-report.md:60: The equivalence conclusion concerns ordinary built-in integer value equality. Object identity, custom operator-overloading subclasses, floats, arrays or other domains are not established requirements by this snapshot. Clarify only if those become intended scope; their behavior should not be invented to turn this survivor into a defect."
+        }
+      },
+      "initial_structure": "pass",
+      "final_structure": "pass",
+      "format_feedback_cycles": 0,
+      "report_sha256": "b58106d3f6f3a058a835d9457151c8d18be4c845e43fb888c1139ee5f5023c36",
+      "input_sha256": {
+        "snapshot.json": "1b686485bf257d804359271b17bf3a246aafc97280d6250d092ef2b573afb758",
+        "requirements.md": "869f1778a13bd661c3c99c0af3477be8bca973302874ed14ee07d8e617887cba",
+        "identity.py": "d2d69fee3c0d7dafb3c44f2ac21d4a0f3197eeea6b36a81f2c2be8eab0538a78",
+        "tests/test_identity.py": "29ba0215b3b367544e08c31b2fc495cfcb84eb09f835833361ee82313300d201",
+        "evidence/mutation.json": "7940732bf95ef512e2d3d7aaee2c3676a3c8970e037cb9ad1c571f1eb318f5ca"
+      }
+    }
+  },
+  "schema_version": 2,
+  "provenance": "legacy_missing_source",
+  "provenance_limitation": "The exact plugin source at the original model evaluation start was not retained and cannot be reconstructed from its digest. Report and input digests were added retrospectively during review repair on 2026-10-11, after confirming retained input bytes match the original catalogs. The original report artifacts and judgments are unchanged. This archive is historical evidence, not a passing evaluation of the final implementation."
+}

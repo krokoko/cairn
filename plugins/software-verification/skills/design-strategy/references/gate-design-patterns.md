@@ -2,7 +2,8 @@
 
 ## The three-checkpoint model
 
-Consolidate human review to three high-value gates instead of many low-value interruptions:
+Consider these review purposes when consolidating redundant checkpoints. They need not be three
+separate approvals; preserve existing user authorization and project requirements.
 
 | Gate | Purpose | Human role | Agent role |
 |------|---------|------------|------------|
@@ -14,28 +15,28 @@ Consolidate human review to three high-value gates instead of many low-value int
 
 | Anti-pattern | Symptom | Fix |
 |--------------|---------|-----|
-| Rubber-stamp gate | Reviewer approves >95% without changes | Remove gate or make it agent-only |
+| Rubber-stamp gate | Reviewer rarely changes outcomes | Investigate value and risk before consolidating |
 | Bottleneck gate | PR queue grows faster than review capacity | Automate with agent pre-review, escalate only exceptions |
-| Duplicate gate | Same check done by CI and human reviewer | Remove human check where CI is authoritative |
+| Duplicate gate | Same mechanical check done by CI and reviewer | Consolidate after qualifying CI; retain intent review |
 | Late-stage gate | Issues caught at deploy that could be caught at PR | Shift check earlier (fail fast) |
-| Missing gate | High-risk changes ship with no human review | Add targeted approval for risk class |
+| Missing gate | A consequential decision has no adequate check | Add a scoped check or designated review |
 | Bypassable gate | Agent routes around a hook (`git commit --no-verify`, skipping CI) | Deny bypass commands in agent config; make CI the non-negotiable server-side gate |
 | Silent skip | Artifact exists (TLA+ module, scanner config, formal spec) but gate skips when unwired | Fail loudly — see **Presence ⇒ mandatory** below |
 | Vacuous gate | Gate reports green while checking nothing (empty ruleset, unconstrained invariant) | Require non-empty config + anti-vacuity probe; see **Vacuous gates** below |
 
 ## Presence ⇒ mandatory
 
-If the repo **looks** verifiable — a formal spec on disk, a `(verified=…)` marker, a scanner
-config, an FSM source — the pipeline must either **run the corresponding gate** or **fail with an
-explicit opt-out**. Never silently skip.
+For each check declared required by the project, the pipeline must run it or report an explicit
+missing/unsupported state under the project's opt-out policy. Never turn a silent skip into a pass.
+Inventory formal files and markers, but distinguish active claims from examples and inactive drafts.
 
 | Signal on disk | Mandatory gate behavior |
 |----------------|-------------------------|
 | Requirement with `(verified=kani\|proptest\|tla\|dst)` marker | Matching proof/test/spec must exist and run in verify-quick or CI |
-| TLA+ / Alloy module with invariants | Model checker runs; each invariant has a known-violating mutation the checker must catch |
+| Active TLA+ / Alloy claim | Completed checked scope and relevant known-violating controls; justify unsupported probes |
 | FSM `next()` source declared in config | Spec sync check + regenerated formal artifact in gate path |
-| Secret scanner config present | Non-empty ruleset; empty config = fail (not pass) |
-| Coverage threshold configured | Mutation testing or equivalent on verified core (coverage alone is insufficient) |
+| Required secret scanner | Confirm effective rules including inherited defaults; inspect a known secret control |
+| Coverage threshold configured | Check source/branch scope; use relevant negative controls for assertion sensitivity |
 
 **Auditable opt-out:** "Out of scope" must be declared in versioned config (e.g. exempt list with
 reason), not implied by absence. Accidental absence must never read as passing.
@@ -46,15 +47,17 @@ Worse than no gate: a gate that **manufactures confidence**. Common vacuous patt
 
 | Vacuous pattern | Why it lies | Fix |
 |-----------------|-------------|-----|
-| Secret scanner with no rules | Always green | Fail if config empty; ship default ruleset |
+| Secret scanner with no effective rules | No configured detection | Validate inherited/default rules and a known secret control |
 | TLA+ invariant that constrains nothing | TLC passes vacuously | Anti-vacuity mutation table — flip guard, expect violation |
 | Coverage gate on wrong package | Green while core untested | Scope coverage to verified core crate/module |
-| Mutation testing never run | High line coverage, hollow tests | Run mutants on core; fail on surviving mutants |
-| BDD scenarios exist but no REQ linkage | Scenarios drift from intent | Meta-gate: every active REQ has tagged scenario |
-| Traceability matrix maintained by hand | Agent/human drift undetected | Deterministic script parses IDs/tags; fail on gaps |
+| Assertion sensitivity untested | Coverage alone cannot show detection | Run relevant controls/mutants; investigate equivalent survivors |
+| Acceptance declarations without execution | Scenarios can be listed without running | Compare expected checks with fresh runner reports |
+| Traceability links treated as correctness | IDs can resolve while meaning is stale | Separate deterministic link/execution checks from semantic review |
 
-**Anti-vacuity probe:** for each formal invariant or gate, maintain a **known-bad mutation** the
-tool must reject. If the mutation passes, the gate is toothless — fail the meta-gate, not the product.
+**Anti-vacuity probe:** qualify critical gates with known-good and known-bad controls within the
+claimed scope. A relevant violation passing is a qualification failure; investigate configuration,
+encoding, reachability, and scope before interpreting the product result. Mutation does not establish
+that the requirement is current, and equivalent mutations do not demonstrate weak assertions.
 
 Load `../../detect-ai-smells/references/detection-patterns-gates-formal.md` (AI011) for formal-spec vacuity
 detection patterns.
@@ -69,20 +72,20 @@ not a guardrail. Harden enforcement in layers:
 |-------|-----------|-------------|
 | Agent hooks (post-write) | Run tools after each edit; feed output back | High — agent controls its own loop |
 | Pre-commit hooks | Block commit until tools pass | Medium — `--no-verify` skips them |
-| Deny bypass commands | Agent tool config denies `.*git.*--no-verify.*` and similar | Low — agent cannot issue the command |
-| CI/CD + branch protection | Server-side checks; no merge unless all pass | Lowest — outside the agent's environment |
+| Tool permission controls | Enforce permitted actions independently of tests | Depends on actual tool boundary and alternate paths |
+| CI/CD + branch protection | Required server-side checks | Inspect bypass permissions, identities, and settings |
 
-The non-negotiable gate lives server-side (branch protection + required checks). Local hooks are
-for fast feedback; deny-listing bypass commands keeps the agent honest in between.
+Local hooks provide fast feedback. Server-side policy needs verified configuration and appropriate
+bypass permissions; a command denylist alone does not establish enforcement.
 
 ## Gate positioning by risk class
 
 | Risk class | Recommended gates | Rationale |
 |------------|-------------------|-----------|
-| Low (utilities, internal tools) | CI only | Automated checks sufficient; human review is waste |
-| Medium (business logic, APIs) | CI + agent review | Agent catches intent drift; human escalation on ambiguity |
-| High (payments, auth, data) | CI + agent review + human approval | Human judgment needed for blast radius |
-| Critical (safety, security, compliance) | CI + agent review + domain expert approval | Regulatory or safety obligation |
+| Low (utilities, internal tools) | Fast relevant checks | Retain review where intent is ambiguous |
+| Medium (business logic, APIs) | Boundary evidence and scoped review | Agent review is supplemental evidence |
+| High (payments, auth, data) | Qualified failure/rollback checks and consequential intent review | Follow existing approval policy |
+| Critical (safety, security, compliance) | Supported scoped methods plus applicable expert review | Establish actual obligations, not inferred requirements |
 
 ## Assessing current gate placement
 

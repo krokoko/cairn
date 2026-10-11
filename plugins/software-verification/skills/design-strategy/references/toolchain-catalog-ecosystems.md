@@ -1,6 +1,7 @@
 # Toolchain Catalog (JVM and Cross-Language)
 
 Continues `toolchain-catalog.md`. Java/Kotlin ecosystems and cross-language infrastructure tools.
+Apply that catalog's qualification checklist; none of these entries establishes executed evidence.
 
 ## Java / Kotlin
 
@@ -37,7 +38,7 @@ Continues `toolchain-catalog.md`. Java/Kotlin ecosystems and cross-language infr
 | CI/CD | GitHub Actions, GitLab CI, CircleCI |
 | Progressive delivery | Argo Rollouts, Flagger, LaunchDarkly |
 | Chaos engineering | Chaos Monkey, Litmus, Gremlin |
-| Runtime monitoring | OpenTelemetry, Prometheus + alerts |
+| Telemetry transport / metrics | OpenTelemetry, Prometheus (supply explicit monitored rules separately) |
 | Evidence / provenance | in-toto (attestation format), SLSA (provenance spec/levels), Sigstore/Cosign + GitHub artifact attestations (signing) |
 | Agentic QA | Playwright + agent charters, CDP, Cypress + AI drivers |
 | LLM-as-Judge | OpenAI Evals, Braintrust, custom rubric evaluators |
@@ -48,7 +49,8 @@ Continues `toolchain-catalog.md`. Java/Kotlin ecosystems and cross-language infr
 | Category | Tools |
 |----------|-------|
 | Dependency constraints (JS/TS) | eslint-plugin-boundaries, madge, dependency-cruiser |
-| Dependency constraints (Python) | deptry, import-linter, pydeps |
+| Dependency constraints (Python) | Import Linter; pydeps for graph inspection |
+| Dependency hygiene (Python) | deptry (missing/unused/transitive package dependencies) |
 | Dependency constraints (Java) | ArchUnit, jdepend |
 | Dependency constraints (Go) | go-arch-lint, depguard |
 | API surface stability | openapi-diff, buf breaking, api-extractor, cargo-public-api |
@@ -65,3 +67,9 @@ Continues `toolchain-catalog.md`. Java/Kotlin ecosystems and cross-language infr
 | Custom eval runners | Custom scripts (run agent → check git diff → run tests) |
 | LLM evaluation | OpenAI Evals framework, promptfoo, RAGAS |
 | Trace and observability | Langfuse, Langsmith, Braintrust traces, OpenTelemetry |
+
+## Requirements and evidence records
+
+Consider Sphinx-Needs/Sphinx-Test-Reports, StrictDoc, Reqstool, or Doorstop only when native reports
+and existing documentation do not suffice. Load `traceability-design.md` for a representative pilot
+covering skipped, missing, stale, partial, and reviewed evidence. Record-management is not a semantic oracle.

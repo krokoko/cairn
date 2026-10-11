@@ -17,6 +17,12 @@ Assess the current verification maturity of a codebase. Produce a `verification-
 
 ### Step 1: Inventory existing verification
 
+Load `references/evidence-semantics.md`. Record source revision (including relevant dirty changes),
+assessment date, inspected scope, and evidence basis. Distinguish configured capabilities from
+inspected runs in an Evidence Ledger; use the reference's exact status vocabulary. Existing reports
+may be reused only after checking their revision, environment, and affected scope. Record unavailable
+CI history or hosting settings as unknown; do not infer successful execution from configuration.
+
 Search for all verification-related artifacts:
 
 **Testing:**
@@ -76,33 +82,33 @@ class (A–E):
 | E | Probabilistic / learned | Operational oracles, not unit formal stack |
 
 Record evidence (spec language, domain type, failure modes), recommended verification **depth**
-(floor / standard / deep), and **ceremony risk** when maturity tier 4+ formal-method tools exist on
-Class A with no gap.
-
-Use bug-surface to calibrate maturity expectations: Class C at maturity tier 2 with no formal path is a
-critical gap; Class A at maturity tier 4 with full formal stack may be over-investment.
+(floor / standard / deep), and **ceremony risk** when expensive methods address no identified gap.
+For Class C, inspect schedule/fault exploration and model/environment assumptions; missing relevant
+evidence is the gap, rather than absence of a named formal tool.
 
 ### Step 4: Score verification maturity
 
 Load `references/maturity-model.md` and assign a tier (0-5):
 
 - **Tier 0**: No automated verification
-- **Tier 1**: Basic tests exist, may be unreliable
-- **Tier 2**: Reliable test suite with CI gating
-- **Tier 3**: Generative testing + contracts/schemas
-- **Tier 4**: Formal methods for critical paths + operational validation
-- **Tier 5**: Evidence pipeline with replay, shadow, canary, automated promotion
+- **Tier 1**: Configured checks; operation or reliability unconfirmed
+- **Tier 2**: Reliable, enforced checks with inspected execution evidence
+- **Tier 3**: Risk-matched claims and complementary checks
+- **Tier 4**: Qualified oracles, check sensitivity, and environment fidelity
+- **Tier 5**: Managed evidence, decision policies, and continuing improvement
 
-Score both the overall codebase and each individual component. **Apply Step 3 bug-surface when scoring:**
-Class C/D at maturity tier < 3 → note as under-instrumented in component notes; Class A at maturity
-tier ≥ 4 with no identified gap → note ceremony risk. The maturity tier column and Bug-Surface section
-must be consistent — do not assign tier 4 to a Class A counter without documenting why.
+Assign each component the highest demonstrated tier under the reference's criteria, with unknowns
+and limiting evidence. Configuration alone supports Tier 1; inaccessible scope may be `unknown`.
+The overall tier must hold across in-scope critical paths, not average away their gaps. Record
+justified inapplicability; a simple component can reach an advanced tier without formal methods.
+Keep configured/recommended targets separate from demonstrated maturity.
 
 ### Step 5: Identify missing oracles
 
 For each component, answer: "Can we determine if the output is correct?"
 
-Load `references/verification-taxonomy.md` for oracle types.
+Load `references/verification-taxonomy.md` for oracle types and `references/oracle-lifecycle.md`
+for adequacy, sensitivity, independence, and freshness.
 
 | Oracle type | When applicable |
 |-------------|----------------|
@@ -118,33 +124,32 @@ Load `references/verification-taxonomy.md` for oracle types.
 | LLM-as-Judge | Non-deterministic output where human review is too slow/costly |
 | Human judgment | Ambiguous outputs requiring domain expertise |
 
-For components with third-party integrations, specifically assess:
-- Are external services verified via behavioral twins or only interface mocks?
-- Are integration scenarios stored externally as holdout sets (inaccessible to agents)?
-- Is verification measured as satisfaction (probabilistic) or boolean pass/fail?
+For third-party integrations, inspect actual-service evidence, twin/mock fidelity, version
+assumptions, supported scenarios, and holdout access/feedback controls. Neither a local twin nor
+an interface mock establishes provider behavior without fidelity evidence. Holdouts reduce direct
+exposure but repeated feedback can leak cases.
 
-Flag components with **no oracle at all** as critical gaps. Flag third-party integrations verified only via interface mocks as oracle weakness — agents can fabricate plausible API behavior that mocks will not catch.
+For each consequential oracle, record `supported`, `gap`, or `unknown` for the four lifecycle
+dimensions. Identify the approved claim and requirement/assertion/fixture/helper revisions covered
+by semantic review. Changed inputs make that review stale until the relationship is reviewed.
+Check independent expected values, known-good/known-bad controls, relevant mutations, and incident
+regressions. Investigate equivalent or out-of-scope mutants before attributing survivors to weak tests.
 
-For each oracle that exists, also rate its **strength**, not just its presence (see the "Oracle
-strength" section in `references/verification-taxonomy.md`):
-
-- **Strong**: machine-checkable, deterministic, and generalizing (property checks, contracts,
-  reference/differential comparison). Scales without a human in the loop.
-- **Weak**: brittle or unverified (hardcoded expected values that rot as requirements change, an
-  oracle copied without checking it is itself correct, satisfaction thresholds with no ground truth).
-
-This matters because autonomy is capped by oracle strength: a component can have an oracle and still
-be unsafe for autonomous change if that oracle is weak. Flag **oracle rot** — tests that pass while
-the requirement has drifted, so the oracle no longer asserts the right thing — as a distinct gap from
-"no oracle"; it is more dangerous because it gives false confidence.
+Report strength as qualified / weak / unknown / none for the bounded claim, with evidence.
+Flag **oracle rot** separately from missing or execution-stale oracles: a fresh passing run can
+assert an obsolete rule. Mutation challenges sensitivity; it does not approve current intent.
+Prioritize missing/weak oracles by criticality and affected claims.
 
 ### Step 6: Classify correctness feasibility
 
 For each component, determine:
 
-- **Exact correctness possible**: Deterministic, well-specified, finite inputs — amenable to proof or exhaustive testing
-- **Statistical/empirical only**: Learned, stochastic, environment-dependent — requires approximation
-- **Mixed**: Core logic is deterministic (provable) but integration is non-deterministic (empirical)
+- **Exact within scope feasible**: A declared property is amenable to proof or exhaustive analysis under explicit assumptions
+- **Statistical/empirical**: The available environment/claim requires representative samples and stated uncertainty
+- **Mixed**: Some claims admit proof/exhaustion while integration or outcome claims require empirical evidence
+
+Feasibility is not completed evidence. Name properties, bounds, supported semantics, and remaining
+assumptions; a deterministic component does not imply every correctness claim is provable in practice.
 
 ### Step 7: Determine human review requirements
 
@@ -163,6 +168,10 @@ Components where AI agents could iterate autonomously:
 - Property tests or contracts covering key invariants
 - Low blast radius or easy rollback
 - Clear, well-scoped responsibilities
+
+Make recommendations per changed surface, using inspected oracle/evidence quality, blast radius,
+and recovery. Unknown evidence limits the recommendation. A maturity tier is not an autonomy level
+or permission to act; show the remaining claim/environment gaps for each candidate.
 
 ### Step 9: Assess feedback loop completeness
 
@@ -271,6 +280,10 @@ Search for indicators of operational visibility into verification:
 - **Autonomy compliance telemetry**: Audit logs, override tracking, escalation frequency logging
 - **Domain telemetry**: Business-outcome instrumentation, funnel/conversion analytics, anomaly thresholds on domain KPIs — the stream that catches silent failures (green infra, broken behavior)
 
+Treat coverage, complexity, hotspots, and pass rates as diagnostic signals. Tie a proposed improvement
+to a concrete rule or representative change outcome; a metric increase alone does not establish
+maintainability or oracle adequacy.
+
 For each telemetry stream, classify the current level (0-3):
 
 | Stream | Current level | Key gaps | Impact on verification improvement |
@@ -285,25 +298,29 @@ Flag critical gaps: verification that cannot be improved because there is no mea
 
 ### Step 14: Assess requirement traceability
 
-Evaluate whether intent traces to evidence: requirement → acceptance criterion → test → code → result.
+Evaluate the chain from approved requirement to bounded claim, scenario/property, executed check,
+versioned evidence, and reviewed decision, including source/code mappings.
 **Load `references/traceability-model.md` before scoring** — it defines the 0-3 maturity levels and the
-three RTM properties; do not invent your own scale.
+three completeness dimensions; do not invent your own scale.
 
 Search for these signals:
 
 - **Requirement anchors**: `docs/requirements/`, `docs/specs/`, EARS-style statements, structured issue templates
-- **Executable acceptance criteria**: Gherkin `.feature` files and BDD step definitions (Cucumber, Behave, SpecFlow)
+- **Check mappings**: Requirement tags in ordinary tests, reviewed contracts/properties, or Gherkin scenarios
 - **PR → issue links**: this lives in git history, not the working tree — use `git log` (e.g.
   `git log --oneline -50`) and, if available, `gh pr list`. A valid link is a closing keyword
   (`Closes #123`, `Fixes #123`), a bare `#123`/`Refs:`, or a tracker key (e.g. `PROJ-123`). Sample
   recent merges and report the fraction lacking any link rather than asserting a number you cannot compute.
   If git history or `gh` is unavailable, mark this signal "not inspectable" rather than guessing.
-- **Coverage-by-requirement**: any report mapping requirements to tests (not just lines to tests)
-- **Trace tooling**: Kiro, SpecKit, OpenSpec, BMAD `trace`, AI-DLC
+- **Execution completeness**: expected checks joined to runner results for the assessed source/environment;
+  fresh run directories, skipped/missing/interrupted results, and partial claims remain visible
+- **Review freshness**: requirement/assertion/fixture/helper revisions covered by semantic review
+- **Trace tooling**: existing structured records/scripts or tools from the traceability reference
 
-Classify the overall level (0-3). Assess the three RTM properties (scope verification, impact analysis,
-test sufficiency) and flag the failure each gap allows. Flag Level 0-1 as critical: **intent drift** is
-caught only by slow, fully-human review, which cannot keep pace with agents.
+Classify the overall level (0-3 or unknown). Report link, execution, and semantic completeness
+separately, alongside scope verification, impact analysis, and test-sufficiency gaps. An ID parser
+checks links; semantic sufficiency requires review even when links resolve. Prioritize by consequence
+and the intended operating scope.
 
 ### Step 15: Consolidate verification debt
 
@@ -322,3 +339,5 @@ as issues/Jira tickets with a `verification-debt` label.
 Load `references/report-template.md` for the output structure.
 
 Write `verification-report.md` following the template, including all sections assessed in Steps 1-15 (maturity tier through verification debt).
+Include Evidence Scope and Evidence Ledger. Positive ledger conclusions require `run_inspected` and
+`completed`; semantic approval remains separate. Explain unknowns and how they limit recommendations.

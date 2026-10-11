@@ -6,14 +6,15 @@
 |----------|----------|------------------------|
 | **Criticality** | What happens if this fails? | High -> invest in stronger assurance |
 | **Determinism** | Is behavior reproducible? | Deterministic -> static/formal; non-deterministic -> operational |
-| **Resources** | What expertise and time are available? | Limited -> tests + types; strong -> add formal methods |
+| **Resources** | What expertise and time are available? | Choose the least costly adequate portfolio; more expertise does not itself justify more tools |
 | **Stage** | Design, implementation, pre-release, or production? | Early -> specs; late -> operational validation |
 
 ## Four strong heuristics
 
 ### 1. Critical + Deterministic
 
-Move semantics into specifications and invest in proof-oriented methods.
+Make semantics explicit and evaluate proof-oriented methods for consequential claims where
+sampled evidence leaves an important gap.
 
 **Recommended stack**: Contracts, deductive verification or SMT, property tests, theorem proving for smallest kernels.
 
@@ -42,6 +43,10 @@ Rely on alternative oracles and operational validation.
 **Recommended stack**: Metamorphic relations, differential evaluation, statistical thresholds, shadow testing, canaries, human escalation.
 
 **Typical targets**: ML models, recommendation engines, search ranking, LLM-based features.
+
+These stacks are candidates, not cumulative requirements. Record the bounded claim and expected
+evidence before choosing a tool. Qualify its supported scope and explain omitted/inapplicable
+methods. A documentation-listed capability is not evidence of a completed run.
 
 ## System archetypes
 

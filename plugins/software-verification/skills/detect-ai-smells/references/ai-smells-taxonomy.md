@@ -1,6 +1,7 @@
 # AI Smells Taxonomy
 
-AI smells are surface patterns in model-generated output suggesting content was produced for plausibility rather than understanding. They indicate **comprehension debt** — a gap between what code does and what anyone believes it does.
+AI smells are quality-risk signals often associated with generated output. Confirm each against
+context; they do not establish authorship or prove a defect. They can indicate **comprehension debt**.
 
 ## The 11 AI Smells
 
@@ -15,12 +16,13 @@ AI smells are surface patterns in model-generated output suggesting content was 
 | 7 | **Local Reasoning Violations** | Code requiring understanding of distant files or global state | Medium-High | Import sprawl (>5 modules), hidden singleton access, magic values |
 | 8 | **Implicit Drift** | Unpinned references that silently resolve to different versions over time | Medium-High | `latest` tags, floating version ranges, model aliases, mutable external references |
 | 9 | **Happy-Path-Only Coverage** | Tests and code exercise only the success scenario; error paths, edge cases, and boundaries are untested or unhandled | Medium-High | Tests assert on valid input only; no error-branch/exception tests; no empty/boundary/timeout cases; error branches with no covering test |
-| 10 | **Vacuous Tests** | Tests that execute code but verify nothing falsifiable — they pass regardless of behavior | Medium-High | No assertion at all; assertion only that code does `not throw`; assertions only on stubbed/mock return values; snapshot tests auto-updated without review |
+| 10 | **Vacuous Tests** | Tests unable to reject a relevant violation of their claimed rule | Medium-High | No meaningful assertion, tautological expectations, unreviewed snapshot replacement |
 | 11 | **Vacuous Formal Specs** | Formal specs, invariants, or verification configs that constrain nothing — green gate, zero assurance | High | TLA+ invariant always true; empty scanner ruleset; `(verified=…)` marker with no linked proof; hand-written spec diverged from code with no sync gate |
 
 ## The Pinning Principle
 
-AI008 (Implicit Drift) is grounded in the observation that AI-generated code almost never pins references. Models default to `latest`, omit version suffixes on model IDs, and use floating semver ranges because training data shows both patterns equally. The harm: code works on the day it's generated but silently breaks when the reference resolves differently — with no traceable change in the repository.
+Mutable aliases or unresolved version ranges can change behavior without a repository change.
+Inspect actual resolution/lock behavior; a version range alone does not show that deployed bytes drift.
 
 A real pin has two parts:
 1. **Immutable identifier** — SHA hashes, exact versions, dated model IDs, content-addressed references
@@ -36,8 +38,8 @@ Pinning to an alias (e.g., `gpt-4` instead of `gpt-4-0613`) is not pinning.
 | **Medium** | Increased maintenance cost, compounds over time | Warn in PR, track trend |
 | **Low** | Cosmetic or minor; acceptable if isolated | Informational only |
 
-AI011 default enforcement is **conditional**: block merge when formal specs or `(verified=…)` markers
-exist on disk; warn when no formal artifacts are present (see `ci-integration.md`).
+AI011 enforcement follows active claims and project policy. A required check that silently skips is
+a gap; absent formal artifacts can be justified as inapplicable (see `ci-integration.md`).
 
 ## Compound Risk
 
@@ -47,7 +49,7 @@ Individual smells compound when combined:
 - Plausible fabrication + tests mirroring implementation = tests pass against non-existent APIs
 - Implicit drift + shallow error handling = system silently degrades when pinned reference changes behavior
 - Implicit drift + plausible fabrication = generated code references a version that never existed
-- Happy-path-only coverage + shallow error handling = error paths are both unhandled and untested — guaranteed production failures
+- Happy-path-only coverage + shallow error handling = unhandled and untested failure paths
 - Happy-path-only coverage + tests mirroring implementation = a green suite that proves nothing about real-world robustness
 - Vacuous tests + happy-path-only coverage = high reported coverage with near-zero defect-detection power
 - Vacuous formal specs + traceability markers = `(verified=kani)` theater with no proof obligation
@@ -63,7 +65,8 @@ AI004 (Shallow Error Handling) extends beyond empty catch blocks to encompass **
 - Substituting default values on parse failure without logging
 - Catching exceptions at depth instead of validating at boundaries
 
-The fail-fast principle requires: detect problems at the earliest point (system boundaries, startup, function entry), and surface them in a way that demands attention from the appropriate actor. AI-generated code almost never validates at startup or boundaries — it handles errors deep in call stacks where root cause is obscured.
+Check errors where context is available and surface them according to the approved contract.
+Fallback values can be intentional; inspect logging, recovery, and rejected-case behavior.
 
 ## The Happy-Path Principle
 
@@ -89,13 +92,13 @@ which paths it covers.
 - **AI009 (Happy-Path-Only Coverage)** — the test asserts on real behavior, but only for the *success
   path*; error and boundary paths are unexercised.
 - **AI010 (Vacuous Tests)** — the test exercises code but makes *no falsifiable assertion about its
-  output* — no assertion, only `not throws`, or assertions solely against stubbed return values. It
-  passes regardless of what the code does, so it can never fail.
+  output*. A no-throw assertion can be meaningful for that bounded rule; inspect whether any relevant
+  violation can make the test fail rather than judging only its assertion syntax.
 
 The diagnostic question: *"Can this test ever go red if the code under test is wrong?"* If no, it is
-vacuous. Mutation testing is the strongest signal — a vacuous test kills no mutants. Line coverage is
-the trap: vacuous tests inflate coverage while contributing zero defect-detection power, which is why
-AI010 is rated Medium-High rather than Low despite looking harmless.
+vacuous. Relevant negative controls and mutation challenge sensitivity. Equivalent survivors and
+untested/time-out cases need separate interpretation; neither mutation nor line coverage establishes
+that the assertion represents current requirements.
 
 ## The Vacuous-Spec Principle
 
@@ -106,22 +109,15 @@ load-bearing properties are missing or unconstrained.
   still passes (TLC green on flipped guard, secret scan with zero rules, coverage scoped away from core).
 
 Diagnostic question: *"If I introduce a known violation of the stated property, does the gate fail?"*
-If no, the spec or gate is vacuous. **Anti-vacuity mutations** (required violating edits per
-invariant) are the authoritative fix — stronger than reviewing spec prose by hand.
+If a relevant reachable violation passes, investigate the gate's scope, wiring, and semantics.
+Anti-vacuity controls complement specification review; fingerprints detect change, not meaning.
 
-## Scoring Formula
+## Interpreting findings
 
-```
-smell_score = (high_findings × 3 + medium_findings × 2 + low_findings × 1) / total_files_scanned
-```
-
-Normalized 0-100:
-- **0-10**: Clean — minimal AI smell
-- **11-30**: Mild — some patterns, mostly cosmetic
-- **31-60**: Moderate — structural smells affecting maintainability
-- **61-100**: Severe — significant plausibility-over-understanding patterns
-
-Compound multiplier: 2 smells in same file = ×1.5, 3+ smells = ×2.0.
+Report scoped findings, severity rationale, evidence, and unknowns rather than a universal score.
+Counts, duplication, file length, and import depth prioritize investigation. Do not reward splitting
+files or extracting shared helpers unless the resulting change improves the relevant boundary/task.
+Multiple related signals can prioritize review but do not multiply a measured correctness probability.
 
 ## Rule ID Registry
 
@@ -137,4 +133,4 @@ Compound multiplier: 2 smells in same file = ×1.5, 3+ smells = ×2.0.
 | AI008 | Implicit Drift | warning |
 | AI009 | Happy-Path-Only Coverage | warning |
 | AI010 | Vacuous Tests | warning |
-| AI011 | Vacuous Formal Specs | error if formal artifacts on disk; else warning |
+| AI011 | Vacuous Formal Specs | error for failed required claim; otherwise policy/scoped applicability |

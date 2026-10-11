@@ -21,7 +21,7 @@ For each codebase requirement, pair one repo enabler:
 
 | Codebase requirement | Repo enabler |
 |---------------------|--------------|
-| Strict types in CI | Instruction file with 10+ rules + ADR/spec links |
+| Relevant type checks in CI | Maintained project guidance + ADR/spec links |
 | Reliable, blocking CI | Test-with-code policy in CONTRIBUTING; CI enforces |
 | Module boundaries | Boundary linter + agent review checklist in `AGENTS.md` |
 | Integration tests on critical paths | `docs/plans/` + first packaged skill for repeatable workflows |

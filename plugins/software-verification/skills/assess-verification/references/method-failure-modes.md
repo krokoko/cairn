@@ -14,7 +14,7 @@ recommending methods and to identify false confidence in existing verification.
 | Fuzzing | Strong for crashes but weak for semantic correctness unless paired with assertions | Seed corpus, harness quality, sanitizers |
 | Regression replay | Only protects what is already covered; accretes brittle tests | Historical failing cases, captured workflows |
 | Approval / characterization testing | Snapshot churn; approving a bad baseline locks in the current (possibly wrong) behavior | Stable I/O edges, diff-friendly serialization, disciplined re-approval |
-| Mutation testing | Slow on large codebases; equivalent mutants create noise | Existing test suite to evaluate |
+| Mutation testing | Equivalent/out-of-scope mutants distort scores; cannot detect obsolete intent alone | Existing tests, reviewed violating controls, separate survivor/timeout/untested outcomes |
 
 ## Static and formal methods
 
@@ -37,7 +37,7 @@ recommending methods and to identify false confidence in existing verification.
 
 | Method | Failure modes | Prerequisites |
 |--------|--------------|---------------|
-| Runtime verification | Monitor overhead, spec quality, observability gaps, signal noise | Event instrumentation, executable properties |
+| Runtime verification | Missing/misordered events and finite traces limit conclusions; detection alone is not enforcement | Event instrumentation, executable properties, separate response policy |
 | Shadow testing | Candidate and baseline can diverge for benign reasons; write paths need isolation | Traffic mirroring, comparable observability |
 | Canary delivery | Weak metrics or wrong thresholds let bad versions through; too-small samples | Observability, rollback paths, release policy |
 | Chaos engineering | Can cause real incidents if blast radius is unmanaged; poor hypotheses = random breakage | Steady-state metrics, safety controls, rollback |
@@ -46,9 +46,10 @@ recommending methods and to identify false confidence in existing verification.
 ## The false-confidence trap
 
 Incomplete invariants can produce automated confidence in incorrect behavior. A proof
-that the code satisfies the wrong property is still the wrong system. Always pair
-formal evidence with operational validation. Assurance is relative to a property, a
-model, a specification, and a trusted toolchain.
+that the code satisfies the wrong property is still the wrong system. Review the property
+against intent and pair it with representative environment evidence where that claim depends
+on integration or real use. Assurance is relative to a property, scope, model, specification,
+and trusted toolchain. Use `evidence-semantics.md` to preserve those limits in reports.
 
 ## Development-stage recommendations
 

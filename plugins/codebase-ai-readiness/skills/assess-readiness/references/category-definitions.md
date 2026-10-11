@@ -1,6 +1,8 @@
 # Category Definitions
 
 Load `category-definitions-agent.md` for feedforward, compound engineering, and context engineering.
+Interpret counts and configurations as discovery signals. Use `evidence-scope.md` to distinguish
+observed absence, unavailable evidence and inspected execution; do not score inaccessible controls as absent.
 
 ## Categories
 
@@ -12,7 +14,7 @@ Load `category-definitions-agent.md` for feedforward, compound engineering, and 
 | Naming consistency | File and directory naming patterns |
 | Separation of concerns | Routes vs logic vs data in distinct directories |
 | Architectural isolation | WASM, sandboxed containers, process separation, stable/experimental split |
-| Mechanically-enforced boundaries | Custom linters, structural tests, or dependency-direction checks in CI |
+| Mechanically-enforced boundaries | Custom linters, structural tests, or dependency checks; inspect allowed/forbidden controls, parser scope and exceptions |
 
 ### Documentation
 | Signal | Where to check |
@@ -25,7 +27,7 @@ Load `category-definitions-agent.md` for feedforward, compound engineering, and 
 | Signal | Where to check |
 |--------|----------------|
 | Test directories exist | `test/`, `tests/`, `__tests__/`, `*_test.*`, `*_spec.*` |
-| Test-to-source ratio | Count test files vs source files (>0.5 is good) |
+| Relevant claims exercised | Sample critical boundary assertions and inspected runs; file counts alone do not establish test adequacy |
 | Integration test separation | Separate directories or markers for integration tests |
 | DI / interfaces | Constructor injection, interface types, trait objects |
 
@@ -33,7 +35,8 @@ Load `category-definitions-agent.md` for feedforward, compound engineering, and 
 | Signal | Where to check |
 |--------|----------------|
 | CI config exists | `.github/workflows/`, `.gitlab-ci.yml`, `Jenkinsfile` |
-| Multiple checks + coverage | Count jobs/steps; `codecov.yml`, branch protection rules |
+| Completed required checks | Runner results, expected check inventory, source revision, skipped/missing outcomes and inspectable branch protection |
+| Coverage gaps | Identify important unexercised decisions; execution coverage does not establish assertion or requirement quality |
 | Flakiness signals | `retry:`, `flaky` annotations, timeout overrides |
 | Shift-left checks | `.pre-commit-config.yaml`, `.husky/`, `lefthook.yml`, watch mode configs |
 | Test impact analysis | pytest-testmon, Jest `--onlyChanged`, Launchable — run only affected tests (essential at agent test volume) |
@@ -70,14 +73,14 @@ Load `spec-first-artifacts.md` for spec-first scoring bands and the cap rule.
 
 | Signal | Where to check |
 |--------|----------------|
-| Stable requirement IDs | `docs/requirements/`, `spec/requirements/`, `REQ-*.md` with frontmatter |
+| Versioned requirement records | Requirement docs, test annotations or reviewed contracts with stable claim identity |
 | API + data schemas | `openapi.*`, `*.graphql`, `*.proto`, `*.schema.json`, Zod/Pydantic |
 | Contracts / property tests | Assertions, invariants, Hypothesis, fast-check |
 | Formal specs | `*.tla`, `*.als` (Alloy), `*.dfy` (Dafny) |
-| Executable acceptance criteria | Gherkin `.feature` files; BDD step defs; scenario tagged per REQ |
-| Pure verified core | Domain logic in IO-free module/crate; adapters in outer layer |
+| Executable acceptance criteria | Ordinary tests/contracts or BDD with step definitions; inspect actual relevant execution |
+| Separable core | Domain logic can be checked apart from adapters; separation alone is not verification |
 | Determinism ports | Injected Clock/Rng/Id; no ambient `now()`/thread RNG in domain |
-| Requirement traceability | PRs link issues (`Closes #`); tests tag requirement IDs; requirement-coverage report |
+| Requirement traceability | Links, expected/actual executions and current assertion review; partial claims/deviations remain explicit |
 | Regenerative readiness | Components definable by specs+tests alone; can be deleted and rebuilt |
 
 ### Progressive context disclosure

@@ -22,7 +22,7 @@ work is improving over time—not only whether the repo is technically checkable
 | Labels for agent-assisted work | Issue/PR label configs |
 | Documented review rubric for agents | `AGENTS.md`, `CONTRIBUTING.md`, review skill or checklist |
 | Retrospective or learning docs updated after reviews | `docs/learnings/`, workflow artifact dirs |
-| Instruction file growth after corrections | `AGENTS.md` / `CLAUDE.md` git history or rule count |
+| Maintained lessons after corrections | `AGENTS.md` / `CLAUDE.md` history of useful edits and obsolete-rule removal |
 
 ## Recommendations by autonomy level
 
@@ -31,7 +31,7 @@ work is improving over time—not only whether the repo is technically checkable
 | L0-L1 | Optional; focus on README and basic docs |
 | L2 | Track iteration cycles informally on agent PRs |
 | L3 | Estimate first-pass acceptance monthly; add rules after repeated corrections |
-| L4 | Target first-pass acceptance ≥50% on bounded tasks; gate merges on CI not re-prompting |
+| L4 | Track comparable bounded-task outcomes and rework; use reviewed evidence for merge decisions |
 | L5 | Track all three metrics; feed learnings into specs, tests, and instruction files |
 
 ## Report output
@@ -42,6 +42,28 @@ Always include a **Collaboration effectiveness** section with:
 2. **Infrastructure**: which measurement enablers exist or are missing
 3. **Recommendations**: 2-4 concrete steps to start or improve tracking
 4. **Link to roadmap**: actions that improve both compound engineering and collaboration
+
+## Representative maintenance outcomes
+
+Distinguish concrete rules, diagnostic signals and observed outcomes. Dependency violations
+can verify a configured rule; complexity, coverage and change coupling identify areas to
+investigate. Neither proves that a future change will be easy.
+
+Where useful, inspect or propose a realistic task such as adding an adapter through documented
+extension points. An assessment may recommend the exercise without performing an unrequested
+implementation change. Record:
+
+| Field | What to retain |
+|-------|----------------|
+| Task and scope | Requirement, affected surface, baseline revision and expected extension point |
+| Change spread | Expected vs unexpected files/modules changed; dependency direction preserved or violated |
+| Effort | Observed time/correction cycles and measurement limits |
+| Outcome | Relevant completed checks, regressions, boundary violations and unresolved friction |
+
+Use allowed and deliberately forbidden examples to qualify architecture checks, including
+supported indirect imports, parser coverage and exceptions. A shorter file or lower complexity
+score accompanied by more cycles is not demonstrated improvement. Generalize only to comparable
+tasks; distinguish measured outcomes from estimates and `not measured`.
 
 ## Alignment with autonomy level
 

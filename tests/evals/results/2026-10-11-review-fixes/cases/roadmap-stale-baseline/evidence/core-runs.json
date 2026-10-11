@@ -1,0 +1,9 @@
+{
+  "source_revision": "roadmap-stale-baseline-r3",
+  "scope": "core.py and tests/test_core.py; REQ-TOTAL/1 only",
+  "environment": "CPython 3.12",
+  "repeats": 3,
+  "executed_per_repeat": 1,
+  "failed": 0,
+  "adapter_calls": 0
+}

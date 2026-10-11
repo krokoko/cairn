@@ -2,9 +2,8 @@
 
 ## Definition
 
-Compound engineering ensures every shipped unit of work converts its lessons into
-durable, agent-readable surfaces. The principle: each feature should make subsequent
-features easier to build, not harder.
+Compound engineering preserves useful lessons in durable, agent-readable surfaces.
+Assess whether those lessons improve subsequent comparable work.
 
 A codebase with strong compound engineering readiness has "landing strips" where
 institutional knowledge accumulates systematically rather than evaporating between
@@ -31,11 +30,11 @@ live in-repo—not only in chat or issue comments.
 ## Scoring signals
 
 ### Strong compound readiness (score 76-100)
-- Instruction file with >10 project-specific rules showing iterative growth
+- Maintained instruction file with relevant lessons from prior work
 - Custom skills or workflows for repeated tasks (code generation, review, deployment)
 - Hooks enforce conventions discovered through past mistakes
 - Tests encode past bugs as regression checks
-- Evidence of recent updates to instruction files (growing, not stale)
+- Evidence of useful updates and removal of obsolete/conflicting instructions
 - Workflow artifact dirs present with recent feature-scoped docs (see `workflow-artifacts.md`)
 - First-pass acceptance rate tracked or improvable (see `collaboration-metrics.md`)
 
@@ -63,21 +62,19 @@ live in-repo—not only in chat or issue comments.
 
 ## The compounding effect
 
-Without durable surfaces, agent productivity stays flat: the 100th task is as hard as
-the first because no institutional memory accumulates. With strong compound engineering,
-each correction feeds back into the system:
+Look for evidence that corrections influence subsequent work:
 
 ```
-Correction → Rule in instruction file → Agent avoids mistake next time
-Bug → Regression test → Agent never reintroduces the bug
-Convention → Hook → Convention enforced automatically
+Correction → Maintained guidance → Observe whether comparable mistakes decrease
+Bug → Sensitive regression test → Detect the covered recurrence
+Convention → Qualified hook → Check the supported cases
 ```
 
 ## Critical companion: maintenance
 
 Codified knowledge rots. Rules contradict, skills become stale, hooks block forgotten
 requirements. Compound readiness includes evidence of maintenance:
-- Instruction files updated within last 30 days (not stale)
+- Instruction files reviewed when requirements/tooling change; a recent timestamp alone is insufficient
 - Hooks that match current tooling (not broken or bypassed)
 - Tests that still test relevant behavior (not testing removed features)
 
@@ -87,3 +84,5 @@ requirements. Compound readiness includes evidence of maintenance:
 modification — indicates whether compounding is working. This metric is aspirational
 (most teams don't track it explicitly), but the infrastructure to *enable* tracking
 is assessable.
+Compare similar task scopes and retain rework/regression outcomes so easy tasks or permissive
+acceptance do not masquerade as improvement.
