@@ -42,14 +42,23 @@ or Limits; do not force all run metadata into the table itself.
 - A timeout, skipped check, stale report or unresolved obligation is not a positive result.
   Preserve execution state. For stale evidence, that state describes the historical artifact;
   its conclusion about the current scope is always `unknown` or `incomplete`, including when
-  the historical execution was skipped, unsupported or not run.
+  the historical execution was skipped, unsupported or not run. `incomplete` describes required
+  current analysis that remains unfinished, not an interrupted historical run; identify it in
+  Limits. Use `unknown` if the current completion state is unknown.
 - A counterexample can be useful even when a campaign did not finish; retain its reproducer.
 - For inaccessible CI/history, use `not_inspectable` + `unknown` + `unknown`.
   A present configuration without inspected run evidence is normally
   `configuration_only` + `unknown` + `unknown`; use `not_run` only when that is known.
+- An unconditional source skip may use `configuration_only` + `skipped` + `not_run`.
+  Cite its declaration, assessed revision and unconditional scope in Limits; no observed run
+  is implied. A conditional skip with an unestablished condition remains `unknown` + `unknown`.
 - `not_applicable` requires a scope-specific reason. Never use it to hide missing evidence.
 - Distinguish local doubles from deployed dependencies. Agreement between a test and code
   using the same expectation helper does not establish independent correctness.
+
+Use `-` for no additional limits or findings; bracketed references such as `[ADR-7]` are valid.
+Required identities, evidence states and scope metadata still need meaningful values.
+Replace template tokens such as `[Component]` with the assessment.
 
 ## Reusing a report
 

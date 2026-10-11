@@ -26,7 +26,7 @@ Draft/example artifacts can be explicitly inapplicable. Load `detection-patterns
 
 | Level | Meaning | When appropriate |
 |-------|---------|-----------------|
-| **Blocking** | Fails build, prevents merge | High-severity smells (AI001, AI004, AI011 when formal specs or verified markers exist) |
+| **Blocking** | Fails build, prevents merge | Required checks for consequential claims, including active AI011 verification claims |
 | **Warning** | PR annotation, does not block | Scoped findings needing review or gates in calibration |
 | **Informational** | Report only, trend tracked | Low-severity (AI006), new gates in trial period |
 

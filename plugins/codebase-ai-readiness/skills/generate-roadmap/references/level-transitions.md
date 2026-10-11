@@ -1,7 +1,7 @@
 # Level Transitions
 
 Requirements for advancing an assessed surface. Load
-`../../assess-readiness/references/autonomy-prerequisites.md` for the shared ceilings and L5
+`../../assess-readiness/references/autonomy-prerequisites.md` for the shared ceilings and L4/L5
 gate contract. A transition requires evidence; a score or completed planning document is insufficient.
 
 ## L0 to L1: Human only -> Assisted
@@ -32,6 +32,11 @@ gate contract. A transition requires evidence; a score or completed planning doc
 - Integration tests cover critical paths
 - Required checks block merge on failure
 
+For the reliability decision, identify the project budget and denominator (first attempts, retries,
+and final outcomes separately). If absent, inspect the latest 20 comparable runs as an initial sample,
+report failures that pass unchanged on retry, and propose a budget from failure cost and feedback
+delay. A missing sample/budget stays unknown; a blanket "<5%" threshold does not establish reliability.
+
 **Gating categories:** Typing strength, Testable boundaries, CI reliability
 
 **Collaboration:** Begin estimating iteration cycles on agent-assisted PRs; optional workflow
@@ -43,7 +48,8 @@ Load `l2-to-l3-hinge.md` for the paired codebase + repo-enabler checklist.
 ## L3 to L4: Bounded iteration -> Verified autonomy
 
 **Minimum requirements:**
-- Property-based tests or contracts cover critical invariants
+- `L4-INTENT` and `L4-ORACLES` are both `met` for the proposed scope and critical dependencies
+- Reviewed tests, properties or contracts cover critical invariants with an appropriate portfolio
 - Critical claims have relevant, sensitive checks; coverage gaps and thresholds are reviewed in context
 - Deterministic environment and deployment (reproducible environment, infrastructure as code)
 - Architecture decisions are documented
@@ -54,6 +60,9 @@ Load `l2-to-l3-hinge.md` for the paired codebase + repo-enabler checklist.
 - First-pass acceptance estimated or tracked; iteration cycles decreasing on bounded tasks
 
 **Gating categories:** Machine-readable intent, Testable boundaries, Deterministic environment and deployment, Progressive context disclosure, Feedforward surfaces, Compound engineering readiness
+
+Use the canonical L4 evidence and status rules from `../../assess-readiness/references/autonomy-prerequisites.md`.
+Missing/unknown scoped intent or oracle evidence caps the surface at L3 regardless of category scores.
 
 ## L4 to L5: Verified autonomy -> End-to-end autonomous
 

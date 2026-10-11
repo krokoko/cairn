@@ -8,10 +8,10 @@ Continues `detection-patterns-gates.md`. AI011 and formal-spec gate patterns.
 |-----------|-------|-----------------|
 | Anti-vacuity controls | Custom mutation runner invoking the supported checker | Relevant invariant violations not detected |
 | Spec↔code sync gate | Generated TLA+ from FSM, diff check on regen | Model checks stale or incomplete transition table |
-| Verified-marker enforcement | Script parsing `(verified=…)` + `implements_in` | Markers claiming proof with no linked artifact |
+| Verified-marker enforcement | Script parsing active `(verified=…)` claims + `implements_in` | Active claims of proof with no linked artifact |
 | Effective scanner rules | Inspect defaults/inheritance and known-secret control | No effective detection despite a green scan |
 | Coverage scope validation | Coverage scoped to verified core crate/module | Green coverage on adapter code while core untested |
-| Presence ⇒ mandatory meta-gate | Custom CI step | Formal artifact on disk but gate skipped silently |
+| Required-claim meta-gate | Custom CI step | An active required formal check is skipped silently |
 
 **Vacuous-spec principle:** qualify a critical claim with a relevant known-bad control and a known-good
 case. If a genuine violation passes, investigate configuration, reachability, and scope; do not
@@ -39,6 +39,6 @@ grep -rn '(verified=' docs/requirements spec/requirements 2>/dev/null
 grep -Ern 'rules[[:space:]]*=[[:space:]]*\[\]' .gitleaks.toml .harness/config/gitleaks.toml 2>/dev/null
 ```
 
-Load `../../design-strategy/references/gate-design-patterns.md` for presence⇒mandatory and vacuous-gate
-anti-patterns. Add to minimum viable gate set (priority 10): anti-vacuity probes + presence⇒mandatory
-meta-gates for active formal claims or required checks; document drafts and inactive examples.
+Load `../../design-strategy/references/gate-design-patterns.md` for required-claim and vacuous-gate
+patterns. Add scoped anti-vacuity probes and meta-gates for active formal claims or required checks;
+document drafts and inactive examples without making every artifact on disk mandatory.

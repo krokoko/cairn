@@ -23,6 +23,12 @@ Exclude generated/vendor output when measuring. Counts locate investigation targ
 shorter file is not proof of single responsibility or easier maintenance. Avoid splitting
 cohesive code solely to meet a line threshold.
 
+For repeatable triage, start with the three largest maintained source files per major component,
+or the project's existing size rule. A 500-line warning can locate candidates; under 300 lines is
+not automatically good. Trace a representative task through each candidate and record unrelated
+concerns, navigation steps, unexpected edits, and new coupling. Recommend a split only when that
+exercise shows a boundary problem; otherwise retain the file with the rationale.
+
 ### 2. Layered documentation for progressive loading
 
 Agents should be able to load context progressively — from high-level overview to

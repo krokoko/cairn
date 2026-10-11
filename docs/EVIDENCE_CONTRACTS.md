@@ -25,6 +25,9 @@ when the rest of a campaign was interrupted. Positive conclusions require inspec
 completed execution. A current skipped check yields `not_run`; unavailable remote execution
 is `unknown`. A stale artifact retains its historical execution state, while its conclusion
 for the assessed revision must be `unknown` or `incomplete`.
+An unconditional skip visible in source may use `configuration_only | skipped | not_run`,
+with its source location and reason cited. This declares a source exclusion, not an inspected
+run; a skip dependent on unknown runtime conditions stays `unknown`.
 
 Keep requirement/assertion review separate from execution freshness. A fresh run can check
 an obsolete rule. Record the approved requirement, assertion, fixture and helper revisions;
@@ -46,12 +49,17 @@ python3 plugins/codebase-ai-readiness/scripts/check-report.py --check readiness-
 The CLI exits nonzero for missing sections, empty required metadata, unfinished assessment
 cells, missing table rows, invalid states, and selected contradictions among declared states.
 Every matching contract table is checked, including tables split into subsections.
-Fixed row labels do not count as completed assessments.
+Fixed row labels do not count as completed assessments. Ordinary identifiers such as
+`[ADR-7]` are valid; only known template tokens are rejected as placeholders. Use `-` for
+none in optional findings cells, not for required identities, state values, or scope metadata.
 
 Readiness reports declare two L4 prerequisites for reviewed executable intent and adequate
 critical-path oracles, separately from the five stricter L5 prerequisites. Missing or unknown
 L4 prerequisites cap the recommendation at L3; L5 requires all seven prerequisites to be met.
 Declared recommendations cannot exceed their provisional score or evidence ceiling.
+An unknown provisional score does not imply weak evidence: a known, justified evidence
+ceiling and met prerequisites may support L4/L5 without an aggregate score. An unknown
+evidence ceiling cannot support above L3. Record the distinction in the surface rationale.
 The readiness summary uses `**Level**: L0` through `L5` and cannot exceed the lowest assessed
 surface recommendation; explain scoped differences in Surface Autonomy.
 Each plugin includes its own validator and contract file and can be installed independently.
@@ -94,4 +102,4 @@ Readiness scores remain diagnostic heuristics. Unknown categories remain visible
 assessed weight; thresholds and file/rule counts are not improvement targets. Recommendations
 remain scoped advice rather than operating permissions.
 
-For reproducible behavioral checks, use the [independent evaluation workflow](./SKILL_EVALUATIONS.md).
+To retain and audit skill-evaluation evidence, use the [evaluation workflow](./SKILL_EVALUATIONS.md).

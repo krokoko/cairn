@@ -148,9 +148,12 @@ Recommend:
 Flag components where verify-full tools run on every save (blocks agents) or Check tier runs only in
 CI (late feedback).
 
-When depth and consequence differ, address both: simple high-impact changes need strong relevant
-checks without automatically needing model checking; hidden interleavings need appropriate exploration
-even in a small component. Document the selection and remaining scope instead of defaulting to a tier.
+When bug-surface depth and consequence suggest different requirements, use the higher applicable
+evidence requirement: satisfy both sets of claims, retaining the stronger requirement where they
+overlap. Low-impact Class C still needs relevant schedule/fault exploration; high-impact Class A
+needs sensitive checks and consequential intent review without automatically needing model checking.
+If requirements conflict, record the unresolved decision and owner; do not silently pick the cheaper
+option. Document scope and exceptions instead of choosing tools from a maturity label.
 
 ### Step 8: Design feedback loop improvements
 

@@ -34,6 +34,19 @@ before assigning tiers; use `bug-surface-routing.md` to identify relevant failur
 - This rubric replaces the earlier method ladder. Record the rubric version/date when comparing
   historical reports; an unchanged codebase may receive a different tier under revised criteria.
 
+## Read-only assessment and access limits
+
+Read-only does not mean configuration-only: inspect retained JUnit/SARIF/JSON reports, repeat-run
+history, known-good/bad control results, requirement review records, and dated hosting-settings
+exports supplied with the repository or accessible through allowed reads. Bind each to revision and
+scope; a screenshot or claimed pass without that identity cannot establish current execution.
+
+If only source/configuration is available, Tier 1 is often the highest demonstrated tier. Name the
+missing evidence and a proposed target separately; do not lower an uninspectable control to absent.
+Tier 2+ does not require a particular hosting provider: inspect the actual decision gate, or justify
+remote merge enforcement as inapplicable for a scope with no remote merge/release dependency.
+Do not launch expensive or externally mutating checks solely to raise the assessment's tier.
+
 ## Tier criteria
 
 ### Tier 1 — Configured

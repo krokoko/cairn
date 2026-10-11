@@ -22,6 +22,7 @@ assessment date, inspected scope, and evidence basis. Distinguish configured cap
 inspected runs in an Evidence Ledger; use the reference's exact status vocabulary. Existing reports
 may be reused only after checking their revision, environment, and affected scope. Record unavailable
 CI history or hosting settings as unknown; do not infer successful execution from configuration.
+Read-only assessment can use supplied run/review/settings artifacts; load `references/maturity-model.md` for access limits and evidence needed beyond configuration.
 
 Search for all verification-related artifacts:
 
@@ -102,6 +103,9 @@ and limiting evidence. Configuration alone supports Tier 1; inaccessible scope m
 The overall tier must hold across in-scope critical paths, not average away their gaps. Record
 justified inapplicability; a simple component can reach an advanced tier without formal methods.
 Keep configured/recommended targets separate from demonstrated maturity.
+Cross-check component tiers, bug surfaces, and oracles: Tier 3+ requires evidence addressing important
+applicable failures, including Class C schedules/faults and Class D rejected inputs. A qualified simple
+Class A component may reach a high tier; flag ceremony only for costly checks with no identified need.
 
 ### Step 5: Identify missing oracles
 
@@ -139,6 +143,8 @@ Report strength as qualified / weak / unknown / none for the bounded claim, with
 Flag **oracle rot** separately from missing or execution-stale oracles: a fresh passing run can
 assert an obsolete rule. Mutation challenges sensitivity; it does not approve current intent.
 Prioritize missing/weak oracles by criticality and affected claims.
+A claim with no oracle has a critical verification gap: correct and incorrect behavior cannot be
+distinguished. Record it, retain review, and prioritize by consequence; not every such component is high risk.
 
 ### Step 6: Classify correctness feasibility
 
@@ -206,8 +212,8 @@ Identify all human review and approval checkpoints in the development workflow:
 
 Branch protection rules and required-approval counts live in the hosting platform's settings, not
 the working tree. Read them with `gh api` (e.g. `gh api repos/{owner}/{repo}/branches/{branch}/protection`)
-when available; if `gh`/network is unavailable, mark these "not inspectable from working tree" rather
-than assuming they are absent.
+when available, or inspect a dated, scoped settings export. Otherwise record `not_inspectable`
+observation and `unknown` execution/conclusion in the ledger; explain the access limit.
 
 For each gate, evaluate:
 
@@ -311,7 +317,7 @@ Search for these signals:
   `git log --oneline -50`) and, if available, `gh pr list`. A valid link is a closing keyword
   (`Closes #123`, `Fixes #123`), a bare `#123`/`Refs:`, or a tracker key (e.g. `PROJ-123`). Sample
   recent merges and report the fraction lacking any link rather than asserting a number you cannot compute.
-  If git history or `gh` is unavailable, mark this signal "not inspectable" rather than guessing.
+  If history or `gh` is unavailable, record `not_inspectable` observation and `unknown` execution/conclusion.
 - **Execution completeness**: expected checks joined to runner results for the assessed source/environment;
   fresh run directories, skipped/missing/interrupted results, and partial claims remain visible
 - **Review freshness**: requirement/assertion/fixture/helper revisions covered by semantic review

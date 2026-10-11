@@ -57,9 +57,12 @@ In `## Surface Autonomy`, use exactly:
 Use exactly `L0`–`L5` or `unknown` in the two bound columns; put rationale in Blockers.
 Recommended level is exactly `L0`–`L5` and cannot exceed either known bound.
 If no score is defensible, use `unknown` for the provisional level and make only a
-conservative evidence-based recommendation. An unknown evidence ceiling cannot support above
-L3. A repo-wide summary must not imply permission on excluded surfaces or conceal the lowest
-relevant dependency ceiling.
+conservative evidence-based recommendation. A known evidence ceiling can support L4 or L5
+despite an unknown provisional score when the applicable prerequisites are `met`: the score is
+a diagnostic estimate, while the ceiling comes from direct qualification of the operating scope.
+Explain the missing score and the supporting evidence. An unknown evidence ceiling cannot
+support above L3 because qualification itself is unresolved. A repo-wide summary must not imply
+permission on excluded surfaces or conceal the lowest relevant dependency ceiling.
 
 In `## Recommended Autonomy Level`, write `**Level**: L0` (using the applicable L0–L5 value)
 as one exact value, without a tier name or additional level on that line. This conservative

@@ -114,4 +114,4 @@ Write `readiness-report.md` at the codebase root using this structure:
 Replace placeholders with substantive findings. Use `evidence-scope.md` for state vocabulary
 and positive-result constraints. Use `autonomy-prerequisites.md` for canonical gate IDs,
 status values and ceiling rules; repeat both L4 and all five L5 rows for each assessed surface.
-Category scores may be `unknown` or justified `not applicable`; do not invent zeroes.
+Category scores may be `unknown` or justified `not_applicable`; do not invent zeroes.

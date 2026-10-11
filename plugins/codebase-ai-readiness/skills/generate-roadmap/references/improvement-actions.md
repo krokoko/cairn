@@ -3,8 +3,13 @@
 Load `improvement-actions-agent.md` for agent surfaces. Select actions from observed gaps;
 effort is indicative. Adapt each acceptance criterion to the surface, claim and environment.
 These actions do not promise score increments or demonstrate outcomes before execution.
+Examples below are candidates, not mandatory dependencies; prefer existing project tools and name
+the actual file/configuration to change in each roadmap action.
 
 ## Structure and modularity
+
+Examples: dependency-cruiser, Import Linter or ArchUnit for rules; madge for graph discovery;
+separate packages, containers or WASM for justified isolation. Discovery alone is not enforcement.
 
 | Action | Effort | Failure addressed | Acceptance criterion |
 |--------|--------|-------------------|----------------------|
@@ -15,6 +20,9 @@ These actions do not promise score increments or demonstrate outcomes before exe
 
 ## Documentation
 
+Examples: README setup/verification commands, MADR templates in an ADR directory, API docstrings,
+and CHANGELOG entries with commitlint or the existing release tooling.
+
 | Action | Effort | Failure addressed | Acceptance criterion |
 |--------|--------|-------------------|----------------------|
 | Improve setup and verification instructions | Small | New contributors cannot reproduce the workflow | A clean-environment trial reaches the documented checks; unresolved setup dependencies are recorded |
@@ -22,6 +30,9 @@ These actions do not promise score increments or demonstrate outcomes before exe
 | Document public APIs and compatibility changes | Medium | Consumers infer behavior incorrectly | Examples and compatibility claims are checked against the current revision |
 
 ## Testable boundaries
+
+Examples: pytest/Jest/Go test for accepted/rejected cases; Hypothesis, fast-check or proptest for
+invariants; test factories and injected clock/network seams; policy in CONTRIBUTING and CI.
 
 | Action | Effort | Failure addressed | Acceptance criterion |
 |--------|--------|-------------------|----------------------|
@@ -33,6 +44,9 @@ These actions do not promise score increments or demonstrate outcomes before exe
 
 ## CI reliability
 
+Examples: GitHub Actions/GitLab CI required jobs and hosting protection rules; ESLint/ruff/clippy;
+pre-commit or lefthook; pytest-testmon/Jest `--onlyChanged` with a full-run fallback.
+
 | Action | Effort | Failure addressed | Acceptance criterion |
 |--------|--------|-------------------|----------------------|
 | Add or repair CI test execution | Medium | Configured checks do not run on relevant changes | A completed run binds expected checks and results to the target revision |
@@ -42,6 +56,9 @@ These actions do not promise score increments or demonstrate outcomes before exe
 
 ## Typing strength
 
+Examples: TypeScript strict mode, mypy/pyright strict settings, and Zod/Pydantic boundary validators;
+check that the exact local configuration is also used by CI.
+
 | Action | Effort | Failure addressed | Acceptance criterion |
 |--------|--------|-------------------|----------------------|
 | Enable relevant strict type checks | Small | Invalid states cross typed boundaries | Known invalid examples fail under the CI configuration |
@@ -49,6 +66,9 @@ These actions do not promise score increments or demonstrate outcomes before exe
 | Type and validate API boundaries | Medium | External data is trusted without validation | Invalid boundary inputs are rejected; supported valid inputs remain accepted |
 
 ## Deterministic environment and deployment
+
+Examples: Docker/devcontainer, pinned mise or Nix inputs, `.env.example` plus config validation,
+and CDK/Terraform/Pulumi with synth/plan checks and a scoped staging/recovery exercise.
 
 | Action | Effort | Failure addressed | Acceptance criterion |
 |--------|--------|-------------------|----------------------|
@@ -58,6 +78,9 @@ These actions do not promise score increments or demonstrate outcomes before exe
 
 ## Architecture decisions
 
+Examples: MADR Accepted/Superseded fields and links, `.github/CODEOWNERS`, and an ADR-linked
+boundary rule with allowed/forbidden fixtures.
+
 | Action | Effort | Failure addressed | Acceptance criterion |
 |--------|--------|-------------------|----------------------|
 | Record ownership and review boundaries | Small | Consequential changes lack an accountable decision | In-scope changes resolve the relevant owner and review policy |
@@ -65,6 +88,9 @@ These actions do not promise score increments or demonstrate outcomes before exe
 | Track decision status and supersession | Small | Agents follow obsolete decisions | A superseded decision points to its current replacement and affected checks |
 
 ## Machine-readable intent
+
+Examples: OpenAPI/protobuf/JSON Schema, ordinary acceptance tests or Cucumber/Behave scenarios,
+stable requirement IDs, and a check comparing expected IDs with completed runner results.
 
 | Action | Effort | Failure addressed | Acceptance criterion |
 |--------|--------|-------------------|----------------------|
@@ -76,6 +102,9 @@ These actions do not promise score increments or demonstrate outcomes before exe
 
 ## Progressive context disclosure
 
+Examples: AGENTS or CLAUDE entry documents, per-directory READMEs, and versioned plans linked
+to the current requirements, ADRs, progress, and decision log.
+
 | Action | Effort | Failure addressed | Acceptance criterion |
 |--------|--------|-------------------|----------------------|
 | Add an agent entry point with current project rules | Small | Agents guess conventions | A representative task locates its constraints and verification command |
@@ -84,12 +113,18 @@ These actions do not promise score increments or demonstrate outcomes before exe
 
 ## Hidden state and magic
 
+Examples: `.env.example`, JSON Schema/Zod/Pydantic initialization validation, and a central flag
+registry with owner, expiry, defaults, and rollback behavior.
+
 | Action | Effort | Failure addressed | Acceptance criterion |
 |--------|--------|-------------------|----------------------|
 | Validate environment and feature configuration | Medium | Ambient defaults change behavior silently | Supported configurations are explicit and invalid states fail at the boundary |
 | Document runtime flags and ownership | Small | Release behavior is detached from review | Each consequential flag has declared semantics, owner and rollback behavior |
 
 ## Repository-scale reasoning
+
+Examples: a domain glossary, a canonical module template, and Make/just/mise task commands
+that enumerate the same expected checks locally and in CI.
 
 | Action | Effort | Failure addressed | Acceptance criterion |
 |--------|--------|-------------------|----------------------|

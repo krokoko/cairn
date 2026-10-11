@@ -10,13 +10,17 @@ configured capabilities from inspected execution evidence. It produces:
 - **Provisional score** (0-100 when evidence permits), with assessed weight and explicit unknowns
 - **Category breakdown** with evidence-backed findings
 - **Evidence scope and ledger** recording revision, environment, execution state and supported conclusions
-- **Per-surface autonomy recommendations** (L0-L5), bounded by evidence and five shared L5 prerequisites
+- **Per-surface autonomy recommendations** (L0-L5), bounded by two L4 scope prerequisites and five L5 gates
 - **Collaboration effectiveness** with optional **alignment note** when agent practices and codebase score diverge
 - **Blockers** preventing advancement to the next level
 - **Prioritized roadmap** with failures addressed and observable acceptance criteria
 
 An assessment recommends an operating scope; it does not grant merge, deployment or tool
 permissions. A high aggregate score cannot offset missing evidence on a critical path.
+L4 requires `L4-INTENT` (reviewed executable intent) and `L4-ORACLES` (current adequate critical-path
+evidence). L5 additionally requires complete intent/oracle coverage, representative environments,
+silent-failure detection, and recovery. Read-only assessment can inspect supplied run/review/settings
+artifacts; unavailable evidence remains unknown and limits the demonstrated recommendation.
 
 ## Skills
 

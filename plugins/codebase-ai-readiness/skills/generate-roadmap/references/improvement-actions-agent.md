@@ -2,8 +2,12 @@
 
 Continues `improvement-actions.md`. Choose relevant actions from observed failures.
 Acceptance criteria describe evidence to obtain, not a promised score increase.
+Examples are implementation candidates; retain the project's existing tools when they meet the need.
 
 ## Failure mode legibility
+
+Examples: typed error classes/codes; ESLint `no-empty` or Semgrep rules for reviewed masking patterns;
+structured CI diagnostics with rule ID, location, and remediation.
 
 | Action | Effort | Failure addressed | Acceptance criterion |
 |--------|--------|-------------------|----------------------|
@@ -12,6 +16,9 @@ Acceptance criteria describe evidence to obtain, not a promised score increase.
 | Add remediation to lint/CI feedback | Small | Agents repeat edits without understanding the failure | A deliberate violation identifies the rule, location and useful next action |
 
 ## Feedforward surfaces
+
+Examples: AGENTS/CLAUDE project rules; eslint-plugin-boundaries, Import Linter or ArchUnit;
+pre-commit/lefthook; plop/hygen templates; Semgrep, bandit or gitleaks; required server-side checks.
 
 | Action | Effort | Failure addressed | Acceptance criterion |
 |--------|--------|-------------------|----------------------|
@@ -24,6 +31,9 @@ Acceptance criteria describe evidence to obtain, not a promised score increase.
 | Require server-side checks | Small | Local hook bypass produces an unchecked merge | Inspected protection configuration and a controlled failure show merge enforcement |
 
 ## Compound engineering readiness
+
+Examples: versioned plans/specs/decisions linked from agent instructions; a module/API scaffold
+containing handler, contract, tests, and docs; incident-derived regression cases; maintained skills.
 
 | Action | Effort | Failure addressed | Acceptance criterion |
 |--------|--------|-------------------|----------------------|
@@ -38,6 +48,9 @@ Acceptance criteria describe evidence to obtain, not a promised score increase.
 
 ## Collaboration effectiveness
 
+Examples: sample the latest 10 comparable agent-assisted PRs as an initial baseline; task IDs in
+PR templates; a CONTRIBUTING review rubric; linked runbooks and a representative maintenance task.
+
 | Action | Effort | Failure addressed | Acceptance criterion |
 |--------|--------|-------------------|----------------------|
 | Sample comparable agent-assisted PR outcomes | Small | Workflow claims have no outcome evidence | Record sample/scope, acceptance, correction cycles and post-merge rework |
@@ -47,6 +60,10 @@ Acceptance criteria describe evidence to obtain, not a promised score increase.
 | Validate a representative maintenance task | Medium | Improved metrics conceal harder changes | Record effort, unexpected edit spread, regressions and boundary behavior for a real extension task |
 
 ## Context engineering friendliness
+
+Examples: per-module READMEs, an architecture overview, explicit supported exports, searchable
+headings, and domain names. Load `../../assess-readiness/references/context-engineering.md`
+for the triage procedure before prescribing splits.
 
 | Action | Effort | Failure addressed | Acceptance criterion |
 |--------|--------|-------------------|----------------------|

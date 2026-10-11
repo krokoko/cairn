@@ -21,6 +21,9 @@ Load `references/evidence-scope.md`. Record the source revision and relevant unc
 changes, assessment date, inspected paths and exclusions. Maintain an evidence ledger as you
 inspect artifacts. Read accessible run reports when they affect a recommendation; the
 assessment does not require executing every target check. Keep unavailable evidence unknown.
+Read-only assessment can inspect supplied runner reports, CI exports, review records, and hosting
+settings snapshots after checking revision, date, and scope. Configuration alone cannot establish
+L4/L5 prerequisites; record access limits and the specific evidence needed for reassessment.
 
 Use Glob and Grep to understand the project:
 
@@ -113,7 +116,7 @@ Load `references/spec-first-artifacts.md` for the spec-first checklist, scoring 
 - Configuration schemas with validation
 - Executable acceptance criteria linked to reviewed claims; ordinary tests, contracts and BDD are valid representations
 - **Spec-first artifacts**: versioned requirement records, mapped checks, pure core separated from IO/adapters, determinism ports where simulation applies
-- Requirement traceability supports intent review. Find mappings with Glob/Grep and inspect relevant assertions/run evidence; PR→issue links live in `git log` (closing keywords like `Closes #123`, bare `#123`, or tracker keys). If history is unavailable, mark the PR-link signal "not inspectable" rather than absent.
+- Requirement traceability supports intent review. Find mappings with Glob/Grep and inspect relevant assertions/run evidence; PR→issue links live in `git log` (closing keywords like `Closes #123`, bare `#123`, or tracker keys). If history is unavailable, use observation `not_inspectable` and execution/conclusion `unknown` in the ledger rather than marking the link absent.
 - Regenerative readiness (components definable by specs/tests, rebuildable without loss)
 
 Apply the **cap rule** from spec-first-artifacts: strong schemas/property tests without

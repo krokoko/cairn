@@ -25,6 +25,9 @@ This plugin analyzes a codebase's current verification posture and designs a tai
 Assesses existing verification infrastructure and available execution evidence. Classifies components
 by bug-surface (A–E), rates demonstrated maturity, and separates traceability links, execution, and
 semantic review. Uninspected settings and runs stay unknown. Outputs `verification-report.md`.
+Read-only assessments can use supplied CI exports, runner reports, controls, review records, and
+dated settings snapshots. With configuration alone, Tier 1 is often the highest demonstrated tier;
+the report identifies the evidence needed to assess a stronger configured or proposed target.
 
 ### `/design-strategy`
 

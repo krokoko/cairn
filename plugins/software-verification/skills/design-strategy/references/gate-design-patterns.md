@@ -21,10 +21,10 @@ separate approvals; preserve existing user authorization and project requirement
 | Late-stage gate | Issues caught at deploy that could be caught at PR | Shift check earlier (fail fast) |
 | Missing gate | A consequential decision has no adequate check | Add a scoped check or designated review |
 | Bypassable gate | Agent routes around a hook (`git commit --no-verify`, skipping CI) | Deny bypass commands in agent config; make CI the non-negotiable server-side gate |
-| Silent skip | Artifact exists (TLA+ module, scanner config, formal spec) but gate skips when unwired | Fail loudly — see **Presence ⇒ mandatory** below |
+| Silent skip | An active required claim/check is declared but its gate skips when unwired | Report failure or explicit unsupported state — see **Active required claims** below |
 | Vacuous gate | Gate reports green while checking nothing (empty ruleset, unconstrained invariant) | Require non-empty config + anti-vacuity probe; see **Vacuous gates** below |
 
-## Presence ⇒ mandatory
+## Active required claims
 
 For each check declared required by the project, the pipeline must run it or report an explicit
 missing/unsupported state under the project's opt-out policy. Never turn a silent skip into a pass.
@@ -32,14 +32,17 @@ Inventory formal files and markers, but distinguish active claims from examples 
 
 | Signal on disk | Mandatory gate behavior |
 |----------------|-------------------------|
-| Requirement with `(verified=kani\|proptest\|tla\|dst)` marker | Matching proof/test/spec must exist and run in verify-quick or CI |
+| Active requirement with a project-recognized `(verified=kani\|proptest\|tla\|dst)` claim | Matching proof/test/spec must exist and run in verify-quick or CI; otherwise report the claim unsupported |
 | Active TLA+ / Alloy claim | Completed checked scope and relevant known-violating controls; justify unsupported probes |
 | FSM `next()` source declared in config | Spec sync check + regenerated formal artifact in gate path |
 | Required secret scanner | Confirm effective rules including inherited defaults; inspect a known secret control |
-| Coverage threshold configured | Check source/branch scope; use relevant negative controls for assertion sensitivity |
+| Coverage threshold declared required | Check source/branch scope; use relevant negative controls for assertion sensitivity |
 
 **Auditable opt-out:** "Out of scope" must be declared in versioned config (e.g. exempt list with
 reason), not implied by absence. Accidental absence must never read as passing.
+Examples, tutorial markers, draft specs, and optional exploratory checks do not become mandatory
+merely because files exist. Record their status; an active correctness claim cannot be exempted
+silently or reported as established when its check is inactive.
 
 ## Vacuous gates
 
@@ -103,7 +106,13 @@ For each existing review/approval checkpoint, evaluate:
 
 | Current state | Recommendation |
 |---------------|----------------|
-| Many low-value human gates, low rejection rate | Consolidate to three-checkpoint model |
+| Many low-value human gates, low rejection rate | Evaluate consolidation after checking distinct coverage and approval requirements |
 | Single gate at merge, high rejection rate | Add earlier spec review gate to catch issues sooner |
 | No human gates, high revert rate | Add ship review for high-risk components |
 | Human reviews everything equally | Segment by risk class, automate low-risk |
+
+Before recommending consolidation, sample comparable decisions (start with the latest 20 if no
+project window exists), record material corrections, rejected proposals, and later escapes, and
+separate risk classes. Approval above 95% is a review trigger, not proof that a gate is useless:
+earlier feedback or deterrence may explain it. Consolidate only after equivalent coverage and
+existing approval requirements are accounted for; retain the gate when evidence is insufficient.

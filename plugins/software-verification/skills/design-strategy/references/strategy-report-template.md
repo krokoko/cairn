@@ -78,8 +78,8 @@ All rows below are proposed requirements, not completed evidence.
 
 ## Architecture Fitness Functions
 
-| Property | Type | Tool / qualified scope | Runs at | Controls / remaining limits |
-|----------|------|------------------------|---------|-----------------------------|
+| Property | Type | Tool / qualified scope | Current maturity (0–4 / unknown) | Target maturity (0–4) | Runs at | Controls / remaining limits |
+|----------|------|------------------------|----------------------------------|----------------------|---------|-----------------------------|
 
 **Maintenance exercise**: [representative change, effort/unexpected edits/regressions, or justified inapplicability]
 

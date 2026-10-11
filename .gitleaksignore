@@ -1,0 +1,3 @@
+# Archived fixture SHA-256, verified against cases/strategy-provider-migration/provider-api-v2.json.
+# Keep scanning evaluation artifacts; suppress only this known historical false positive.
+05def5f7089622eb1088b9d3a95f7796d2b776bb:tests/evals/results/2026-10-11-review-fixes/results.json:generic-api-key:300

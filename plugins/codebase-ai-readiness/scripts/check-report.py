@@ -29,13 +29,73 @@ CLAIMS = {"counterexample", "established_within_scope", "no_counterexample_found
 L4_PREREQUISITES = {"L4-INTENT", "L4-ORACLES"}
 L5_PREREQUISITES = {"L5-INTENT", "L5-ORACLES", "L5-ENVIRONMENT", "L5-DETECTION", "L5-RECOVERY"}
 PREREQUISITES = L4_PREREQUISITES | L5_PREREQUISITES
+OPTIONAL_CELLS = {"Limits", "Blockers", "Scope / limits"}
+# Exact template tokens, not arbitrary bracketed references such as [ADR-7].
+# Keep this vocabulary aligned with the report templates in both standalone plugins.
+PLACEHOLDERS = {
+    "component", "component name", "name", "placeholder", "environment", "surface", "status",
+    "date", "iso date", "yyyy-mm-dd", "l0–l5", "l0–l5 or unknown", "level name", "tier name",
+    "actual environment", "allowed conclusion", "allowed execution", "allowed observation",
+    "all assessed surfaces and dependencies; exclusions remain outside the recommendation",
+    "artifacts inspected, access limits, prior-report freshness",
+    "artifacts/runs inspected and inaccessible evidence", "assertion revision, owner, invalidation rule",
+    "assessment date and changes from historical method-based scores", "bounded claim and revision",
+    "bounds, exclusions and review status", "bounds, exclusions, remaining gaps",
+    "ceiling rationale and gaps, or reason none", "change classes/human decisions",
+    "cited artifact and revision", "cited artifact/run and revision", "cited evidence or gap",
+    "claim / check", "claim and check",
+    "commit and relevant dirty changes, or explain unavailable identity",
+    "commit plus relevant working-tree changes", "commit/snapshot and relevant uncommitted changes",
+    "completed checks and supported result", "components, paths, environments, accessible settings",
+    "components, paths, environments, exclusions", "config path / revision", "config/run and revision",
+    "configuration and run artifacts inspected; inaccessible settings/history",
+    "counts of qualified/partial/configured/none/unknown/not-applicable categories",
+    "counts of qualified/partial/configured/none/unknown/not applicable categories",
+    "critical paths, unknowns, justified inapplicability",
+    "current adequate critical-path oracle evidence for that scope or gap",
+    "current commit and relevant dirty changes, or explain unavailable identity",
+    "date of planning assessment", "evidenced level or unknown",
+    "exactly l0–l5; no higher than the lowest assessed surface recommendation",
+    "execution/qualification not inspected", "existing check",
+    'include only when mismatch detected — practices ahead of codebase or codebase ahead of practices. see `references/autonomy-levels.md`. otherwise omit or write "aligned."',
+    "inspected runs/artifacts, configuration observations, unavailable evidence",
+    "links, execution, and meaning separately", "list gates that exist but only as warnings or reports",
+    "list of specific blockers preventing advancement to next level",
+    "list smells with no coverage and their risk", "list where trend tracking would help",
+    "missing evidence", "missing mappings", "missing or questionable mappings",
+    "missing run evidence and relevant assumptions",
+    "observed blocking/warning/informational/unknown, with evidence",
+    "one paragraph: maturity of session-scoped context; what is missing",
+    "partial claims, deviations, stale/unknown review", "path/run and revision",
+    "paths, categories, environments, exclusions", "paths, components, dependencies and exclusions",
+    "pr templates, labels, review rubric, learning docs — present or missing",
+    "property, assumptions; not evidence of a completed proof",
+    "proposed gate, failure addressed, qualification controls, scope/limits, completion evidence",
+    "provisional score and assessed weight, or unknown", "provisional xx/100 or unknown",
+    "qualification limits", "recommendation only; operating permissions remain external",
+    "reports, source/config identity, environment",
+    "representative change, effort/unexpected edits/regressions, or justified inapplicability",
+    "representative task, scope, effort, unexpected edits, regressions and boundary violations; or not measured with a proposed exercise",
+    "reviewed executable intent for the proposed operating scope or gap",
+    "reviewed task criteria, prohibited overclaims, sample size, model/configuration, uncertainty",
+    "scoped gate claim", "share of category weights scored; excluded categories and reasons",
+    "skipped/missing/stale evidence",
+    "source report path/revision/date; freshness comparison; reused, stale and unknown findings",
+    "surface and dependencies", "surface and level", "target surfaces and exclusions",
+    "uninspected execution or other limits", "unknown review",
+    "yes/no and evidence; include unknown intent/oracles and unmet l5 gates",
+}
 
 
-def meaningful(value: str) -> bool:
+def meaningful(value: str, *, allow_dash: bool = False) -> bool:
     value = value.strip().strip("`").strip()
-    if re.fullmatch(r"\[[^\[\]]+\]|X+(?:/\d+)?(?:(?:, or| /) unknown)?", value):
+    if value == "-":
+        return allow_dash
+    if value.startswith("[") and value.endswith("]") and value[1:-1].lower() in PLACEHOLDERS:
         return False
-    return bool(value) and value.lower() not in {"...", "…", "tbd", "todo", "-"}
+    if re.fullmatch(r"X+(?:/\d+)?(?:(?:, or| /) unknown)?", value):
+        return False
+    return bool(value) and value.lower() not in {"...", "…", "tbd", "todo"}
 
 
 def sections(text: str) -> tuple[dict[str, str], set[str]]:
@@ -89,7 +149,9 @@ def substantive(body: str) -> bool:
             elif table_started:
                 row = cells(line)
                 # The first column commonly contains fixed template labels.
-                if len(row) > 1 and all(meaningful(cell) for cell in row[1:]):
+                if len(row) > 1 and meaningful(row[0]) and all(
+                    meaningful(cell, allow_dash=True) for cell in row[1:]
+                ):
                     return True
         else:
             table_started = False
@@ -113,8 +175,10 @@ def validate_assessment_tables(body: str, name: str, errors: list[str]) -> None:
                 break
             rows.append(cells(row_line))
         if not rows:
-            errors.append(f"{name}: an assessment table needs a completed row or an explicit unknown/exclusion.")
-        elif any(len(row) != width or not all(meaningful(value) for value in row) for row in rows):
+            errors.append(f"{name}: needs a substantive row; state unknowns or exclusions explicitly.")
+        elif any(len(row) != width or not meaningful(row[0]) or not all(
+            meaningful(value, allow_dash=True) for value in row[1:]
+        ) for row in rows):
             errors.append(f"{name}: every assessment table row needs {width} non-placeholder cells.")
 
 
@@ -136,12 +200,13 @@ def table(body: str, header: list[str], name: str, errors: list[str]) -> list[di
             if not row_line.lstrip().startswith("|"):
                 break
             row = cells(row_line)
-            if len(row) != len(header) or not all(meaningful(value) for value in row):
-                errors.append(f"{name}: every row needs {len(header)} non-placeholder cells.")
+            if len(row) != len(header) or not all(
+                meaningful(value, allow_dash=column in OPTIONAL_CELLS)
+                for column, value in zip(header, row)
+            ):
+                errors.append(f"{name}: every assessment table row needs {len(header)} non-placeholder cells.")
                 continue
             rows.append(dict(zip(header, row)))
-        if not rows:
-            errors.append(f"{name}: needs a substantive row; state unknowns or exclusions explicitly.")
         all_rows.extend(rows)
     if not matched:
         errors.append(f"{name}: missing table columns: {' | '.join(header)}.")
@@ -163,12 +228,21 @@ def validate_ledger(rows: list[dict[str, str]], errors: list[str]) -> None:
             errors.append(f"{label}: Conclusion '{conclusion}' is incompatible with Execution '{execution}'.")
         if conclusion in CLAIMS and observed != "run_inspected":
             errors.append(f"{label}: an evidential conclusion requires run_inspected.")
-        if observed == "configuration_only" and execution not in {"not_run", "unknown"}:
+        if observed == "configuration_only" and execution not in {"skipped", "not_run", "unknown"}:
             errors.append(f"{label}: configuration alone cannot establish execution.")
         if observed == "not_inspectable" and (execution != "unknown" or conclusion != "unknown"):
             errors.append(f"{label}: uninspectable evidence must retain unknown execution and conclusion.")
         if observed == "not_applicable" and (execution != "not_applicable" or conclusion != "not_applicable"):
             errors.append(f"{label}: an exclusion must use not_applicable consistently and give its reason in Limits.")
+        reason = None
+        if observed == "not_applicable":
+            reason = "a claim/risk-based exemption reason"
+        elif observed == "configuration_only" and execution == "skipped":
+            reason = "the unconditional skip declaration and scope"
+        elif observed == "stale" and conclusion == "incomplete":
+            reason = "the unfinished current analysis"
+        if reason and not meaningful(row["Limits"]):
+            errors.append(f"{label}: Limits must identify {reason}; '-' is insufficient.")
 
 
 def validate_autonomy(surfaces: list[dict[str, str]], gates: list[dict[str, str]], errors: list[str]) -> None:
@@ -224,23 +298,25 @@ def validate(path: Path, contracts: dict) -> list[str] | None:
         return ["Report file is missing or not readable."]
     found, duplicates = sections(path.read_text(encoding="utf-8"))
     errors: list[str] = []
+    parsed = {}
     for heading in contract["sections"]:
         if heading not in found:
             errors.append(f"Missing required section: '## {heading}'.")
         elif heading in duplicates:
             errors.append(f"Duplicate required section: '## {heading}'.")
-        elif not substantive(found[heading]):
-            errors.append(f"Section '{heading}' needs substantive content.")
         if heading in found:
-            validate_assessment_tables(found[heading], heading, errors)
+            section_errors: list[str] = []
+            validate_assessment_tables(found[heading], heading, section_errors)
+            if heading in contract.get("tables", {}):
+                parsed[heading] = table(found[heading], contract["tables"][heading], heading, section_errors)
+            if not substantive(found[heading]) and not section_errors:
+                section_errors.append(f"Section '{heading}' needs substantive content.")
+            errors.extend(dict.fromkeys(section_errors))
     scope = found.get("Evidence Scope", "")
     for field in METADATA:
         match = re.search(rf"^\*\*{re.escape(field)}(?::\*\*|\*\*:)[ \t]*(.*)$", scope, re.M)
         if not match or not meaningful(match.group(1)):
             errors.append(f"Evidence Scope: missing or placeholder '{field}'.")
-    parsed = {}
-    for heading, columns in contract.get("tables", {}).items():
-        parsed[heading] = table(found.get(heading, ""), columns, heading, errors)
     if "Evidence Ledger" in parsed:
         validate_ledger(parsed["Evidence Ledger"], errors)
     if "Surface Autonomy" in parsed:

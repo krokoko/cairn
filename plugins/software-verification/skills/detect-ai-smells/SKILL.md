@@ -91,11 +91,15 @@ For each relevant gate, record configuration, supported source scope, current ru
 version, and enforcement evidence separately. Unavailable branch settings or CI history remain
 unknown. Inspect existing allowed/violating controls where available; do not silently run expensive
 or externally mutating campaigns as part of an assessment.
+Read-only assessment can use supplied CI exports, retained runner reports, control results, and
+review records after checking revision and scope. Without those artifacts, report Configured or
+Unknown as appropriate and name the evidence needed; do not run campaigns just to obtain a label.
 
 ### Step 3: Map gates to smell categories
 
 Load `references/detection-patterns.md`, `references/detection-patterns-gates.md`, and
 `references/detection-patterns-gates-formal.md` for what patterns each gate should catch.
+Apply `references/coverage-decisions.md` for repeatable per-smell scope and Partial decisions.
 
 For each category, state the bounded behavior a gate claims to detect and the evidence inspected:
 
@@ -110,6 +114,11 @@ Coverage status describes the declared scope, never complete protection from a s
 - **None**: No relevant gate found in the inspected scope.
 - **Unknown**: Access or evidence is insufficient to assess.
 - **Not applicable**: The failure surface is absent, with an explicit justification.
+
+Define the category's applicable scope before assigning status. A qualified check for one subcase
+does not qualify the whole category: use Partial when executed evidence leaves material applicable
+subcases uncovered, and identify the narrower qualified check in Evidence / limits. With configuration
+alone, use Configured and describe the known coverage gaps separately.
 
 For AI001, code and mocks can share invented behavior. Seek independent schema/provider or consumer
 evidence. A twin is an approximation requiring fidelity/version qualification; it is not a mandatory

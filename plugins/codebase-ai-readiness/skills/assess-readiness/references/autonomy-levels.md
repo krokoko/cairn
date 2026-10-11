@@ -29,7 +29,7 @@ Apply `autonomy-prerequisites.md` to every surface before recommending an operat
 
 - **L1 to L2**: CI exists and runs tests; agents can submit PRs for review
 - **L2 to L3**: Tests are reliable (not flaky), types are enforced, scoping is clear
-- **L3 to L4**: Property tests or contracts cover critical paths; CI is the authority
+- **L3 to L4**: `L4-INTENT` and `L4-ORACLES` are met for the operating scope; relevant checks govern changes
 - **L4 to L5**: Machine-readable specs cover system behavior; oracles exist for all critical paths
 
 ## The autonomy ceiling

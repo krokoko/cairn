@@ -47,6 +47,12 @@ or `not_applicable`. `not_run` requires evidence of non-execution; use `unknown`
 available to inspect. A runner that exits successfully with all checks skipped did not complete
 those checks. Keep test-level status visible even when the overall job is green.
 
+An unconditional skip declared in the inspected source at the assessed revision may use
+`configuration_only` + `skipped` + `not_run`. Cite the skip declaration and its unconditional
+scope in Limits; this records source-defined exclusion, not an observed runner result.
+For a conditional skip whose condition was not established, use `configuration_only` +
+`unknown` + `unknown`. Configuration alone cannot establish completion or a positive conclusion.
+
 ### Conclusion
 
 | Value | Meaning |
@@ -66,6 +72,9 @@ current conclusion remains `unknown` or `incomplete`. A genuine recorded counter
 useful even if the rest of a campaign was interrupted; identify the failing case.
 For stale rows, Execution records the historical artifact's state; even an earlier skipped,
 unsupported or not-run result cannot establish that state for the current revision.
+Thus `stale` + `skipped` + `incomplete` is valid when required current analysis is incomplete;
+it does not say the historical skip was an interrupted execution. State the unfinished current
+analysis in Limits. Use `unknown` when its current completion state is unknown.
 
 Neither a positive conclusion nor a fresh artifact hash is semantic approval. Record the reviewed
 relationship between requirement, assertion, fixtures/helpers, and environment separately.
@@ -101,3 +110,7 @@ report dialect. A declared scenario is not evidence that its steps ran.
 Promotion policy names required claims, accepted evidence modes/scopes, and handling of unknowns.
 An unrelated proof cannot compensate for a required integration check with no evidence. Report
 recommendations do not grant operational permission; humans or configured policy own the decision.
+
+Report cells may use `-` for no additional limits or findings, and bracketed references such as
+`[ADR-7]` are valid citations. Required identities, evidence states and scope metadata still need
+meaningful values; template tokens such as `[Component]` must be replaced.

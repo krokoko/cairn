@@ -90,7 +90,7 @@ class ReportContracts(unittest.TestCase):
             self.assertInvalid(text, "Missing required section")
 
     def test_missing_empty_or_placeholder_metadata(self):
-        for value in ("", "...", "`...`", "TBD", "[commit/snapshot and relevant uncommitted changes]"):
+        for value in ("", "-", "...", "`...`", "TBD", "[commit/snapshot and relevant uncommitted changes]"):
             text = self.example().replace("**Source revision**: fixture-r2", "**Source revision**: " + value)
             self.assertInvalid(text, "'Source revision'")
 
@@ -108,6 +108,53 @@ class ReportContracts(unittest.TestCase):
         self.assertInvalid(text.replace("campaign-r2", "..."), "non-placeholder cells")
         self.assertInvalid(text.replace("campaign-r2", "[cited artifact and revision]"), "non-placeholder cells")
 
+    def test_reference_labels_and_explicit_none_are_not_placeholders(self):
+        for value in ("[ADR-7]", "[REQ-ID]", "[Reviewed acceptance record]", "-"):
+            with self.subTest(value=value):
+                text = self.example().replace("20 sequences; provider fidelity unverified", value)
+                result = self.invoke("verification-report.md", text)
+                self.assertEqual(result.returncode, 0, result.stdout)
+        original = "Retry core is stateful and affects billing; provider adapter needs separate evidence."
+        findings = "| Component | Finding | Reference |\n|-----------|---------|-----------|\n| Retry core | - | [ADR-7] |"
+        result = self.invoke("verification-report.md", self.example().replace(original, findings))
+        self.assertEqual(result.returncode, 0, result.stdout)
+
+    def test_generic_table_rows_still_require_an_identity(self):
+        original = "Retry core is stateful and affects billing; provider adapter needs separate evidence."
+        table = "| Component | Finding |\n|-----------|---------|\n"
+        for row in ("| - | - |", "| - | No findings |"):
+            with self.subTest(row=row):
+                result = self.invoke("verification-report.md", self.example().replace(original, table + row))
+                self.assertEqual(result.returncode, 1, result.stdout)
+                self.assertEqual(result.stdout.count("non-placeholder cells"), 1, result.stdout)
+                self.assertNotIn("needs substantive", result.stdout)
+        result = self.invoke("verification-report.md", self.example().replace(original, table + "| Retry core | - |"))
+        self.assertEqual(result.returncode, 0, result.stdout)
+
+    def test_unfilled_smell_coverage_summary_is_not_substantive(self):
+        original = "One configured detection capability has inspected execution evidence."
+        scaffold = "**Overall coverage**: [counts of Qualified/Partial/Configured/None/Unknown/Not applicable categories]"
+        self.assertInvalid(self.example("ai-smells-gates-report.md").replace(original, scaffold),
+                           "Gate Coverage Summary' needs substantive", "ai-smells-gates-report.md")
+
+    def test_none_does_not_replace_required_identity_or_state(self):
+        for value in ("Retry preserves job identity", "campaign-r2", "local double", "run_inspected", "completed", "no_counterexample_found"):
+            with self.subTest(value=value):
+                self.assertInvalid(self.example().replace(value, "-", 1), "non-placeholder cells")
+
+    def test_one_table_problem_has_one_specific_diagnostic(self):
+        for value in ("...", "[cited artifact and revision]"):
+            text = self.example().replace("campaign-r2", value)
+            result = self.invoke("verification-report.md", text)
+            self.assertEqual(result.returncode, 1, result.stdout)
+            self.assertEqual(result.stdout.count("non-placeholder cells"), 1, result.stdout)
+            self.assertNotIn("needs substantive", result.stdout)
+            self.assertNotIn("needs a substantive row", result.stdout)
+        row = next(line for line in self.example().splitlines() if line.startswith("| Retry preserves"))
+        result = self.invoke("verification-report.md", self.example().replace(row, ""))
+        self.assertEqual(result.stdout.count("needs a substantive row"), 1, result.stdout)
+        self.assertNotIn("needs substantive content", result.stdout)
+
     def test_every_ledger_table_is_validated(self):
         ledger = (
             "| Claim / check | Artifact / revision | Environment | Observation | Execution | Conclusion | Limits |\n"
@@ -123,13 +170,13 @@ class ReportContracts(unittest.TestCase):
 
     def test_table_scaffolding_is_not_substantive(self):
         original = "Retry core is stateful and affects billing; provider adapter needs separate evidence."
-        for body in (
-            "| Component | Archetype |\n|-----------|-----------|",
-            "| Component | Archetype |\n|-----------|-----------|\n| [component] | ... |",
-            "**Component**: [name]",
-            "**Component:** [name]",
+        for body, needle in (
+            ("| Component | Archetype |\n|-----------|-----------|", "Component Breakdown: needs a substantive row"),
+            ("| Component | Archetype |\n|-----------|-----------|\n| [component] | ... |", "Component Breakdown: every assessment table row"),
+            ("**Component**: [name]", "Component Breakdown' needs substantive"),
+            ("**Component:** [name]", "Component Breakdown' needs substantive"),
         ):
-            self.assertInvalid(self.example().replace(original, body), "Component Breakdown' needs substantive")
+            self.assertInvalid(self.example().replace(original, body), needle)
 
     def test_fixed_labels_do_not_complete_assessment_tables(self):
         cases = (
@@ -155,7 +202,7 @@ class ReportContracts(unittest.TestCase):
         )
         for name, old, body, heading in cases:
             with self.subTest(name=name):
-                self.assertInvalid(self.example(name).replace(old, body), f"{heading}' needs substantive", name)
+                self.assertInvalid(self.example(name).replace(old, body), f"{heading}: every assessment table row", name)
 
     def test_completed_row_or_prose_cannot_hide_unfilled_assessment_cells(self):
         old = "Retry core is stateful and affects billing; provider adapter needs separate evidence."
@@ -170,7 +217,33 @@ class ReportContracts(unittest.TestCase):
                                  "| Provider | unknown | Remote run evidence could not be inspected |")
         self.assertEqual(self.invoke("verification-report.md", self.example().replace(old, completed)).returncode, 0)
         empty = "Provider evidence remains inaccessible.\n\n| Component | State |\n|-----------|-------|\n"
-        self.assertInvalid(self.example().replace(old, empty), "assessment table needs a completed row")
+        self.assertInvalid(self.example().replace(old, empty), "needs a substantive row")
+
+    def test_configuration_can_identify_an_unconditional_source_skip(self):
+        text = self.example().replace("| run_inspected | completed | no_counterexample_found |",
+                                      "| configuration_only | skipped | not_run |")
+        text = text.replace("20 sequences; provider fidelity unverified",
+                            "tests/provider.py:8 unconditionally skips this check at fixture-r2; no run inspected")
+        result = self.invoke("verification-report.md", text)
+        self.assertEqual(result.returncode, 0, result.stdout)
+        self.assertInvalid(text.replace("| skipped | not_run |", "| skipped | no_counterexample_found |"), "incompatible")
+        self.assertInvalid(text.replace("| skipped | not_run |", "| completed | no_counterexample_found |"), "configuration alone")
+
+    def test_state_dependent_limits_cannot_be_replaced_with_a_dash(self):
+        for observation, execution, conclusion, rationale in (
+            ("not_applicable", "not_applicable", "not_applicable",
+             "This transport retry check does not apply to the pure arithmetic module."),
+            ("configuration_only", "skipped", "not_run",
+             "tests/provider.py:8 unconditionally skips this check at fixture-r2; no run inspected."),
+            ("stale", "skipped", "incomplete",
+             "The old check was skipped; the required current provider campaign remains unfinished."),
+        ):
+            with self.subTest(observation=observation):
+                text = self.example().replace("| run_inspected | completed | no_counterexample_found |",
+                                              f"| {observation} | {execution} | {conclusion} |")
+                text = text.replace("20 sequences; provider fidelity unverified", rationale)
+                self.assertEqual(self.invoke("verification-report.md", text).returncode, 0)
+                self.assertInvalid(text.replace(rationale, "-"), "Limits must identify")
 
     def test_stale_completed_run_can_leave_current_claim_incomplete(self):
         text = self.example().replace("| run_inspected | completed | no_counterexample_found |",
@@ -226,6 +299,16 @@ class ReportContracts(unittest.TestCase):
         text = self.example("readiness-report.md").replace("| L3 | L4 | L3 |", "| unknown | unknown | L3 |")
         self.assertEqual(self.invoke("readiness-report.md", text).returncode, 0)
         self.assertInvalid(text.replace("| unknown | unknown | L3 |", "| unknown | unknown | L4 |"), "unknown evidence ceiling", "readiness-report.md")
+
+    def test_unknown_score_allows_a_known_evidence_ceiling_with_met_prerequisites(self):
+        text = self.example("readiness-report.md").replace("| L3 | L4 | L3 |", "| unknown | L4 | L4 |")
+        text = text.replace("**Level**: L3", "**Level**: L4")
+        result = self.invoke("readiness-report.md", text)
+        self.assertEqual(result.returncode, 0, result.stdout)
+        self.assertInvalid(text.replace("| L4-ORACLES | met |", "| L4-ORACLES | unknown |"),
+                           "ceiling is L3", "readiness-report.md")
+        self.assertInvalid(text.replace("| unknown | L4 | L4 |", "| unknown | L3 | L4 |"),
+                           "exceeds", "readiness-report.md")
 
     def test_l5_needs_all_prerequisites(self):
         text = self.example("readiness-report.md").replace("| L3 | L4 | L3 |", "| L5 | L5 | L5 |")

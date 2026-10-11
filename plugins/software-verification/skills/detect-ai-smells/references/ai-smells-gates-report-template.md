@@ -22,7 +22,9 @@ is a recommendation, not inspected execution evidence; justify inapplicable cate
 
 ## Gate Coverage Summary
 
-**Overall coverage**: [counts of qualified/partial/configured/none/unknown/not-applicable categories]
+**Overall coverage**: [counts of Qualified/Partial/Configured/None/Unknown/Not applicable categories]
+
+Coverage labels above differ from ledger enums: use `not_applicable` in ledger state columns.
 **Enforcement level**: [observed blocking/warning/informational/unknown, with evidence]
 
 ## Coverage Matrix

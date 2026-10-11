@@ -8,9 +8,11 @@ from __future__ import annotations
 
 import argparse
 import hashlib
+import io
 import json
 import re
 import shutil
+import subprocess
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -25,6 +27,10 @@ SKILLS = {
     "detect-ai-smells": "software-verification",
 }
 SOURCE_SUFFIXES = {".md", ".json", ".py", ".sh"}
+
+
+class SourceUnavailable(ValueError):
+    """A retained Git commit is not available in this local checkout."""
 
 
 def require(condition: bool, message: str) -> None:
@@ -54,10 +60,21 @@ def relative_path(value: object) -> Path:
     return path
 
 
-def artifact(directory: Path, name: object) -> Path:
+def contained_path(directory: Path, name: object) -> Path:
     path = directory / relative_path(name)
     require(path.resolve().is_relative_to(directory.resolve()),
             f"Artifact paths must stay within their directory: {name}")
+    return path
+
+
+def subdirectory(directory: Path, name: object) -> Path:
+    path = contained_path(directory, name)
+    require(path.is_dir(), f"Missing artifact directory: {path}")
+    return path
+
+
+def artifact(directory: Path, name: object) -> Path:
+    path = contained_path(directory, name)
     require(path.is_file(), f"Missing artifact: {path}")
     return path
 
@@ -97,6 +114,45 @@ def implementation_digest() -> str:
     return source_digest(source_files())
 
 
+def git_source_files(revision: object) -> dict[str, str]:
+    require(isinstance(revision, str) and re.fullmatch(r"[0-9a-f]{40}|[0-9a-f]{64}", revision),
+            "Git source provenance requires a full commit SHA")
+    # A local replace ref must not redefine bytes attributed to an immutable commit SHA.
+    command = ["git", "--no-replace-objects", "-C", str(ROOT)]
+    exists = subprocess.run([*command, "cat-file", "-e", f"{revision}^{{commit}}"],
+                            capture_output=True)
+    if exists.returncode:
+        raise SourceUnavailable(
+            f"Git source commit {revision} is unavailable locally (for example, in a shallow checkout); "
+            "source integrity and preparation cannot be checked. No history was fetched.")
+    tree = subprocess.run([*command, "ls-tree", "-rz", revision, "--", "plugins"], capture_output=True)
+    require(tree.returncode == 0, f"Cannot read plugin tree from Git commit {revision}")
+    entries = []
+    for entry in tree.stdout.split(b"\0"):
+        if not entry:
+            continue
+        metadata, raw_name = entry.split(b"\t", 1)
+        mode, kind, object_id = metadata.split()
+        name = raw_name.decode("utf-8")
+        if Path(name).suffix in SOURCE_SUFFIXES:
+            require(kind == b"blob" and mode in {b"100644", b"100755"},
+                    f"Git source must contain regular plugin files: {name}")
+            entries.append((name, object_id))
+    blobs = subprocess.run([*command, "cat-file", "--batch"],
+                           input=b"".join(object_id + b"\n" for _, object_id in entries),
+                           capture_output=True)
+    require(blobs.returncode == 0, f"Cannot read plugin bytes from Git commit {revision}")
+    stream = io.BytesIO(blobs.stdout)
+    files = {}
+    for name, object_id in entries:
+        header = stream.readline().split()
+        require(len(header) == 3 and header[:2] == [object_id, b"blob"], f"Missing Git blob: {name}")
+        content = stream.read(int(header[2]))
+        require(stream.read(1) == b"\n", f"Incomplete Git blob: {name}")
+        files[name] = content.decode("utf-8")
+    return files
+
+
 def load(cases_path: Path | None = None, rubric_path: Path | None = None):
     catalog = read_json(cases_path or CASES)
     rubric = read_json(rubric_path or RUBRIC)
@@ -121,16 +177,20 @@ def load(cases_path: Path | None = None, rubric_path: Path | None = None):
     return catalog, rubric
 
 
-def snapshot(output: Path) -> None:
+def snapshot(output: Path, revision: str | None = None) -> None:
     load()
-    files = source_files()
+    files = git_source_files(revision) if revision else source_files()
     require(files, "No plugin source found")
+    provenance = "git_revision" if revision else "retained_source"
     output.mkdir(parents=True, exist_ok=False)
     shutil.copyfile(CASES, output / "cases.json")
     shutil.copyfile(RUBRIC, output / "rubric.json")
-    write_json(output / "source.json", {"version": 1, "files": files})
+    if provenance == "retained_source":
+        write_json(output / "source.json", {"version": 1, "files": files})
     write_json(output / "snapshot.json", {
-        "version": 1,
+        "version": 2,
+        "provenance": provenance,
+        **({"source_revision": revision} if revision else {}),
         "implementation_sha256": source_digest(files),
         "fixture_sha256": digest(output / "cases.json"),
         "rubric_sha256": digest(output / "rubric.json"),
@@ -138,27 +198,44 @@ def snapshot(output: Path) -> None:
     print(output / "snapshot.json")
 
 
-def load_snapshot(directory: Path):
+def load_snapshot(directory: Path, allow_missing_source: bool = False):
     identity = read_json(artifact(directory, "snapshot.json"))
-    require(identity["version"] == 1, "Unsupported snapshot version")
+    require(identity["version"] in {1, 2}, "Unsupported snapshot version")
     cases_path = artifact(directory, "cases.json")
     rubric_path = artifact(directory, "rubric.json")
     require(identity["fixture_sha256"] == digest(cases_path), "Fixture digest mismatch")
     require(identity["rubric_sha256"] == digest(rubric_path), "Rubric digest mismatch")
-    source = read_json(artifact(directory, "source.json"))
-    require(source["version"] == 1 and isinstance(source["files"], dict) and source["files"],
-            "Invalid source snapshot")
-    for name, content in source["files"].items():
-        path = relative_path(name)
-        require(path.parts[0] == "plugins" and path.suffix in SOURCE_SUFFIXES and isinstance(content, str),
-                f"Invalid source snapshot file: {name}")
-    require(sha256(identity["implementation_sha256"], "implementation") == source_digest(source["files"]),
-            "Implementation digest mismatch")
+    provenance = identity.get("provenance", "retained_source")
+    require(provenance in {"retained_source", "git_revision"}, "Invalid snapshot source provenance")
+    files = None
+    if provenance == "git_revision":
+        try:
+            files = git_source_files(identity.get("source_revision"))
+        except SourceUnavailable as exc:
+            if not allow_missing_source:
+                raise
+            print(f"WARNING: {exc}")
+    else:
+        source = read_json(artifact(directory, "source.json"))
+        require(source["version"] == 1 and isinstance(source["files"], dict) and source["files"],
+                "Invalid source snapshot")
+        files = source["files"]
+    if files is not None:
+        require(files, "No plugin source found")
+        for name, content in files.items():
+            path = relative_path(name)
+            require(path.parts[0] == "plugins" and path.suffix in SOURCE_SUFFIXES and isinstance(content, str),
+                    f"Invalid source snapshot file: {name}")
+        require(sha256(identity["implementation_sha256"], "implementation") == source_digest(files),
+                "Implementation digest mismatch")
+    else:
+        sha256(identity["implementation_sha256"], "implementation")
     catalog, rubric = load(cases_path, rubric_path)
-    for case in catalog["cases"]:
-        skill = f"plugins/{SKILLS[case['skill']]}/skills/{case['skill']}/SKILL.md"
-        require(skill in source["files"], f"Missing evaluated skill source: {skill}")
-    return identity, catalog, rubric, source["files"]
+    if files is not None:
+        for case in catalog["cases"]:
+            skill = f"plugins/{SKILLS[case['skill']]}/skills/{case['skill']}/SKILL.md"
+            require(skill in files, f"Missing evaluated skill source: {skill}")
+    return identity, catalog, rubric, files
 
 
 def prepare(case_id: str, output: Path, snapshot_directory: Path) -> None:
@@ -190,21 +267,23 @@ def retain_case(case_id: str, prepared: Path, run: Path, report_name: str) -> No
             "Preparation identity differs from retained snapshot")
     case = next((item for item in catalog["cases"] if item["id"] == case_id), None)
     require(case is not None, f"Unknown case: {case_id}")
+    source_directory = subdirectory(prepared, "source")
+    repository = subdirectory(prepared, "repository")
     for name, content in files.items():
-        require(artifact(prepared / "source", name).read_bytes() == content.encode(),
+        require(artifact(source_directory, name).read_bytes() == content.encode(),
                 f"Prepared source changed: {name}")
     report_path = relative_path(report_name)
-    report = report_artifact(prepared / "repository", report_path.as_posix(), case["files"])
+    report = report_artifact(repository, report_path.as_posix(), case["files"])
     require(report.read_bytes().strip(), "Empty assessment artifact")
     for name, content in case["files"].items():
-        require(artifact(prepared / "repository", name).read_bytes() == content.encode(),
+        require(artifact(repository, name).read_bytes() == content.encode(),
                 f"Prepared input changed: {case_id}/{name}")
-    destination = run / "cases" / case_id
+    destination = contained_path(run, (Path("cases") / case_id).as_posix())
     destination.mkdir(parents=True, exist_ok=False)
     for name in (*case["files"], report_path.as_posix()):
         target = destination / name
         target.parent.mkdir(parents=True, exist_ok=True)
-        shutil.copyfile(prepared / "repository" / name, target)
+        shutil.copyfile(repository / name, target)
     print(json.dumps({
         "report": (Path("cases") / case_id / report_path).as_posix(),
         "report_sha256": digest(destination / report_path),
@@ -213,7 +292,7 @@ def retain_case(case_id: str, prepared: Path, run: Path, report_name: str) -> No
     }, indent=2))
 
 
-def check_results(path: Path, integrity_only: bool = False) -> int:
+def inspect_results(path: Path, allow_missing_source: bool = False):
     result = read_json(path)
     require(result.get("schema_version") == 2, "Unsupported result schema; migrate retained artifacts explicitly")
     for field in ("run_id", "date", "source_revision", "implementation_sha256",
@@ -226,11 +305,18 @@ def check_results(path: Path, integrity_only: bool = False) -> int:
     require(result["rubric_sha256"] == digest(rubric_path), "Rubric digest mismatch")
     catalog, rubric = load(cases_path, rubric_path)
     provenance = result.get("provenance")
-    require(provenance in {"retained_source", "legacy_missing_source"}, "Missing source provenance")
-    if provenance == "retained_source":
-        identity, _, _, _ = load_snapshot(path.parent)
+    require(provenance in {"retained_source", "git_revision", "legacy_missing_source"}, "Missing source provenance")
+    source_complete = False
+    if provenance in {"retained_source", "git_revision"}:
+        identity, _, _, files = load_snapshot(path.parent, allow_missing_source=allow_missing_source)
+        require(provenance == identity.get("provenance", "retained_source"),
+                "Result/snapshot source provenance differs")
         for field in ("implementation_sha256", "fixture_sha256", "rubric_sha256"):
             require(result[field] == identity[field], f"Result/snapshot identity differs: {field}")
+        if provenance == "git_revision":
+            require(result["source_revision"] == identity["source_revision"],
+                    "Result/snapshot Git revision differs")
+        source_complete = files is not None
     else:
         require(text(result.get("provenance_limitation")), "Legacy source provenance requires an explicit limitation")
         print(f"Legacy provenance warning: {result['run_id']}: {result['provenance_limitation']}")
@@ -242,7 +328,8 @@ def check_results(path: Path, integrity_only: bool = False) -> int:
         case_directory = Path("cases") / case_id
         require(report_path.is_relative_to(case_directory),
                 f"Report paths must stay within their case directory: {case_id}")
-        report = report_artifact(path.parent / case_directory,
+        case_root = subdirectory(path.parent, case_directory.as_posix())
+        report = report_artifact(case_root,
                                  report_path.relative_to(case_directory).as_posix(),
                                  fixtures[case_id]["files"])
         require(report.read_bytes().strip(), f"Empty assessment artifact: {report}")
@@ -251,7 +338,7 @@ def check_results(path: Path, integrity_only: bool = False) -> int:
         require(set(case["input_sha256"]) == set(fixtures[case_id]["files"]),
                 f"Incomplete input inventory: {case_id}")
         for name, content in fixtures[case_id]["files"].items():
-            input_path = artifact(path.parent / "cases" / case_id, name)
+            input_path = artifact(case_root, name)
             expected = hashlib.sha256(content.encode()).hexdigest()
             require(sha256(case["input_sha256"][name], "input") == digest(input_path) == expected,
                     f"Input digest mismatch: {case_id}/{name}")
@@ -265,19 +352,42 @@ def check_results(path: Path, integrity_only: bool = False) -> int:
             require(status in counts, f"Unknown adjudication: {case_id}/{criterion}")
             require(text(judgment.get("evidence")), f"Missing rationale: {case_id}/{criterion}")
             counts[status] += 1
-    print(f"{result['run_id']}: recorded adjudications {counts}. Artifact integrity checked; judgments require review.")
+    return result, counts, source_complete
+
+
+def print_result_check(result: dict, counts: dict, source_complete: bool) -> None:
+    qualification = "Source and artifact integrity checked" if source_complete else "Artifact integrity checked; source provenance incomplete"
+    print(f"{result['run_id']}: recorded adjudications {counts}. {qualification}; judgments require review.")
+
+
+def check_results(path: Path, integrity_only: bool = False, allow_missing_source: bool = False) -> int:
+    result, counts, source_complete = inspect_results(path, allow_missing_source=allow_missing_source)
+    print_result_check(result, counts, source_complete)
     if integrity_only:
         return 0
-    return int(bool(counts["fail"] or counts["not_evaluated"] or provenance != "retained_source"))
+    return int(bool(counts["fail"] or counts["not_evaluated"] or not source_complete))
 
 
 def check_archives(directory: Path) -> int:
     require(directory.is_dir(), f"Missing evaluation archives: {directory}")
-    archives = sorted(path for path in directory.iterdir() if path.is_dir())
+    archives = sorted(subdirectory(directory, path.name) for path in directory.iterdir() if path.is_dir())
     require(archives, "No retained evaluation archives")
+    recorded_passes = []
     for run in archives:
-        check_results(artifact(run, "results.json"), integrity_only=True)
-    print(f"{len(archives)} retained evaluation archives passed integrity checks; no new model was executed.")
+        path = artifact(run, "results.json")
+        result, counts, source_complete = inspect_results(path, allow_missing_source=True)
+        print_result_check(result, counts, source_complete)
+        if source_complete and not counts["fail"] and not counts["not_evaluated"]:
+            recorded_passes.append(result)
+    if recorded_passes:
+        latest = max(recorded_passes, key=lambda result: (result["date"], result["run_id"]))
+        if latest["implementation_sha256"] != implementation_digest():
+            print(f"WARNING: Live plugin source differs from the latest recorded all-pass run "
+                  f"{latest['run_id']}. Its historical judgments do not evaluate the current source.")
+    else:
+        print("WARNING: No retained run records complete passing adjudications with source provenance.")
+    print(f"{len(archives)} retained evaluation archives checked; see any provenance warnings above. "
+          "No new model or semantic judge was executed.")
     return 0
 
 
@@ -288,6 +398,7 @@ def main() -> int:
     commands.add_parser("fingerprint")
     freeze = commands.add_parser("snapshot")
     freeze.add_argument("--output", type=Path, required=True)
+    freeze.add_argument("--revision", help="Full committed source SHA; omit to retain standalone live source")
     prep = commands.add_parser("prepare")
     prep.add_argument("case")
     prep.add_argument("--snapshot", type=Path, required=True)
@@ -305,12 +416,12 @@ def main() -> int:
     try:
         if args.command == "check":
             catalog, _ = load()
-            print(f"{len(catalog['cases'])} independent scenarios and withheld rubrics are structurally valid. No skill was executed.")
+            print(f"{len(catalog['cases'])} scenarios and withheld rubrics are structurally valid. No skill was executed.")
         elif args.command == "fingerprint":
             print(json.dumps({"implementation_sha256": implementation_digest(),
                               "fixture_sha256": digest(CASES), "rubric_sha256": digest(RUBRIC)}))
         elif args.command == "snapshot":
-            snapshot(args.output)
+            snapshot(args.output, args.revision)
         elif args.command == "prepare":
             prepare(args.case, args.output, args.snapshot)
         elif args.command == "retain-case":

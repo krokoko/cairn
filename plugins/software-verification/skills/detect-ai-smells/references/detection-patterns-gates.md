@@ -90,7 +90,7 @@ grep -rn 'raise \|throw \|return null\|return \[\]\|except\|catch' src/ | grep -
 
 | Gate type | Tools | What it catches |
 |-----------|-------|-----------------|
-| Assertion-presence lint | `eslint-plugin-jest` (`expect-expect`), `flake8-pytest-style`, custom AST checks | Test bodies with no assertion at all or only a `not throws` |
+| Assertion-presence lint | `eslint-plugin-jest` (`expect-expect`), `flake8-pytest-style`, custom AST checks | Test bodies lacking an assertion; review `not throws` against the claimed behavior |
 | Mutation testing | `stryker`, `mutmut`, `cargo-mutants` | Tests insensitive to the selected relevant mutations |
 | Mock-return assertion detection | Custom AST/semgrep | Assertions made only against stubbed/mock return values |
 | Snapshot hygiene | Review gate, `--ci` snapshot mode | Auto-updated snapshots committed without review |
@@ -122,4 +122,4 @@ For teams starting from zero, select relevant candidates by failure consequence 
 7. Lockfile enforcement + Docker tag linting (catches AI008)
 8. Branch coverage + error-path test requirement (catches AI009)
 9. Assertion-presence lint + mutation testing (catches AI010)
-10. Anti-vacuity probes + presence⇒mandatory meta-gates (catches AI011 — see `detection-patterns-gates-formal.md`)
+10. Anti-vacuity probes + meta-gates for active required claims (AI011 — see `detection-patterns-gates-formal.md`)

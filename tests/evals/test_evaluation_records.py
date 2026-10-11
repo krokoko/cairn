@@ -5,6 +5,7 @@ import contextlib
 import importlib.util
 import io
 import json
+import shutil
 import subprocess
 import sys
 import tempfile
@@ -69,6 +70,25 @@ class EvaluationIdentity(unittest.TestCase):
         with contextlib.redirect_stdout(io.StringIO()):
             return evaluation.check_results(path, integrity_only=integrity_only)
 
+    def commit_source(self):
+        commands = [
+            ["init", "--quiet"],
+            ["add", "plugins"],
+            ["-c", "user.name=Evaluation Test", "-c", "user.email=evaluation@example.invalid",
+             "commit", "--quiet", "-m", "Preserve synthetic evaluated source"],
+        ]
+        for command in commands:
+            subprocess.run(["git", "-C", str(evaluation.ROOT), *command], check=True, capture_output=True)
+        return subprocess.check_output(["git", "-C", str(evaluation.ROOT), "rev-parse", "HEAD"],
+                                       text=True).strip()
+
+    def use_git_provenance(self, revision):
+        identity = evaluation.read_json(self.run / "snapshot.json")
+        identity.update(provenance="git_revision", source_revision=revision)
+        evaluation.write_json(self.run / "snapshot.json", identity)
+        (self.run / "source.json").unlink()
+        self.result.update(provenance="git_revision", source_revision=revision)
+
     def test_matching_record(self):
         self.assertEqual(self.check(), 0)
 
@@ -99,6 +119,77 @@ class EvaluationIdentity(unittest.TestCase):
                          b"# Frozen skill\r\nPreserve these exact bytes.\r\n")
         self.assertNotIn(str(evaluation.ROOT), (other / "TASK.txt").read_text())
         self.assertEqual(self.check(), 0)
+
+    def test_git_revision_replays_committed_source_despite_live_changes(self):
+        revision = self.commit_source()
+        self.skill.write_text("Uncommitted changes must not enter this evaluation.")
+        run = self.root / "git-run"
+        prepared = self.root / "git-prepared"
+        with contextlib.redirect_stdout(io.StringIO()):
+            evaluation.snapshot(run, revision)
+            evaluation.prepare("example", prepared, run)
+        identity = evaluation.read_json(run / "snapshot.json")
+        self.assertEqual(identity["provenance"], "git_revision")
+        self.assertEqual(identity["source_revision"], revision)
+        self.assertFalse((run / "source.json").exists())
+        self.assertEqual((prepared / "source" / self.skill_relative).read_bytes(),
+                         b"# Frozen skill\r\nPreserve these exact bytes.\r\n")
+
+    def test_git_replacement_refs_do_not_redefine_recorded_source(self):
+        original = self.commit_source()
+        self.skill.write_text("A different skill in a later commit.")
+        replacement = self.commit_source()
+        subprocess.run(["git", "-C", str(evaluation.ROOT), "replace", original, replacement],
+                       check=True, capture_output=True)
+        self.use_git_provenance(original)
+        self.assertEqual(self.check(), 0)
+        self.assertEqual(evaluation.git_source_files(original)[self.skill_relative],
+                         "# Frozen skill\r\nPreserve these exact bytes.\r\n")
+
+    def test_default_snapshot_remains_standalone_in_git_checkout(self):
+        self.commit_source()
+        run = self.root / "standalone-run"
+        with contextlib.redirect_stdout(io.StringIO()):
+            evaluation.snapshot(run)
+        self.assertEqual(evaluation.read_json(run / "snapshot.json")["provenance"], "retained_source")
+        self.assertTrue((run / "source.json").is_file())
+
+    def test_git_revision_result_binds_source_bytes_and_revision(self):
+        revision = self.commit_source()
+        self.use_git_provenance(revision)
+        self.assertEqual(self.check(), 0)
+        self.result["source_revision"] = "f" * 40
+        with self.assertRaisesRegex(ValueError, "Git revision differs"):
+            self.check()
+        self.result["source_revision"] = revision
+        identity = evaluation.read_json(self.run / "snapshot.json")
+        identity["implementation_sha256"] = "0" * 64
+        evaluation.write_json(self.run / "snapshot.json", identity)
+        with self.assertRaisesRegex(ValueError, "Implementation digest mismatch"):
+            self.check()
+
+    def test_unavailable_git_source_is_explicitly_incomplete_and_report_integrity_still_checked(self):
+        self.use_git_provenance("0" * 40)
+        with self.assertRaisesRegex(evaluation.SourceUnavailable, "unavailable locally"):
+            self.check()
+        output = io.StringIO()
+        with contextlib.redirect_stdout(output):
+            self.assertEqual(evaluation.check_archives(self.run.parent), 0)
+        self.assertIn("source provenance incomplete", output.getvalue())
+        self.assertIn("No history was fetched", output.getvalue())
+        self.assertNotIn("Source and artifact integrity checked", output.getvalue())
+        self.assertIn("No retained run records complete passing adjudications with source provenance",
+                      output.getvalue())
+        (self.run / "cases/example/report.md").write_text("Changed report while source is absent.")
+        with contextlib.redirect_stdout(io.StringIO()):
+            with self.assertRaisesRegex(ValueError, "Report digest mismatch"):
+                evaluation.check_archives(self.run.parent)
+        with self.assertRaises(evaluation.SourceUnavailable):
+            evaluation.prepare("example", self.root / "cannot-prepare", self.run)
+
+    def test_git_revision_requires_a_full_sha(self):
+        with self.assertRaisesRegex(ValueError, "requires a full commit SHA"):
+            evaluation.snapshot(self.root / "short-revision", "HEAD")
 
     def test_changed_report_invalidates_adjudication(self):
         (self.run / "cases/example/report.md").write_text("A different conclusion.")
@@ -173,6 +264,31 @@ class EvaluationIdentity(unittest.TestCase):
                 with self.assertRaisesRegex(ValueError, "Report cannot be an input"):
                     evaluation.retain_case("example", self.prepared, self.run, name)
 
+    def test_retention_cannot_write_through_an_escaping_cases_directory(self):
+        run = self.root / "new-run"
+        with contextlib.redirect_stdout(io.StringIO()):
+            evaluation.snapshot(run)
+        external = self.root / "external-write-target"
+        external.mkdir()
+        (run / "cases").symlink_to(external, target_is_directory=True)
+        with self.assertRaisesRegex(ValueError, "must stay within"):
+            evaluation.retain_case("example", self.prepared, run, "report.md")
+        self.assertEqual(list(external.iterdir()), [])
+
+    def test_retention_rejects_escaping_prepared_directories(self):
+        for name in ("source", "repository"):
+            with self.subTest(directory=name):
+                original = self.prepared / name
+                external = self.root / f"external-{name}"
+                original.rename(external)
+                original.symlink_to(external, target_is_directory=True)
+                try:
+                    with self.assertRaisesRegex(ValueError, "must stay within"):
+                        evaluation.retain_case("example", self.prepared, self.run, "report.md")
+                finally:
+                    original.unlink()
+                    external.rename(original)
+
     def test_record_rejects_input_as_report_including_path_and_file_aliases(self):
         directory = self.run / "cases/example"
         fixture = directory / "nested/input.txt"
@@ -198,6 +314,22 @@ class EvaluationIdentity(unittest.TestCase):
         self.result["cases"]["example"]["report"] = "cases/example/other-case.md"
         with self.assertRaisesRegex(ValueError, "must stay within"):
             self.check()
+
+    def test_record_rejects_a_whole_case_directory_outside_the_run(self):
+        original = self.run / "cases/example"
+        external = self.root / "external-case"
+        original.rename(external)
+        original.symlink_to(external, target_is_directory=True)
+        with self.assertRaisesRegex(ValueError, "must stay within"):
+            self.check()
+
+    def test_archive_check_rejects_a_run_outside_the_archive_directory(self):
+        self.check()
+        external = self.root / "external-run"
+        self.run.rename(external)
+        self.run.symlink_to(external, target_is_directory=True)
+        with self.assertRaisesRegex(ValueError, "must stay within"):
+            evaluation.check_archives(self.run.parent)
 
     def test_fail_and_unassessed_results_preserve_integrity_without_passing(self):
         for status in ("fail", "not_evaluated"):
@@ -247,6 +379,45 @@ class EvaluationIdentity(unittest.TestCase):
         (self.run / "results.json").unlink()
         with self.assertRaisesRegex(ValueError, "Missing artifact"):
             evaluation.check_archives(self.run.parent)
+
+    def test_archive_check_warns_when_current_plugins_are_not_the_evaluated_source(self):
+        self.check()
+        output = io.StringIO()
+        with contextlib.redirect_stdout(output):
+            self.assertEqual(evaluation.check_archives(self.run.parent), 0)
+        self.assertNotIn("Live plugin source differs", output.getvalue())
+        self.skill.write_text("New plugin behavior has no recorded evaluation.")
+        output = io.StringIO()
+        with contextlib.redirect_stdout(output):
+            self.assertEqual(evaluation.check_archives(self.run.parent), 0)
+        self.assertIn("Live plugin source differs", output.getvalue())
+        self.assertIn("historical judgments do not evaluate the current source", output.getvalue())
+        self.assertEqual(self.check(), 0)
+
+    def test_failed_record_does_not_suppress_missing_passing_evaluation_warning(self):
+        self.result["cases"]["example"]["criteria"]["scope"]["status"] = "fail"
+        self.check()
+        output = io.StringIO()
+        with contextlib.redirect_stdout(output):
+            self.assertEqual(evaluation.check_archives(self.run.parent), 0)
+        self.assertIn("No retained run records complete passing adjudications", output.getvalue())
+
+    def test_newer_unavailable_git_run_cannot_replace_verified_source_for_staleness(self):
+        self.check()
+        earlier = self.run.parent / "earlier-complete-run"
+        shutil.copytree(self.run, earlier)
+        self.use_git_provenance("0" * 40)
+        self.result.update(date="2026-10-12", implementation_sha256="1" * 64)
+        identity = evaluation.read_json(self.run / "snapshot.json")
+        identity["implementation_sha256"] = self.result["implementation_sha256"]
+        evaluation.write_json(self.run / "snapshot.json", identity)
+        evaluation.write_json(self.run / "results.json", self.result)
+        output = io.StringIO()
+        with contextlib.redirect_stdout(output):
+            self.assertEqual(evaluation.check_archives(self.run.parent), 0)
+        self.assertIn("source provenance incomplete", output.getvalue())
+        self.assertNotIn("Live plugin source differs", output.getvalue())
+        self.assertNotIn("No retained run records complete passing adjudications", output.getvalue())
 
     def test_optimized_python_cannot_disable_checks(self):
         self.check()
