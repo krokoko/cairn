@@ -20,6 +20,9 @@ work is improving over time—not only whether the repo is technically checkable
 |--------|----------------|
 | PR templates requiring agent/task metadata | `.github/pull_request_template.md`, similar |
 | Labels for agent-assisted work | Issue/PR label configs |
+| Issue templates and label taxonomy | `.github/ISSUE_TEMPLATE/`, consistent label prefixes (type, area, priority) — agents can pick up well-formed tasks |
+| Backlog health | Open issues have labels and descriptive titles (`gh issue list --json title,labels`); NOT INSPECTABLE offline |
+| Agent co-authored commits | `git log --grep=Co-authored-by -i` trailers naming an agent — agents already contribute here |
 | Documented review rubric for agents | `AGENTS.md`, `CONTRIBUTING.md`, review skill or checklist |
 | Retrospective or learning docs updated after reviews | `docs/learnings/`, workflow artifact dirs |
 | Instruction file growth after corrections | `AGENTS.md` / `CLAUDE.md` git history or rule count |

@@ -18,20 +18,15 @@ Workflow order (not test-first TDD): **requirement → executable acceptance cri
 | **Architecture decisions** | `spec/adr/`, `docs/adr/` tied to enforcement | ADR cites lint/fitness function | ADRs with no mechanical check |
 | **Formal spec (when concurrent)** | `*.tla`, FSM with generated sync | Model-check in CI or verify-quick | Hand-wavy "thread-safe" comments |
 
-## Scoring rubric (for category 2.8)
+## Verdicts for category 2.8
 
-Add to Machine-readable intent score using these bands:
+The **Machine-readable intent** rows in `category-definitions.md` are the denominator. Each
+artifact above maps to a row: the **Strong signal** column is the PASS profile, the
+**Weak / absent** column is FAIL.
 
-| Score band | Spec-first profile |
-|------------|-------------------|
-| **0–25** | No requirement files; no executable criteria; logic entangled with IO |
-| **26–50** | Issues/README describe intent; some schemas; tests exist but untagged |
-| **51–75** | Requirement IDs + some Gherkin/BDD; partial traceability; core partly separable |
-| **76–100** | REQ files + scenario per requirement + traceability gate + pure core pattern (or justified exception documented in ADR) |
-
-**Cap rule:** If category 2.8 raw signals look strong (schemas, property tests) but **no
-requirement files and no executable acceptance criteria**, cap 2.8 at **60** until spec-first
-artifacts exist — schemas alone do not prevent intent drift.
+**Cap rule:** if the computed 2.8 score exceeds 60 while both **Stable requirement IDs** and
+**Executable acceptance criteria** are FAIL, cap 2.8 at 60 — schemas and property tests alone do
+not prevent intent drift. Note the cap in the category's Notes cell.
 
 ## Discovery commands
 
