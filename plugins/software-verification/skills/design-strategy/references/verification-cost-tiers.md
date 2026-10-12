@@ -19,13 +19,14 @@ Prefer T1 for Check tier so agents self-correct before accumulating debt.
 
 ## Default gate contents by ecosystem
 
-Adapt names to your stack; one tool per bug class within each tier.
+Adapt names to the claim and stack; these are candidate contents, not a required bundle. Budget
+timings are planning targets, not guarantees. Retain scope/completion evidence for each selected check.
 
 ### Check (~seconds)
 
 - Formatter + linter (strict)
 - Type checker
-- Secret scan (non-empty ruleset)
+- Secret scan (qualified effective rules, including defaults)
 - Meta-gates: traceability, spec↔code sync, requirement↔scenario coverage
 - File-size / doc-count hygiene (if project enforces)
 
@@ -59,19 +60,22 @@ Adapt names to your stack; one tool per bug class within each tier.
 
 Cross-check bug-surface with product risk:
 
-| Risk | Check | Verify-quick | Verify-full | Human gate |
+| Risk | Check | Verify-quick | Verify-full | Review consideration |
 |------|-------|--------------|-------------|------------|
-| Low | CI Check | CI verify-quick | Nightly optional | None |
-| Medium | Hook + CI Check | CI verify-quick | Pre-merge sample | Agent review |
-| High | Hook + CI Check | CI verify-quick | Required verify-full | Ship review |
-| Critical | Hook + CI Check | CI verify-quick + attestation | Required verify-full + formal evidence | Domain expert |
+| Low | Local/CI feedback | Relevant local behavior | Justify if useful | Ambiguous intent |
+| Medium | Local + CI | Boundary/behavior checks | Representative deeper cases | Unresolved meaning |
+| High | Local + CI | Critical decisions | Fault/integration evidence where needed | Consequential decisions and existing policy |
+| Critical | Local + CI | Qualified critical claims | Supported deeper methods with scoped completion | Applicable domain obligations |
+
+A risk label does not mandate formal verification, signing, or a new approval. Select methods for
+the actual failure surface; document why omitted checks are inapplicable and what would change that.
 
 ## Anti-patterns
 
 | Anti-pattern | Fix |
 |--------------|-----|
 | Full suite only at verify-full | Move fmt/lint/types to Check at T1 |
-| verify-full on every save | Split tiers; route heavy tools by class C/D only |
+| verify-full on every save | Split tiers; schedule heavier checks by scope, consequence, and measured cost |
 | Check tier skips meta-gates | Add traceability and vacuity probes (see gate-design-patterns) |
 | Same tier for all components | Per-component verify-full only where class or risk demands |
 
@@ -82,4 +86,5 @@ For each target component, specify:
 1. **Check commands** — exact scripts/hooks (pre-commit, post-write)
 2. **Verify-quick commands** — CI job or local alias
 3. **Verify-full commands** — required check vs nightly
-4. **Skip justification** — explicit opt-out when class A and risk Low (auditable, not silent)
+4. **Skip justification** — explicit inapplicability or approved exception, with remaining limits
+5. **Evidence requirements** — source/oracle revisions, environment, completion, bounds, and retained artifacts

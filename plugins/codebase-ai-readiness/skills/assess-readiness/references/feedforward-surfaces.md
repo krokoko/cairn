@@ -30,7 +30,7 @@ deterministically and cheaply before they compound.
 | Type system (strict) | Shape errors, null violations, wrong types | `tsconfig.json` strict, `mypy.ini` strict, `--strict` flags |
 | Linter config | Style drift, known antipatterns, banned APIs | `.eslintrc*`, `ruff.toml`, `.golangci.yml`, `clippy.toml` |
 | Schema validators | Invalid data shapes at API boundaries | JSON Schema, Zod, Pydantic, protobuf |
-| Module boundary linters | Unauthorized cross-module imports | eslint-plugin-boundaries, deptry, madge, ArchUnit |
+| Module boundary linters | Configured prohibited imports | eslint-plugin-boundaries, Import Linter, ArchUnit; qualify parser scope and exceptions |
 | Formatters | Layout inconsistencies | Prettier, Black, rustfmt, gofmt |
 | Security scanners | Known vulnerability patterns | Semgrep, CodeQL, Snyk, bandit |
 | Pre-commit hooks | All of the above, on every change | `.pre-commit-config.yaml`, `.husky/`, `lefthook.yml` |
@@ -39,13 +39,17 @@ deterministically and cheaply before they compound.
 ## Scoring signals
 
 ### Strong feedforward (score 76-100)
-- Instruction file with >10 actionable rules specific to the project
-- Strict type checking with <5% escape hatches
+- Current, relevant project rules that address observed errors without conflicting guidance
+- Relevant strict type checks with reviewed escape hatches at consequential boundaries
 - Module boundary enforcement via linter or structural tests
 - Pre-commit hooks run type checker + linter + formatter on every change
 - Hooks are non-bypassable: agent config denies skip commands, CI enforces server-side
 - Templates exist for common file types (components, services, tests)
 - Architecture docs specify which module depends on what
+
+Inspect allowed/forbidden controls before crediting an enforcement claim. Configured tools
+are useful signals; missing run/protection evidence remains unknown. Rule counts, percentages
+and tool presence do not by themselves establish prevention of the relevant failure.
 
 ### Moderate feedforward (score 51-75)
 - Instruction file exists but is generic or incomplete

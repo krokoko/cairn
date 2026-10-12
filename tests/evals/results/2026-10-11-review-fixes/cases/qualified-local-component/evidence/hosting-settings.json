@@ -1,0 +1,17 @@
+{
+  "provenance": "Read-only repository settings export captured 2026-10-11 for this synthetic snapshot",
+  "source_revision": "qualified-local-component-r4",
+  "branch": "main",
+  "required_status_checks": [
+    "truth-table (ubuntu-latest)",
+    "truth-table (macos-latest)"
+  ],
+  "require_up_to_date_branch": true,
+  "bypass_actors": [],
+  "enforcement_probe": {
+    "source_revision": "qualified-local-component-r4",
+    "known_bad_variant": "exclude_cancelled",
+    "failed_required_check": "truth-table (ubuntu-latest)",
+    "merge_result": "blocked"
+  }
+}

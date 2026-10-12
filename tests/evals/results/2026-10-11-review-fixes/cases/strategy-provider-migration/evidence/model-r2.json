@@ -1,0 +1,14 @@
+{
+  "source_revision": "strategy-provider-migration-r2",
+  "requirement_revision": 2,
+  "environment": "in-memory Python model",
+  "generated_sequences": 50,
+  "failed": 0,
+  "provider_calls": 0,
+  "excluded": [
+    "timeouts after commit",
+    "process restarts",
+    "v1/v2 overlap",
+    "tenant namespaces"
+  ]
+}

@@ -13,13 +13,13 @@ independently and produces uniform evidence records.
 | Formal | Machine-checked: model checking, SMT, deductive proofs | TLA+/TLC, Kani, Dafny, Z3 |
 | Operational | Real-world: shadow, canary, chaos, runtime verification | Argo Rollouts, Chaos Monkey |
 
-All lanes feed an **Evidence Store** and then a **Scoring and Policy Engine** that
-decides: may this merge, may this deploy, must a human approve?
+Applicable lanes feed an **Evidence Store** and a **Policy Engine** that evaluates the configured
+merge/release criteria. Scores do not grant action permissions; preserve existing authorization rules.
 
 ## Four-rail coverage
 
 The five lanes above are *method categories*. They are orthogonal to a second question: does the
-stack cover the whole lifecycle? A sound base stack has **one rail in each of four positions**:
+stack cover the relevant lifecycle? Review these four positions and justify inapplicable rails:
 
 | Rail | Position | Catches | Example |
 |------|----------|---------|---------|
@@ -28,17 +28,16 @@ stack cover the whole lifecycle? A sound base stack has **one rail in each of fo
 | Production-proximate | Near/in production | What labs miss | Shadow, canary, replay, SLOs |
 | Evidence | After verdict | Unverifiable/untrusted delivery | Signed attestation (in-toto/SLSA) |
 
-Use this as a coverage checklist: a stack missing a rail has a blind spot regardless of how many
-lanes it exercises.
+Use this as a coverage checklist. A local library may not have a deployed service; record the
+consumer boundary and applicable release evidence instead of inventing a production gate.
 
 ## Evidence rail and attestations
 
-The Evidence Store should not only retain records — for high/critical risk it should emit **signed,
-portable attestations** (in-toto attestation format, SLSA provenance levels, signed via
+Use **signed, portable attestations** when downstream provenance or release policy calls for them
+(in-toto attestation format, SLSA provenance levels, signed via
 Sigstore/Cosign or GitHub artifact attestations). This lets downstream and cross-team consumers
-trust *what ran, on which commit, with which verdict* without rerunning the harness. Attestation is
-evidence packaging — it proves the process happened, not that the output is semantically correct —
-so it complements oracles, never replaces them.
+authenticate the issuer's recorded source, process, and verdict. This depends on signer and build
+trust; signing does not establish that assertions match intent or strengthen the result's semantics.
 
 ## Core interface schemas
 
@@ -54,8 +53,14 @@ assumptions. Keeps validation reproducible and attributable.
 
 ### Evidence record
 
-Method, tool, property, verdict, artifact hash, runtime, assumptions, links to
-trace/crash/proof. Lets policy engines reason over heterogeneous evidence.
+Use `../../assess-verification/references/evidence-semantics.md` for observation, execution, and
+conclusion states. Retain requirement/claim and oracle revisions; semantic-review identity; source
+commit plus relevant uncommitted changes; environment/dependency fidelity; tool version/configuration;
+bounds/campaign size/exclusions; completion; and links to reports, traces, or proof artifacts.
+
+Use fresh run directories and an expected inventory. Missing/skipped/interrupted results remain
+visible. A configured tool is not an inspected run; positive conclusions require `run_inspected`
+and `completed`, with a conclusion appropriate to the method and supported scope.
 
 ### Replay label
 
@@ -64,8 +69,8 @@ tags. Turns incidents and historical failures into durable regression assets.
 
 ### Promotion policy
 
-Required checks by risk class, rollback policy, approval thresholds, low-confidence
-escalation rules. Converts evidence into action consistently.
+Required scoped evidence, unresolved gaps, rollback policy where applicable, existing authorization
+requirements, and escalation rules. A monitored violation needs a separate enforcement mechanism.
 
 ## Harness metrics
 
@@ -90,7 +95,6 @@ turnaround time (commit to decision).
 
 ## Key design principle
 
-Each lane must produce a **uniform evidence record**: what property was checked, with
-which tool, on which artifact, under which assumptions, resulting in which verdict.
-Incomplete invariants can produce automated confidence in incorrect behavior, so
-production telemetry and replay must always feed back into the pipeline.
+Each applicable lane produces a **uniform evidence record** without flattening different conclusions
+into one green status. For operated systems, feed representative incidents and observed outcomes
+back into the oracle review process. Telemetry and provenance alone are not behavioral correctness.

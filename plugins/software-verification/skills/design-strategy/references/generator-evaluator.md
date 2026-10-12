@@ -3,9 +3,8 @@
 ## Definition
 
 The Generator-Evaluator pattern uses two agents in an adversarial loop: one writes
-code (generator) and another judges it (evaluator). This creates verification
-pressure beyond what self-review provides, since agents tend to be biased toward
-their own output.
+code (generator) and another judges it (evaluator). This can expose mistakes missed by self-review;
+the value depends on criteria, information separation, and correlated evaluator/generator errors.
 
 ## Why self-verification is insufficient
 
@@ -18,8 +17,8 @@ to provide genuine verification pressure.
 ### 1. Generator + Test-Writer (separation of concerns)
 
 The generating agent writes implementation; a separate agent writes tests without
-seeing the implementation. Tests express intent independently, catching cases where
-implementation and tests silently agree on wrong behavior.
+seeing the implementation. Tests can offer a separate interpretation of intent. Shared specification
+errors can still make implementation and tests agree on wrong behavior.
 
 | Role | Input | Output | Key constraint |
 |------|-------|--------|----------------|
@@ -41,18 +40,20 @@ issues. The generator then fixes identified issues.
 ### 3. Generator + Mutant (robustness testing)
 
 After the generator produces code, a mutant agent deliberately introduces subtle bugs.
-The test suite must catch them. If mutations survive, tests are weak.
+Check whether the suite detects relevant behavior-changing mutations. Investigate survivors:
+they can expose weak assertions, equivalent behavior, or changes outside the claimed scope.
 
 | Role | Input | Output | Key constraint |
 |------|-------|--------|----------------|
 | Generator | Task | Implementation + tests | Normal coding flow |
 | Mutant | Implementation | Mutated versions | Subtle, realistic bugs only |
-| Verifier | Tests + mutants | Kill rate | Measures test strength |
+| Verifier | Tests + mutants | Outcomes per mutant | Separate killed, survived, equivalent, timeout, and untested cases |
 
-### 4. N-of-M Consensus (statistical verification)
+### 4. N-of-M Consensus (corroboration)
 
-Multiple generator agents produce independent solutions. Solutions are compared;
-agreement across independent generations provides confidence.
+Multiple agents produce solutions without sharing drafts. Compare them against external acceptance
+criteria. Agreement can reflect correlated model errors or a shared wrong specification; generation
+separation alone does not establish statistical independence or a correctness guarantee.
 
 | Role | Input | Output | Key constraint |
 |------|-------|--------|----------------|
@@ -61,12 +62,12 @@ agreement across independent generations provides confidence.
 
 ## When to apply each variant
 
-| Variant | Best for | Cost | Confidence gain |
-|---------|----------|------|-----------------|
-| Generator + Test-Writer | New features with clear specs | 2x generation cost | High (independent verification) |
-| Generator + Critic | Complex changes, security-sensitive | 1.5x cost | Medium (reviewer bias possible) |
-| Generator + Mutant | Testing test quality itself | 2-3x cost | High for test adequacy |
-| N-of-M Consensus | Critical, well-specified components | Nx cost | Highest (statistical) |
+| Variant | Best for | Cost considerations | Evidence limit |
+|---------|----------|---------------------|----------------|
+| Generator + Test-Writer | Features with reviewed specs | Another generation plus reconciliation | Tests may share specification mistakes |
+| Generator + Critic | Complex or security-sensitive changes | Review and repair iterations | Findings depend on rubric and reviewer context |
+| Generator + Mutant | Critical test decisions | Campaign size and test runtime | Sensitivity to selected mutations only |
+| N-of-M Consensus | Exploring alternative implementations | Multiple generations and comparison | Agreement is corroboration, not proof |
 
 ## Implementation guidance
 
@@ -76,7 +77,9 @@ The evaluator must genuinely bring independent perspective:
 - Different system prompt / instruction set
 - Focus on failure modes, not confirmation
 - Access to spec but NOT to generator's reasoning
-- Calibrated rubrics with concrete criteria (not "looks good")
+- Calibrated rubrics with concrete criteria and independently labeled accepted/rejected controls
+- Versioned requirement, prompt/model, fixtures, and oracle revisions
+- Separate development feedback from evaluation cases; record repeated exposure and leakage limits
 
 ### Cost management
 
@@ -90,7 +93,9 @@ Reserve for cases where the cost of a missed bug exceeds the cost of dual genera
 
 ### Integration with CI
 
-Generator produces code; evaluator produces tests or critique; both merge into PR; standard CI validates; disagreements go to human review.
+Generator produces a candidate; evaluator supplies tests or critique for review. Run the relevant
+gates and retain scoped results before merging. Resolve consequential or ambiguous disagreements
+with the designated reviewer; evaluation scores do not authorize tool actions or bypass permissions.
 
 ## Related patterns
 

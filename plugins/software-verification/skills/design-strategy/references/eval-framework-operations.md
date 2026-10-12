@@ -27,6 +27,13 @@ Run evals:
 ```markdown
 # Eval Results — [Date]
 
+## Evidence Scope
+
+**Source revision**: [fixture/source revision and relevant changes]
+**Assessment date**: [ISO date]
+**Inspected scope**: [tasks, environments, exclusions]
+**Evidence basis**: [runner artifacts, model/configuration, labels, sample size]
+
 ## Summary
 - Tasks attempted: N
 - Success rate: X%
@@ -48,10 +55,14 @@ Run evals:
 
 ## Relationship to verification infrastructure
 
-Evals consume verification infrastructure (tests, types, lint, CI). Low eval scores indicate:
+Evals consume verification infrastructure (tests, types, lint, CI). Investigate low scores for:
 1. Weak verification infrastructure (no oracle to check against)
 2. Poor feedforward surfaces (agent makes preventable mistakes)
 3. Task horizon exceeded (task too complex for single agent session)
+4. Agent behavior, environment failures, or unrepresentative/incorrect evaluation criteria
+
+Preserve timeout, interrupted, and missing outcomes separately from behavioral failures. Report
+sample uncertainty and label-review limits; do not infer universal reliability from a small campaign.
 
 ## Tools for building evals
 

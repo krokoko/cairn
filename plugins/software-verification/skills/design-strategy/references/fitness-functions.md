@@ -25,13 +25,20 @@ Prevent unauthorized module dependencies (e.g., UI layer cannot import database 
 | Tool | Language | How it works |
 |------|----------|-------------|
 | eslint-plugin-boundaries | TypeScript/JS | Define element types and allowed dependency rules |
-| deptry | Python | Detect missing, unused, and transitive deps |
+| Import Linter | Python | Enforce forbidden imports and dependency-layer contracts |
 | madge | TypeScript/JS | Circular dependency detection |
 | ArchUnit | Java/Kotlin | Test architectural rules as unit tests |
 | go-arch-lint | Go | Layer and dependency rules for Go packages |
-| cargo-deny | Rust | License, ban, and advisory checks |
+| Custom dependency checks | Rust | Check declared module/crate boundaries within supported analysis scope |
 
 Example rule: "No file in `src/domain/` may import from `src/infrastructure/`"
+
+Keep dependency hygiene separate: deptry finds missing/unused/transitive package dependencies;
+cargo-deny checks licenses, bans, and advisories. These do not establish arbitrary module boundaries.
+
+Qualify analyzers with allowed and forbidden fixtures for the actual stack. Include direct, nested,
+and indirect imports where supported; record parser versions, source exclusions, unresolved edges,
+and exceptions. A clean report supports only the configured rule over the analyzed graph.
 
 ### 2. API surface checks
 
@@ -60,3 +67,10 @@ Measurable thresholds that prevent quality erosion.
 | Test execution | CI timing assertions | < 3 minutes for unit suite |
 
 Example rule: "Bundle size must not increase by more than 5% without reviewer approval"
+
+## Validate maintainability
+
+Separate rule conformance, diagnostic measurements, and maintenance outcomes. Complexity, duplication,
+coverage, hotspots, and change coupling identify possible friction; none establishes ease of change.
+Try a representative task such as adding an adapter through documented extension points. Record
+effort, unexpected edits, regressions, and boundary behavior; interpret findings within that task's scope.

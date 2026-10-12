@@ -1,0 +1,393 @@
+{
+  "schema_version": 2,
+  "provenance": "retained_source",
+  "run_id": "2026-10-11-review-fixes",
+  "date": "2026-10-11",
+  "source_revision": "d3f3870d68c811adcc70a59fab3ec4040276b15d plus uncommitted feat/scoped-verification-evidence review fixes; exact evaluated plugin files retained in source.json before preparing any case.",
+  "implementation_sha256": "8261c56038099d977de5619e53e05137a2a62f5d9724057af504650803273653",
+  "fixture_sha256": "e104ca3d0e46370dc69eddf10e66b5644c3e00cd86263dab41498af6868fd905",
+  "rubric_sha256": "e68de82d625d5c19d78291f2bf3fc1a4f3f7f040edbf50afcd06db7ab851b83e",
+  "model": "Inherited Codex session model; exact runtime identifier was not exposed to the evaluators.",
+  "configuration": "Twelve fork_turns=none evaluators, one fresh context per case. Each read only its TASK.txt, relevant frozen skill/references and raw repository snapshot. No rubric, prior conclusions, sibling cases, live plugin source, target check execution or remote retrieval was provided. Report self-validation was permitted. One submitted report (skipped-acceptance) had two ledger rows changed after frozen validator diagnostics; original retained. One semantic sample per case; exact runtime model identifier and sampling controls unavailable.",
+  "adjudicator": "Integrating parent agent authored or coordinated the rubric and manually graded all submitted reports against it. This is self-adjudication, not independent semantic review. Fresh evaluator contexts did not receive the rubric. The portable report CLI separately checked structure and declared states. Retention verified prepared source and raw fixture bytes unchanged.",
+  "limitations": "Twelve synthetic read-only scenarios and 36 agent-recorded passing judgments cover five skills but are not a reliability estimate, independent grading, or semantic certification. One output per case was reviewed by an adjudicator participating in integration; short qualitative criteria do not establish reproducible grading. Eleven submitted reports passed the then-current portable validator without parent feedback. Skipped-acceptance had two ledger rows changed after validator diagnostics. Its original artifact and hash remain retained; three state-cell edits preserved the narrative findings but reduced ledger precision by replacing a source-declared unconditional skip with unknown, so the repair was not purely structural. Exact plugin source and retained catalogs are preserved; judgments apply only to that frozen implementation. Exact runtime model and sampling identifiers were unavailable: source replay is possible, exact model-run reproduction is not. No new model run or regrading accompanied this metadata clarification.",
+  "cases": {
+    "configured-only": {
+      "report": "cases/configured-only/readiness-report.md",
+      "report_sha256": "93945301f79927ff405f3c6ae6f6eb21ef400d25176a7a5d95fa48b0252db295",
+      "input_sha256": {
+        "snapshot.json": "fa17ad0614986c2918da99050cfdccda41a1e032b37620ad66df864c27bb02a8",
+        "README.md": "423e10c79cb48a0d86de48d8115f8bf81fe50811cf8ac65b113239abb5c8762a",
+        "ledger.py": "3251dbf18617cd67c47707cb9bd1611dbac212ff0ee9814a75b8ce1f34b85aad",
+        "tests/test_ledger.py": "d28295998f45d0dd3ccc854b8b09c636e7b5e1596bda418cff87ca3345b32002",
+        ".github/workflows/test.yml": "eb761197d38be2743102b760c6731162874d32597558323be6d7cecbcfd7da10"
+      },
+      "criteria": {
+        "configuration_not_execution": {
+          "status": "pass",
+          "evidence": "Evidence Scope states static inspection only; all configured tests/workflow rows in Evidence Ledger use configuration_only / unknown / unknown. The paragraph after the ledger explicitly distinguishes prior unknown execution from this assessment not running checks."
+        },
+        "unknown_remote_state": {
+          "status": "pass",
+          "evidence": "Required CI checks row is not_inspectable / unknown / unknown. CI reliability is unknown and excluded from assessed weight; Category Breakdown says configuration alone is not reliability evidence."
+        },
+        "no_unearned_high_autonomy": {
+          "status": "pass",
+          "evidence": "Recommended Autonomy Level is L1, Surface Autonomy is L1 with L2 evidence ceiling, and L4-INTENT is missing / L4-ORACLES unknown."
+        }
+      },
+      "structural_validation": {
+        "submitted": "pass",
+        "parent_feedback": "none"
+      }
+    },
+    "oracle-rot": {
+      "report": "cases/oracle-rot/verification-report.md",
+      "report_sha256": "68e28a27d31aae011286c33edbaa457772d24bb3c051a08d44e9f3d0f5743f86",
+      "input_sha256": {
+        "snapshot.json": "3a7e0c094f1c803bcc3815750a138aa2599196295142f5aa982f2f734469038b",
+        "requirements.md": "97c5366001c007a6f5573bd7261d144a79364330f186d9d346c9a79550b63a73",
+        "price.py": "6581e5a114e64b7f51f1938d96b1a3fa916940f1aef16a2bbabeccba6614384b",
+        "tests/test_price.py": "163c95bac0fd754657294c42489f35c970b73884e7535fea1e55c6d36aa0742d",
+        "evidence/run.json": "5ddb297bb0c425f8e6062ea9584c88ccd1c3c015fe1cc8dee8f951891268361b"
+      },
+      "criteria": {
+        "stale_meaning": {
+          "status": "pass",
+          "evidence": "Evidence Scope identifies oracle rot: current source and assertion compute/expect 9000 for 10000 while approved revision 2 requires 8500. Ledger separates matching-revision test execution from stale revision 1 semantic review."
+        },
+        "mutation_limit": {
+          "status": "pass",
+          "evidence": "Oracle rot versus execution freshness states rerunning, increasing mutation score or refreshing fingerprints leaves the semantic defect intact; mutation ledger row retains unknown campaign details and says 98% cannot approve the current business rule."
+        },
+        "independent_review": {
+          "status": "pass",
+          "evidence": "Missing Oracles and Verification Debt VD-1/VD-2 require independent revision 2 values, repaired implementation/assertion, obsolete 10% known-bad control and renewed revision-bound domain approval."
+        }
+      },
+      "structural_validation": {
+        "submitted": "pass",
+        "parent_feedback": "none"
+      }
+    },
+    "skipped-acceptance": {
+      "report": "cases/skipped-acceptance/verification-report.md",
+      "report_sha256": "0fc0528b564dc1bf2ba5d90436348a6fc1d2498391ed50fb3d2b5f9f86ffa7f3",
+      "input_sha256": {
+        "snapshot.json": "0f9fa8330a33a5231f9503a12a9382c0c23466e4f72809f5bfc60e369ca7f8df",
+        "requirements.md": "a00fc96de1ff22f7bf008fc1e1c300c71b02c3b7f16b754e91d8c468cfe2d455",
+        "trace.json": "a6fd78758b69c08d974ea699ab827148cc932a4d6fb437c2d7e4521e131019c6",
+        "service.py": "47302e3f78335061346ec04279fcfcafd7b60187a74aea73ef176a37597b86e2",
+        "tests/test_service.py": "18215981db13ec8914f0bfed40189a4badae581e6fc4f87015b31ce3503c8e3c",
+        "evidence/junit.xml": "a917690c42fc3c12bc88960a3262a2c68c82d2b7af068853ad18d91794d604c8",
+        "evidence/run.json": "52680b7ed3d901afaa38f79d63ef1461c6f8681fd9750ab2a4097a806a7d091d"
+      },
+      "criteria": {
+        "linked_not_executed": {
+          "status": "pass",
+          "evidence": "Requirement Traceability separates resolved REQ-ID/test mapping from expected 1, completed 0, skipped 1 execution. The ledger records run_inspected / skipped / not_run and explains runner exit 0 is not acceptance."
+        },
+        "no_false_pass": {
+          "status": "pass",
+          "evidence": "Opening finding says the sole declared acceptance check was skipped and zero exit establishes no acceptance assertion. Verification Maturity is Tier 1; no positive behavioral conclusion is claimed."
+        },
+        "gap_preserved": {
+          "status": "pass",
+          "evidence": "Missing Oracles identifies the unconditional self.fail placeholder and no calls to create_job. Debt VD-1/VD-2 retain both missing behavioral assertion and incomplete acceptance execution, with controls and completed evidence required."
+        }
+      },
+      "additional_artifact_sha256": {
+        "cases/skipped-acceptance/first-pass-verification-report.md": "366e972c880e5faa339321ed189fcee3b92efd125b956825bc2241862166121d"
+      },
+      "structural_validation": {
+        "initial": "fail",
+        "final": "pass",
+        "feedback": "Conclusion incomplete is incompatible with skipped execution; configuration_only cannot establish skipped execution. Frozen validator diagnostics only were sent to the same evaluator. Diff changes only three declared state cells in two ledger rows; semantic findings unchanged."
+      }
+    },
+    "stale-run": {
+      "report": "cases/stale-run/verification-report.md",
+      "report_sha256": "f141e399222961fb1bea8de442605f7473aa48042c4de3c155ac88f64e264455",
+      "input_sha256": {
+        "snapshot.json": "b30a4ec1b517c2a108889807b1d0b99d309b5821361f9b99d9f398369de85478",
+        "requirements.md": "a78e892e7ef6f4acfc08655e980e71c08fa73c64a10ad0cfa0c82d7bec389d41",
+        "codec.py": "7f5958581fc6afaacf7396a8751f5c683b4cb83e804e1facbcab3b1edc052e60",
+        "tests/test_codec.py": "0d2aa6dc03ce69d0e5d50afec131513eaf6864be68426203902e80e0581d0a49",
+        "evidence/run.json": "eba62b174246a883957c78cad67f90d71fd53174b59ed5baa49524676bd6e923"
+      },
+      "criteria": {
+        "revision_mismatch": {
+          "status": "pass",
+          "evidence": "Evidence Scope and first ledger row identify the supplied receipt as stale-run-r1 against assessed stale-run-r2, retaining historical completed execution with current conclusion unknown."
+        },
+        "no_current_success": {
+          "status": "pass",
+          "evidence": "Ledger says no current positive execution conclusion is supported and the historical pass must not be promoted to run_inspected for the current revision. Maturity remains Tier 1 with unconfirmed current execution."
+        },
+        "refresh_scoped_evidence": {
+          "status": "pass",
+          "evidence": "Source analysis derives 3 -> \"4\" ->4 against expected 3 without claiming a run. Debt VD-1/VD-2 call for fixing the mismatch, retaining observed failure/fix evidence and obtaining fresh source/environment-bound native results."
+        }
+      },
+      "structural_validation": {
+        "submitted": "pass",
+        "parent_feedback": "none"
+      }
+    },
+    "model-and-adapter": {
+      "report": "cases/model-and-adapter/verification-report.md",
+      "report_sha256": "9f225271c576f52b6e9d8d37ef4f8c5489f11a433fc8325d5a20d0f9dfc7b228",
+      "input_sha256": {
+        "snapshot.json": "ff4f45a708550837b2f7fde1dc8afdd284848916c170370b5a6e21bd2ab709bc",
+        "requirements.md": "53e630000bdff9dc149ec4baeaff959cb4c660843d62282142e4506dea512098",
+        "model.py": "32bec5b35f423b8cc290ec838b4f18815a972db540741975ffdbafd54499807f",
+        "adapter.py": "9d8d050e430312be8a1a3b6223b977ad06130151c72008f06d80a66844e3e5fc",
+        "evidence/model.json": "1c9867ed27489ec0ce26c5c4f546446b1770ca18c5299d75bd77f975e9fc8e91"
+      },
+      "criteria": {
+        "local_scope": {
+          "status": "pass",
+          "evidence": "Model campaign ledger confines the 20 generated sequences to an in-memory sample with unconfirmed completion, missing campaign detail and no exhaustive proof. Component Breakdown keeps model Tier 1 separate from adapter Tier 0."
+        },
+        "provider_gap": {
+          "status": "pass",
+          "evidence": "Ledger explicitly records zero provider calls as not_run; adapter ignores key and always invokes provider.create_job. Missing Oracles identifies absent job-count/identity checks and missing model/adapter/provider correspondence."
+        },
+        "no_deployed_proof": {
+          "status": "pass",
+          "evidence": "Exactness Analysis says local proof cannot supply provider guarantees; supplied 20 sequences are not exhaustive. Autonomy Candidates gives no unattended promotion recommendation and retains provider, recovery, timing and enforcement gaps."
+        }
+      },
+      "structural_validation": {
+        "submitted": "pass",
+        "parent_feedback": "none"
+      }
+    },
+    "mixed-surfaces": {
+      "report": "cases/mixed-surfaces/readiness-report.md",
+      "report_sha256": "b280de001eda0e93af27520b77d58cc6e75a616c74eddad8aa8aecddf8c06d56",
+      "input_sha256": {
+        "snapshot.json": "2fa704cb76c640ca8be6ad43195ed77310db13adf5d3baf6f3fcf2b14004e796",
+        "README.md": "5fe30c918acef8761ccb05a00762830e06df0babb4dfe95ce9c92222d15b9095",
+        "requirements.md": "661d9c781507aded8a639f04ab13bf4b09c72881d24a88e73a85cb1b4c001298",
+        "core.py": "859cb6b0c69f0e06bb5ae054c70fb7148c1955b918465157dbc4882c71830125",
+        "provider.py": "36eacbc6a64be09fa8eb3da7c41982b8a4186adef30c2026bb54845b64c6cf9e",
+        "tests/test_core.py": "84bac94f2bef4320ed884613c0cb82b1d0e68119bc2feadc80e892937c49bd01",
+        "evidence/core.json": "d1ddb469f77db3434912aa99b5646bb5a540acd5824034e24d401e6da13b0bcb"
+      },
+      "criteria": {
+        "surface_separation": {
+          "status": "pass",
+          "evidence": "Surface Autonomy separates Arithmetic core at L2 from Provider adapter and external client at L1, with separate ceilings, operating scopes and prerequisites."
+        },
+        "adapter_ceiling": {
+          "status": "pass",
+          "evidence": "Provider evidence ceiling is L1; README lack of contract/environment qualification and absent provider checks are explicit blockers. Its L4 intent/oracle gates are missing, unlike the core reviewed intent."
+        },
+        "no_global_transfer": {
+          "status": "pass",
+          "evidence": "Summary Level is conservative L1 and states provider semantics/shared assumptions use the lower level. Decision Boundary grants no merge/deploy/charge permission; ledger and summary explicitly refuse transferring core evidence to provider behavior."
+        }
+      },
+      "structural_validation": {
+        "submitted": "pass",
+        "parent_feedback": "none"
+      }
+    },
+    "missing-recovery": {
+      "report": "cases/missing-recovery/readiness-report.md",
+      "report_sha256": "ac159dbad0580ababcd52890068c1ec87d2ff540740ea68a80345e34faca091f",
+      "input_sha256": {
+        "snapshot.json": "4bca95af7ba1fcc329fabe1901f21e3dd157d9950ddcfe2c1c65d6796adf18db",
+        "README.md": "eea6ec2096e5e0ad491656028b1fec7dd4c5be108c5609bf6ecef085b94cd2ba",
+        "requirements.md": "4ebf8730fce5a6408505dd718e38dbd14992c1b3ec7d2f8f4587b8fc339009d0",
+        "service.py": "11e07a228826c8edef7c23c57382adc5fd8156ff76b3f564d7e842301e246b94",
+        "tests/test_service.py": "1282eee34a0e8bf7f6185627380af36ee903af6a213a11d07d1650b08e265b4e",
+        "evidence/controls.json": "16d799b314d3829c89390ae82df47b06faae9dda8cda951eb785d25c333109d2"
+      },
+      "criteria": {
+        "recovery_prerequisite": {
+          "status": "pass",
+          "evidence": "Autonomy Prerequisites explicitly marks L5-RECOVERY missing based on engineer-selected redeployment and no automatic trigger; Blockers states manual recovery fails this gate even if other gates later become met."
+        },
+        "no_l5": {
+          "status": "pass",
+          "evidence": "Recommended summary and surface level are L2. Autonomy cap applied states manual-only recovery caps otherwise qualifying scopes at L4; proposed recovery work is not treated as completed."
+        },
+        "diagnostic_score": {
+          "status": "pass",
+          "evidence": "Evidence Scope declines reuse of unsupported prior 94/100; Overall Score is provisional 39 with assessed weight 0.83 and says it establishes neither a decline from 94 nor production correctness or permission. Campaign and staging limits remain explicit."
+        }
+      },
+      "structural_validation": {
+        "submitted": "pass",
+        "parent_feedback": "none"
+      }
+    },
+    "equivalent-mutant": {
+      "report": "cases/equivalent-mutant/verification-report.md",
+      "report_sha256": "7aae3c9c80698787e526bbb74691c5bc4f076f2a0252e790a8a083519a0f3bcc",
+      "input_sha256": {
+        "snapshot.json": "1b686485bf257d804359271b17bf3a246aafc97280d6250d092ef2b573afb758",
+        "requirements.md": "869f1778a13bd661c3c99c0af3477be8bca973302874ed14ee07d8e617887cba",
+        "identity.py": "d2d69fee3c0d7dafb3c44f2ac21d4a0f3197eeea6b36a81f2c2be8eab0538a78",
+        "tests/test_identity.py": "29ba0215b3b367544e08c31b2fc495cfcb84eb09f835833361ee82313300d201",
+        "evidence/mutation.json": "7940732bf95ef512e2d3d7aaee2c3676a3c8970e037cb9ad1c571f1eb318f5ca"
+      },
+      "criteria": {
+        "equivalence": {
+          "status": "pass",
+          "evidence": "Recorded mutation disposition states value+0 and 0+value are equivalent within the standard Python integer domain, with explicit exclusion of custom arithmetic objects."
+        },
+        "no_blanket_weakness": {
+          "status": "pass",
+          "evidence": "Mutation disposition says a correct equality oracle should accept this mutant and its survival does not demonstrate a weak assertion or regression. Maturity and Debt decline penalizing it or requiring it be killed."
+        },
+        "bounded_interpretation": {
+          "status": "pass",
+          "evidence": "Missing Oracles preserves the direct input-based expectation but leaves sensitivity and overall qualification unknown. Mutation discussion refuses an adjusted score without inventory/completion and proposes a genuinely violating value+1 control without claiming it ran."
+        }
+      },
+      "structural_validation": {
+        "submitted": "pass",
+        "parent_feedback": "none"
+      }
+    },
+    "roadmap-stale-baseline": {
+      "report": "cases/roadmap-stale-baseline/readiness-roadmap.md",
+      "report_sha256": "dfd46273f33da552cd833b1587e10e86bc91e72fd74d2eb6fa134a4a2939a16f",
+      "input_sha256": {
+        "snapshot.json": "2d6a5b25064dda26c7c4e3838db0785e36976da6c29c34ebf04bc461f1d89b26",
+        "README.md": "30fa2c7512c243c055afdbe135da61947b0737085101e6ad1afe8676117f6f46",
+        "requirements.md": "a738b2a011604b275a170d00f440bb03c8e2b6af304fe8f4b3998f0422ad6366",
+        "core.py": "a0b2e71b2d3164b6ed61067248ee698b3a384512fcf788196be0cafe8a1246dd",
+        "adapter.py": "ef95295c410d5c6c41ff7612ec36682e96be671495224d55943fe792976e3f78",
+        "tests/test_core.py": "5c4c1aa96ca9d9d79e0766e795104fde9aedc91a14f05b4208933e825c25c2d8",
+        "tests/test_adapter.py": "07d944a3b3e25bfb1b1aa542b544f0cc7ecd7342a8845e51a8fda92852666144",
+        "readiness-report.md": "6c32b532a735d1692b1c7220865d71837f1036c6808b88ee1d6385d062534fed",
+        "evidence/core-runs.json": "ea06377aaef923366c53f25a31d5705c7e2f304527743332460f1adbadc56539",
+        "evidence/provider-old.json": "b3764973907c53fc4dedcd56972974994cb00d420006fe60ae0385e3b0905ca8"
+      },
+      "criteria": {
+        "baseline_freshness": {
+          "status": "pass",
+          "evidence": "Evidence Scope calls current payment level/score unknown and restricts historical 94/100 and L4 to r1. Freshness Decisions marks old five-minute provider evidence stale for r3/REQ-PAY2; unchanged arithmetic evidence is reused narrowly with attribution."
+        },
+        "critical_gate_sequence": {
+          "status": "pass",
+          "evidence": "C2 requires approved executable tenant/key, retry and conflict semantics; C5 requires current provider fidelity evidence; C7 requires exercised containment/recovery and financial-remediation limits before C8 reassessment. All seven current prerequisites remain missing/unknown despite requested L5 target."
+        },
+        "observable_completion": {
+          "status": "pass",
+          "evidence": "Critical path table C1-C8 names dependencies, failures and inspectable completion evidence, including rejected bad variants, retries/conflicts, 24-hour retention, rollback identity preservation and irreversible charges. Final paragraph says writing the roadmap improves no current gate, level or score."
+        }
+      },
+      "structural_validation": {
+        "submitted": "pass",
+        "parent_feedback": "none"
+      }
+    },
+    "strategy-provider-migration": {
+      "report": "cases/strategy-provider-migration/verification-strategy.md",
+      "report_sha256": "632b3ba9a4ef9084b70a241805e97b400f916acdc72dc6f4ec0e94e2f950ae1e",
+      "input_sha256": {
+        "snapshot.json": "d26badc1f7c2505e4d85a7aba98417d21c8249e088253ab371d247077d8fd24f",
+        "README.md": "5e8b632c9f67c7eaf3686e1f428ef4024eeafebea8be4d78274bfed5b94d5131",
+        "requirements.md": "6ee44c2f4f3c88b0ae186e4671476237705cd330cff8713d209c5f5c7cc2d9a0",
+        "adapter.py": "168b7f2b4c78071ff328e2ad11eb9d44c2fe9c205281ea0794a66c02ba7a4f4f",
+        "local_model.py": "cf2f441f7c7e43c4b7b6b0dc54b6f8ba19a2484cd09189e8e6a3bd2960d1a8c2",
+        "tests/test_adapter.py": "ec406ae26c2e361368c2ebedc5383ed25866c22a47bc2ee584717b122cc5f0bf",
+        "provider-api-v2.json": "b1a229618d1a2e7b961045a5a1baca34ddcc6968e98676bdaba0b6069cd939eb",
+        "evidence/model-r2.json": "fe71c19fe1bd464891e3e1694245ceb0d03f675db875df2c599996433f02ff41"
+      },
+      "criteria": {
+        "change_matched_portfolio": {
+          "status": "pass",
+          "evidence": "Evidence Requirements specifies tenant/key reuse, conflicts, after-commit timeout, process restarts and both mixed-version directions using independent durable effect journals. Ledger marks the old model stale and provider fidelity unknown; Component Strategies chooses complementary checks."
+        },
+        "reviewed_oracle_lifecycle": {
+          "status": "pass",
+          "evidence": "Oracle Strategy derives expectations from approved requirements and independent provider extract, names payments/integration owners, and invalidates semantic review on linked changes. Evidence Requirements explicitly labels all proposed evidence uncompleted; ledger preserves current unknowns."
+        },
+        "persistent_effect_evolution": {
+          "status": "pass",
+          "evidence": "Safe-Evolution Strategy uses expand/migrate/contract, requires a qualified legacy identity bridge, tests overlap and rollback-compatible durable state, and states application rollback cannot undo committed charges. It separates reconciliation and authorized compensation from code rollback."
+        }
+      },
+      "structural_validation": {
+        "submitted": "pass",
+        "parent_feedback": "none"
+      }
+    },
+    "smell-gate-scope": {
+      "report": "cases/smell-gate-scope/ai-smells-gates-report.md",
+      "report_sha256": "7e91fe2343fbc54eeb01ef65a8c36b112042cf0c46cb9857404e7a3e4ce1c89f",
+      "input_sha256": {
+        "snapshot.json": "650dd5d97e3ccb0c11b6ba5f3ef97f842e5f1d50a8606ea37279dd9a302af126",
+        "README.md": "5c542d6cd3f2b568327876d199e31a147680fcce0bab617a59f493857a0be759",
+        "requirements.md": "c880ad1afd3d96527fec2c9507ca26f7de6024b7e3725359a08ee39b10c5b36b",
+        "checkout.py": "94edf96257e5c4f555bc8ffa07438843d62b83596a89dd5f4688c9338647f0f1",
+        "tests/test_checkout.py": "971ce62deb303d887ef332f19c6737b0164dee25376f78a53ebbaa12a6dd7acc",
+        "tools/empty_except.py": "4490fd721bd9149c98bec1b26f661166a5ae419279e8bd269258d4fd1045b85e",
+        "gate_controls/allowed.py": "17bab10009ee723eb6d1e0662b2af1e8037b135e1fdd254b51bd658208dc5cae",
+        "gate_controls/violating.py": "325f104458f6e7f040bec369f131ff3b1d040b5fba9736481d93c6bf14ca4309",
+        ".github/workflows/checks.yml": "dafa5d2e103222abde9a802062af75fff449825f7a1fe943941b717d9f9b28ab",
+        "evidence/empty-except.json": "2ec77a1797fb1bcca57f4dfc3204d0048effb4f90810ba7c121aab5804566638",
+        "evidence/tests.json": "56917b6831020b8e0ce7755eac0a8bf7ad96af5e8be5bcf2fc94c73ae785a82c"
+      },
+      "criteria": {
+        "bounded_gate_qualification": {
+          "status": "pass",
+          "evidence": "Evidence Scope and AI004 Coverage Matrix qualify only pass-only exception handling and identify return [] as uncovered. Gate Coverage Summary distinguishes configured CI failure behavior from unknown actual merge enforcement."
+        },
+        "fresh_run_stale_meaning": {
+          "status": "pass",
+          "evidence": "Gap Analysis identifies the old 9000 expectation versus 8500 required and the empty-list fallback versus propagated errors. It states green tests, branch coverage and mutation do not establish current correctness; Recommendations require checkout-owner semantic review."
+        },
+        "authorship_and_category_limits": {
+          "status": "pass",
+          "evidence": "Git History Hygiene states authorship/generation history is unrecorded and makes no inference. Coverage Summary says the two Qualified rows are the same narrow checker, not independent protections or category-wide assurance; ledger separates configuration, execution and stale review."
+        }
+      },
+      "structural_validation": {
+        "submitted": "pass",
+        "parent_feedback": "none"
+      }
+    },
+    "qualified-local-component": {
+      "report": "cases/qualified-local-component/verification-report.md",
+      "report_sha256": "c1a89b3ac8a2f5a935ab723fd513f918fbcab7f67de8af303eaedee5ab4326f0",
+      "input_sha256": {
+        "snapshot.json": "7a0c48c734aa1d12c48d81c474d986c5bfa403cb74dc1f08e43c6476b150d5f2",
+        "README.md": "2ffe72a4978e5bb4cec622061bc52863fb3ea789e60b0755e50884519d5bf2f5",
+        "requirements.md": "db3febce1278d7ef1f05296c6403a37e81d07f8102fdc7475daec2083175bf86",
+        "terminal.py": "92a258f5079ed3543052484eaa8fb73be3f877a9c232f96b2abb57ec2bae0f04",
+        "tests/test_terminal.py": "dc46af2eb500f02094338e63c370ae3af6b95d5004016c306046d564ea496c6c",
+        ".github/workflows/verify.yml": "97e22f3393ba2d3377aa1dcefc20b0b2f6113b5eb17a183e291f0b8a0498ed3e",
+        "evidence/oracle-review.json": "1047ffe98ed8532d9ef43d6894e73a78a6a1251e9a8b85e0ffe9576ab9636070",
+        "evidence/current-runs.json": "488372e11d5a3634e56e7643aec5b2b4df803c3ef28bfa39c0700019c78846d2",
+        "evidence/sensitivity-controls.json": "d350f8e36a251d80a62f8c44b7d0a695159f219752d46e9a5eb367d3642f4904",
+        "evidence/hosting-settings.json": "3abc7114f9027181c4be0d1ca460a67b7560417776d3b70695b4657b86d455fe",
+        "evidence/traceability.json": "e0cde9cefd7a91d00f6acfd20db0e692608629afde94206c3fa8deaa2a712533"
+      },
+      "criteria": {
+        "qualified_maturity": {
+          "status": "pass",
+          "evidence": "Verification Maturity assigns demonstrated Tier 4/5 Qualified. It states the component does not need a deployed surrogate or formal tool; Bug-Surface Classification calls property frameworks unnecessary for the four enumerated inputs."
+        },
+        "evidence_qualification": {
+          "status": "pass",
+          "evidence": "Missing Oracles marks adequacy, sensitivity, independence and freshness supported; Evidence Ledger separates six complete OS-specific runs, known-good/bad controls, and the blocked-merge enforcement probe. Scope records read-only confirmation of matching source hashes."
+        },
+        "bounded_positive_claim": {
+          "status": "pass",
+          "evidence": "Maturity and Component Breakdown restrict qualification to the local four-value claim; Tier 5 lacks continuing policy/maintenance. Autonomy Candidates explicitly says Tier 4 grants no merge, release or deployment authorization."
+        }
+      },
+      "structural_validation": {
+        "submitted": "pass",
+        "parent_feedback": "none"
+      }
+    }
+  }
+}

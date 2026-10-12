@@ -31,7 +31,8 @@ Cairn treats autonomy as something you **measure and earn**, not switch on. Inst
 - 🗺️ **Prioritized improvement roadmap** — specific, effort-ranked actions to reach the next level.
 - 🔬 **Verification strategy** — per-component oracles, missing tests, and what to verify to unlock safe autonomous iteration.
 - 🚦 **AI-smell detection gates** — whether your CI catches the failure patterns AI-generated code tends to introduce.
-- 🔗 **Requirement traceability** — proof that every change traces back to an intent, so agents don't silently drift from what was asked.
+- 🔗 **Requirement traceability** — connect approved claims to checks, executed evidence, and reviewed decisions; expose missing links, stale results, and unresolved intent.
+- 🧾 **Scoped evidence and autonomy recommendations** — distinguish configured checks from inspected runs, preserve unknowns, and apply evidence ceilings and prerequisites to each changed surface.
 
 **Who it's for:** engineering teams adopting AI coding agents who want a measurable, incremental path to autonomy — not a leap of faith.
 
@@ -96,6 +97,11 @@ Or use natural language triggers:
 - "What should I improve for AI readiness?"
 - "What verification do I need?"
 - "Design a verification strategy for this module"
+
+Reports now separate what was inspected, what actually ran, and what the result supports.
+Readiness scores are diagnostic; a high score does not grant permissions or override missing
+critical-path evidence. See [evidence contracts and migration](./docs/EVIDENCE_CONTRACTS.md)
+for the report vocabulary, portable validators, and revised maturity rubric.
 
 ## Levels of autonomy
 

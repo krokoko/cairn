@@ -11,13 +11,17 @@ allowed-tools: Read Bash Glob Grep
 
 # Assess AI Smell Detection Gates
 
-Assess whether a codebase has gates in place to catch AI-generated code smells — patterns indicating output was produced for plausibility rather than understanding. Produce an `ai-smells-gates-report.md` with coverage of the 11 AI smell categories, gap analysis, recommendations for missing gates, and human review heuristics for what automation can't catch.
+Assess gates for 11 quality-risk categories often associated with generated code; these signals do
+not establish who wrote it. Produce `ai-smells-gates-report.md` with scoped gate evidence, gaps,
+recommendations, and review heuristics. Configuration presence does not establish detection.
 
 ## Workflow
 
 ### Step 1: Load smell taxonomy
 
 Load `references/ai-smells-taxonomy.md` for the 11 AI smell categories and their detection approaches.
+Load `../assess-verification/references/evidence-semantics.md` and
+`../assess-verification/references/oracle-lifecycle.md` for evidence states and oracle limits.
 
 These are the categories of AI-generated quality problems the codebase should be protected against:
 1. Plausible Fabrication
@@ -40,11 +44,11 @@ Search for mechanisms that would catch AI smells:
 - Custom semgrep rules: `.semgrep/`, `semgrep.yml`, semgrep configs in CI
 - Custom lint rules: eslint plugins, ruff extensions, custom clippy lints
 - Complexity checkers: cognitive complexity limits, import depth limits
-- Architecture enforcement: dependency-cruiser, ArchUnit, deptry, import-linter
+- Architecture enforcement: dependency-cruiser, ArchUnit, import-linter (deptry checks package hygiene)
 
 **CI quality gates:**
-- Test coverage thresholds that would catch "tests mirroring implementation" (mutation testing is stronger signal)
-- Mutation testing: `stryker`, `mutmut`, `cargo-mutants` (catches AI005 — tests mirroring implementation)
+- Branch coverage to locate unexercised decisions; coverage alone does not measure assertion quality
+- Mutation testing: `stryker`, `mutmut`, `cargo-mutants` (sensitivity to selected changes; inspect survivors)
 - Dead code detection: `knip`, `ts-prune`, `vulture` (catches AI002/AI003 — unnecessary abstractions)
 - Duplication detection: `jscpd`, `cpd`, `dupfinder` (catches AI006 — symmetry without substance)
 
@@ -83,43 +87,63 @@ Search for mechanisms that would catch AI smells:
 - Required approvals gating on diff size
 - Bot checks that flag PRs without descriptions or tests
 
+For each relevant gate, record configuration, supported source scope, current run artifacts, tool
+version, and enforcement evidence separately. Unavailable branch settings or CI history remain
+unknown. Inspect existing allowed/violating controls where available; do not silently run expensive
+or externally mutating campaigns as part of an assessment.
+Read-only assessment can use supplied CI exports, retained runner reports, control results, and
+review records after checking revision and scope. Without those artifacts, report Configured or
+Unknown as appropriate and name the evidence needed; do not run campaigns just to obtain a label.
+
 ### Step 3: Map gates to smell categories
 
 Load `references/detection-patterns.md`, `references/detection-patterns-gates.md`, and
 `references/detection-patterns-gates-formal.md` for what patterns each gate should catch.
+Apply `references/coverage-decisions.md` for repeatable per-smell scope and Partial decisions.
 
-For each of the 11 AI smells, determine which existing gates provide coverage:
+For each category, state the bounded behavior a gate claims to detect and the evidence inspected:
 
-| Smell | Covered by | Coverage level |
-|-------|-----------|----------------|
-| AI001: Plausible Fabrication | [existing gates or "None"] | Full / Partial / None |
-| AI002: Cargo-Cult Patterns | ... | ... |
-| AI003: Architecture Astronaut | ... | ... |
-| AI004: Shallow Error Handling | ... | ... |
-| AI005: Tests Mirroring Implementation | ... | ... |
-| AI006: Symmetry Without Substance | ... | ... |
-| AI007: Local Reasoning Violations | ... | ... |
-| AI008: Implicit Drift | ... | ... |
-| AI009: Happy-Path-Only Coverage | ... | ... |
-| AI010: Vacuous Tests | ... | ... |
-| AI011: Vacuous Formal Specs | ... | ... |
+| Smell / scoped claim | Gate | Coverage status | Evidence / limits |
+|----------------------|------|-----------------|-------------------|
+| AI001–AI011, each separately | Existing mechanism or none found | Qualified / Partial / Configured / None / Unknown / Not applicable | Artifact, run, and remaining scope |
 
-Coverage levels:
-- **Full**: Automated gate would block or warn on this smell category
-- **Partial**: Some indicators caught but significant gaps remain
-- **None**: No automated mechanism exists for this category
+Coverage status describes the declared scope, never complete protection from a smell category:
+- **Qualified**: Current completed run plus relevant allowed/violating controls support the claim.
+- **Partial**: Inspected evidence supports some of the scope; material gaps remain.
+- **Configured**: Relevant configuration exists but execution/sensitivity is not established.
+- **None**: No relevant gate found in the inspected scope.
+- **Unknown**: Access or evidence is insufficient to assess.
+- **Not applicable**: The failure surface is absent, with an explicit justification.
 
-For AI001 (Plausible Fabrication) specifically: note that interface mocks alone do NOT protect against fabrication — an agent writing both code and mocks creates a closed loop of plausibility. Behavioral twins or contract tests against real API behavior are required for full coverage. If only interface mocks exist for third-party integrations, classify as "Partial" at best.
+Define the category's applicable scope before assigning status. A qualified check for one subcase
+does not qualify the whole category: use Partial when executed evidence leaves material applicable
+subcases uncovered, and identify the narrower qualified check in Evidence / limits. With configuration
+alone, use Configured and describe the known coverage gaps separately.
 
-For AI004 (Shallow Error Handling): assess both traditional empty-catch detection AND silent success masking. If only empty-catch rules exist but no detection of `catch { return [] }` / `catch { return null }` patterns, classify as "Partial". Full coverage requires startup validation enforcement and boundary validation checks.
+For AI001, code and mocks can share invented behavior. Seek independent schema/provider or consumer
+evidence. A twin is an approximation requiring fidelity/version qualification; it is not a mandatory
+tool or proof of deployed compatibility. Held-out cases reduce direct exposure, not all gaming.
 
-For AI008 (Implicit Drift): check for both the pin itself AND an automated update mechanism. Lockfile enforcement without Dependabot/Renovate is "Partial" — it prevents drift but accumulates staleness. Full coverage requires pinning + deliberate update process.
+For AI004, inspect empty catches, silent defaults, error propagation, and relevant startup/boundary
+validation. Defaults can be intended behavior; use the approved error contract and negative examples.
 
-For AI009 (Happy-Path-Only Coverage): line coverage alone does NOT count — a suite can hit every line via success-case tests while never exercising an error branch. Require branch coverage or mutation testing plus the presence of error-path tests (`assertRaises`/`toThrow`/`pytest.raises`). Line coverage only, with no error-path assertions, is "Partial" at best.
+For AI008, distinguish reproducible resolution from deliberate updates. Record actual resolved
+versions and update evidence; absence of a particular dependency bot is not absence of a sound process.
 
-For AI010 (Vacuous Tests): assertion-presence linting (`eslint-plugin-jest` `expect-expect`, custom AST checks) catches the crudest case — test bodies with no assertion — and is "Partial". Full coverage requires mutation testing, the only gate that catches tests which assert but cannot fail (asserting only on stubbed return values). Distinguish from AI005 (asserts on implementation mechanics) and AI009 (asserts only on the happy path): AI010 is the absence of any falsifiable assertion. A suite with high line coverage but a low mutation kill rate is the signature.
+For AI009, investigate important unexercised branches and rejected/boundary cases. Assertion-name
+searches are heuristics: errors may be returned as values or checked through shared helpers.
+Line coverage alone does not establish that the relevant outcomes are asserted.
 
-For AI011 (Vacuous Formal Specs): presence of `*.tla`, invariants, or `(verified=…)` markers alone is "Partial" at best. Full coverage requires **anti-vacuity probes** — a known-bad mutation each invariant must reject — plus **presence⇒mandatory** meta-gates so artifacts on disk cannot skip unwired. Empty secret-scanner rulesets, coverage scoped away from the verified core, and hand-written specs with no spec↔code sync gate are vacuous-gate signatures. Distinguish from AI010 (tests with no assertion) and AI008 (unpinned versions): AI011 is a gate or spec that **runs green while checking nothing**. Load `../design-strategy/references/gate-design-patterns.md` for vacuous-gate patterns.
+For AI010, assertion lint, known-bad controls, old-versus-fixed regression demonstrations, and mutation
+can challenge sensitivity. Surviving mutants may be equivalent or outside the claim. `not throws`
+can be a valid bounded requirement; classify it as vacuous only when it cannot reject a relevant defect.
+Neither mutation nor fresh execution establishes that expected outcomes reflect current intent.
+
+For AI011, a formal file or verified marker is configuration evidence only. Inspect completion,
+bounds, checked obligations, model/code correspondence, and relevant anti-vacuity probes. Verify
+scanner defaults before treating an empty local override as an empty effective ruleset. Required
+checks should fail visibly when unwired; document examples and intentionally inactive artifacts.
+Load `../design-strategy/references/gate-design-patterns.md` for scoped gate qualification.
 
 ### Step 4: Assess gate maturity
 
@@ -130,6 +154,8 @@ For each existing gate, evaluate:
 - **Enforcement level**: Blocking (fails build) / Warning (annotation) / Informational (report only)
 - **Feedback quality**: Does it produce actionable output for agents? (file, line, fix suggestion)
 - **Trend visibility**: Is there historical tracking of gate findings?
+- **Qualification and freshness**: Were allowed/violating examples exercised on the relevant version?
+- **Semantic review**: Does the asserted rule still match the requirement, independently of execution?
 
 ### Step 5: Assess git history hygiene gates
 
@@ -156,4 +182,7 @@ If no human review heuristics exist, the report should recommend establishing th
 
 ### Step 7: Write the report
 
-Load `references/ai-smells-gates-report-template.md` and write `ai-smells-gates-report.md` following that structure. Populate all sections with findings from Steps 1–6.
+Load `references/ai-smells-gates-report-template.md`. Populate all sections, including Evidence Scope
+and Evidence Ledger. Use the exact shared state enums; positive conclusions require `run_inspected`
+and `completed`, with the method's limitations. Separate proposed gates from existing evidence;
+justify inapplicability and retain unknowns. Do not infer general correctness from category counts.

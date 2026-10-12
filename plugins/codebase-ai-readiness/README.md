@@ -4,24 +4,40 @@ Assess how AI-friendly a codebase is and produce an autonomy maturity map.
 
 ## What it does
 
-This plugin reviews an existing codebase and evaluates it across 15 categories that determine how safely and effectively AI agents can operate. It produces:
+This plugin reviews an existing codebase across 15 diagnostic categories and distinguishes
+configured capabilities from inspected execution evidence. It produces:
 
-- **Overall score** (0-100)
-- **Category breakdown** with per-category scores
-- **Recommended autonomy level** (L0-L5)
+- **Provisional score** (0-100 when evidence permits), with assessed weight and explicit unknowns
+- **Category breakdown** with evidence-backed findings
+- **Evidence scope and ledger** recording revision, environment, execution state and supported conclusions
+- **Per-surface autonomy recommendations** (L0-L5), bounded by two L4 scope prerequisites and five L5 gates
 - **Collaboration effectiveness** with optional **alignment note** when agent practices and codebase score diverge
 - **Blockers** preventing advancement to the next level
-- **Prioritized roadmap** of improvement actions
+- **Prioritized roadmap** with failures addressed and observable acceptance criteria
+
+An assessment recommends an operating scope; it does not grant merge, deployment or tool
+permissions. A high aggregate score cannot offset missing evidence on a critical path.
+L4 requires `L4-INTENT` (reviewed executable intent) and `L4-ORACLES` (current adequate critical-path
+evidence). L5 additionally requires complete intent/oracle coverage, representative environments,
+silent-failure detection, and recovery. Read-only assessment can inspect supplied run/review/settings
+artifacts; unavailable evidence remains unknown and limits the demonstrated recommendation.
 
 ## Skills
 
 ### `/assess-readiness`
 
-Performs a full assessment of the codebase. Examines structure, documentation, tests, CI (including test impact analysis), typing, setup, architecture decisions, machine-readable intent (schemas, contracts, executable acceptance criteria, requirement traceability), progressive context disclosure, workflow artifacts, collaboration effectiveness metrics, hidden state, repository-scale reasoning, failure mode legibility, and feedforward surfaces (including non-bypassable hooks). Outputs `readiness-report.md` with an alignment note when practices and score diverge.
+Examines structure, documentation, tests, CI, typing, setup, reviewed executable intent,
+traceability, context and collaboration. Outputs `readiness-report.md` with scope, evidence
+ledger, surface ceilings and prerequisite status. Unavailable evidence stays unknown; linked
+or declared tests do not count as inspected execution. Maintainability signals are interpreted
+alongside concrete boundary rules and representative change outcomes when available.
 
 ### `/generate-roadmap`
 
-Takes an existing readiness report and generates a detailed improvement plan to reach the next autonomy level (or a specified target). Outputs `readiness-roadmap.md` with an **L2 → L3 hinge** section when the plan crosses that boundary (current ≤ L2, target ≥ L3).
+Checks a prior report's revision, scope and freshness before planning improvements for a
+target surface. Outputs `readiness-roadmap.md` with Evidence Scope and an **L2 → L3 hinge**
+section when the plan crosses that boundary (current ≤ L2, target ≥ L3). Stale or missing
+evidence becomes an action to resolve; plans do not count as completed verification.
 
 ## Categories assessed
 
@@ -29,8 +45,8 @@ Takes an existing readiness report and generates a detailed improvement plan to 
 |----------|-----------------|
 | Structure and modularity | Directory organization, module boundaries, naming, architectural isolation |
 | Documentation | README, API docs, ADRs, changelogs |
-| Testable boundaries | Test coverage, isolation, fixtures |
-| CI reliability | Pipeline existence, check count, flakiness |
+| Testable boundaries | Relevant assertions, isolation, fixtures and oracle controls |
+| CI reliability | Expected/completed checks, enforcement, missing results and flakiness |
 | Typing strength | Annotations, strict mode, escape hatches |
 | Deterministic environment and deployment | Containers, reproducible envs, seed data, Infrastructure as Code |
 | Architecture decisions | ADRs, design docs, ownership |
@@ -40,8 +56,8 @@ Takes an existing readiness report and generates a detailed improvement plan to 
 | Repository-scale reasoning | Naming consistency, predictable patterns |
 | Failure mode legibility | Error handling, structured errors, fail-fast |
 | Feedforward surfaces | Instruction files, strict types, boundary linters, non-bypassable pre-commit hooks |
-| Compound engineering readiness | Iterative instruction growth, custom skills, workflow artifacts, regression-from-bugs |
-| Context engineering friendliness | File size distribution, layered docs, retrieval-friendly naming |
+| Compound engineering readiness | Maintained lessons, custom skills, workflow artifacts, incident regressions |
+| Context engineering friendliness | Cohesion, navigation, layered docs and contextual size signals |
 
 ## Installation
 

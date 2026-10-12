@@ -1,0 +1,14 @@
+name: verify-enum
+on: [pull_request, workflow_dispatch]
+jobs:
+  truth-table:
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12.6'
+      - run: python3 -m unittest discover -s tests -v

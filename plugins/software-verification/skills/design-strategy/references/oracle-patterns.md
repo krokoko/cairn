@@ -4,9 +4,9 @@
 
 | Type | Definition | Strengths | Weaknesses |
 |------|-----------|-----------|------------|
-| Exact | Known input/output pairs | Highest confidence | Doesn't scale to large input spaces |
+| Exact | Approved input/output pairs | Precise verdict for exercised cases | Expected values may be wrong or stale; limited input scope |
 | Metamorphic | Relations between executions | No need for exact answers | Weak relations give weak assurance |
-| Differential | Compare multiple implementations | Catches divergence | Requires reference impl |
+| Differential | Compare under an approved equivalence relation | Catches divergence | A reference may preserve bugs; agreement is not general equivalence |
 | Contract | Conformance to a schema or protocol | Machine-checkable; guards API boundaries | Verifies shape/protocol, not business correctness |
 | Temporal | Legal state transitions and event ordering | Catches illegal sequences and protocol violations | Requires an explicit state/protocol model |
 | Statistical | Bounded distributions/thresholds | Handles stochastic behavior | Not proof of correctness |
@@ -14,13 +14,13 @@
 | Performance envelope | Measurable load/latency/resource bounds | Machine-checkable; prevents perf regressions | Doesn't verify functional correctness |
 | LLM-as-Judge | Separate model scores output against rubric | Cheaper than human, handles ambiguity | Biases (position, verbosity, self-preference); needs calibration |
 | Human | Domain expert judgment | Handles ambiguity | Slow, expensive, inconsistent |
-| Behavioral twin | High-fidelity clone of external service | Tests real behavior, not assumptions; holdout scenarios prevent agent gaming | Requires building/maintaining clone; fidelity drift |
+| Behavioral twin | Maintained approximation of an external service | Exercises selected dependency behavior locally | Fidelity, supported scenarios, version drift, and feedback leakage |
 
 ## When to use each oracle
 
-**Selection rule**: pick the cheapest oracle that is still strong enough to reject bad changes
-automatically. If an exact or differential oracle exists, do not reach for an expensive end-to-end
-or human check; escalate to a stronger (costlier) oracle only when no cheaper one is strong enough.
+**Selection rule**: choose complementary checks for the claim and failure surface. Prefer inexpensive
+checks where they answer the question; retain integration or domain review where a local oracle
+cannot establish environment fidelity or intent. No oracle type has universally highest assurance.
 
 | Oracle | Use when | Pattern | Examples |
 |--------|----------|---------|----------|
@@ -46,18 +46,24 @@ or human check; escalate to a stronger (costlier) oracle only when no cheaper on
 
 ### LLM-as-Judge biases to mitigate
 
-Position bias, verbosity bias, self-preference bias, authority bias. Use different model family than generator; calibrate against 50-100 human-labeled gold examples before deployment.
+Position bias, verbosity bias, self-preference bias, authority bias. Calibrate against independently
+labeled accepted and rejected outcomes representative of the task; report sample size and uncertainty.
+A different model family can diversify mistakes but does not establish independence. Keep evaluation
+labels separate from optimization feedback where practical and record repeated exposure.
 
 ### Human oracle
 
-Route low-confidence outputs to human review queue with structured evaluation criteria. Use only when no automated or LLM-based method can assess correctness.
+Use domain review for intended outcomes, consequential ambiguity, and specification changes. Define
+criteria and ownership; automate mechanical checks without assuming they replace this judgment.
 
 ### Behavioral twin pattern
 
-A behavioral twin is a high-fidelity clone of an external service (SaaS API, third-party system) built specifically for testing. Unlike interface mocks (which verify assumptions) or contract tests (which verify schemas), twins verify **actual behavioral compatibility**.
+A behavioral twin approximates an external service for repeatable tests. Its supported behavior
+needs comparison with independent provider documentation, recorded interactions, or permitted live
+checks. Contract tests may cover behavior as well as schemas. Neither tool name establishes fidelity.
 
 **When to recommend:**
-- Codebase integrates with 3+ external services
+- Dependency behavior is important and difficult to exercise reliably
 - Integration code is agent-written (high plausible fabrication risk)
 - Interface mocks exist but integration bugs still reach production
 - Rate limits or costs prevent testing against real services at scale
@@ -65,16 +71,25 @@ A behavioral twin is a high-fidelity clone of an external service (SaaS API, thi
 **Architecture:**
 - Twin built from public API docs + SDK compatibility targets
 - Self-contained binary (no network dependencies)
-- Scenarios stored externally as holdout sets (agents cannot access or game them)
-- Verification measured as satisfaction (probabilistic) not boolean pass/fail
+- Versioned scenarios include provider versions, supported operations, and explicit exclusions
+- Separate evaluation cases reduce direct exposure; repeated feedback can still leak them
+- Record per-scenario outcomes and sampling limits; do not imply deployed compatibility from local passes
 
 **Key distinction from mocking:**
 
-| Approach | Verifies | Agent can game? | Catches fabrication? |
-|----------|----------|-----------------|---------------------|
-| Interface mocks | Code structure | Yes | No |
-| Contract tests | Schema compliance | Partially | Partially |
-| Behavioral twins | End-to-end scenario satisfaction | No (holdout) | Yes |
+| Approach | Potential evidence | Important limit |
+|----------|--------------------|-----------------|
+| Interface mocks | Calls conform to configured expectations | Shared invented expectations can pass |
+| Contract tests | Exercised schema/protocol/consumer agreements | Missing interactions and untested provider behavior |
+| Behavioral twins | Exercised scenarios against modeled dependency behavior | Approximation, drift, and correlated oracle mistakes |
+
+## Oracle lifecycle
+
+Load `../../assess-verification/references/oracle-lifecycle.md` to assess adequacy, sensitivity,
+independence, and freshness separately. Design versioned relationship review, independent expectations,
+known-good/bad controls, and incident/old-versus-fixed regression evidence for consequential claims.
+A new run refreshes execution evidence, not semantic approval; mutation cannot detect stale intent.
+Use `../../assess-verification/references/evidence-semantics.md` to report the resulting evidence.
 
 ## Converting implicit oracles to explicit ones
 

@@ -1,0 +1,8 @@
+{
+  "source_revision": "roadmap-stale-baseline-r1",
+  "requirement": "REQ-PAY/1",
+  "environment": "provider sandbox API revision 1",
+  "retry_window_seconds": 300,
+  "executed": 12,
+  "failed": 0
+}

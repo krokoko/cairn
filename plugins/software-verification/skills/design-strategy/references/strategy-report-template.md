@@ -1,9 +1,32 @@
 # Strategy Report Template
 
-Write `verification-strategy.md` with the following structure:
+Write `verification-strategy.md` with this structure. Replace example rows with substantive records;
+justify inapplicable sections. Use `../../assess-verification/references/evidence-semantics.md` for
+ledger states. Existing observations belong in the ledger; planned checks belong in requirements.
 
 ```markdown
 # Verification Strategy
+
+## Evidence Scope
+
+**Source revision**: [commit plus relevant working-tree changes]
+**Assessment date**: [ISO date]
+**Inspected scope**: [components, paths, environments, exclusions]
+**Evidence basis**: [artifacts inspected, access limits, prior-report freshness]
+
+## Evidence Ledger
+
+| Claim / check | Artifact / revision | Environment | Observation | Execution | Conclusion | Limits |
+|---------------|---------------------|-------------|-------------|-----------|------------|--------|
+| [existing check] | [path/run and revision] | [actual environment] | configuration_only | unknown | unknown | [uninspected execution or other limits] |
+
+## Evidence Requirements
+
+All rows below are proposed requirements, not completed evidence.
+
+| Claim / requirement | Oracle / review owner | Required evidence / environment | Completion / acceptance criteria | Scope / limits |
+|---------------------|-----------------------|---------------------------------|----------------------------------|----------------|
+| [bounded claim and revision] | [assertion revision, owner, invalidation rule] | [reports, source/config identity, environment] | [completed checks and supported result] | [bounds, exclusions, remaining gaps] |
 
 ## Component Strategies
 
@@ -12,13 +35,13 @@ Write `verification-strategy.md` with the following structure:
 
 ### [Component Name]
 **Current state**: ...
-**Target state**: ...
+**Proposed target state**: ...
 **Actions**: 1. ... 2. ...
 
 ## Oracle Strategy
 
-| Component | Oracle type | Implementation | Properties to check |
-|-----------|-------------|----------------|---------------------|
+| Component | Oracle type | Implementation | Properties / review lifecycle |
+|-----------|-------------|----------------|-------------------------------|
 
 ## Evidence Pipeline
 
@@ -55,15 +78,17 @@ Write `verification-strategy.md` with the following structure:
 
 ## Architecture Fitness Functions
 
-| Property | Type | Tool | Runs at | Maturity |
-|----------|------|------|---------|----------|
+| Property | Type | Tool / qualified scope | Current maturity (0–4 / unknown) | Target maturity (0–4) | Runs at | Controls / remaining limits |
+|----------|------|------------------------|----------------------------------|----------------------|---------|-----------------------------|
+
+**Maintenance exercise**: [representative change, effort/unexpected edits/regressions, or justified inapplicability]
 
 ## Eval Framework
 
 | Task | Source | Difficulty | Files | Success criteria |
 |------|--------|-----------|-------|------------------|
 
-Measurement: Correctness (>90% pass), Convention (<2 violations), Efficiency (<5 iterations)
+Measurement: [reviewed task criteria, prohibited overclaims, sample size, model/configuration, uncertainty]
 
 ## Generator-Evaluator Recommendations
 
@@ -83,23 +108,23 @@ Measurement: Correctness (>90% pass), Convention (<2 violations), Efficiency (<5
 
 ## Requirement Traceability
 
-**Current level**: X/3 → **Target level**: Y/3
+**Current evidence → proposed target**: [links, execution, and meaning separately]
 
-| Linking convention | Current | Recommendation / mechanism | Gate (block vs warn by risk class) |
-|--------------------|---------|----------------------------|-------------------------------------|
-| Requirement IDs | ... | ... | ... |
-| Criterion → test | ... | ... | ... |
-| Code → requirement | ... | ... | ... |
+| Obligation | Current evidence / gaps | Proposed mechanism | Completion criteria / review owner |
+|------------|-------------------------|--------------------|------------------------------------|
+| Links and relevant change references | ... | ... | ... |
+| Expected vs executed checks | ... | ... | ... |
+| Assertion-to-claim meaning and freshness | ... | ... | ... |
 
 ## Implementation Roadmap
 
-### Phase 1: Quick wins (week 1)
-| # | Action | Component | Effort | Tools |
-|---|--------|-----------|--------|-------|
+### Phase 1: Quick wins
+| # | Action / failure addressed | Component | Effort | Completion evidence |
+|---|---------------------------|-----------|--------|---------------------|
 
-### Phase 2: Foundation (weeks 2-4)
+### Phase 2: Foundation
 ...
 
-### Phase 3: Deep investment (month 2+)
+### Phase 3: Deeper checks where justified
 ...
 ```

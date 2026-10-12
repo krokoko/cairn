@@ -19,15 +19,15 @@ Smell-specific gates by pipeline stage:
 | CI - slow | Mutation testing, branch coverage, duplication detection, silent success scan, anti-vacuity probes, spec↔code sync, traceability meta-gates | AI004, AI005, AI006, AI009, AI010, AI011 |
 | PR review | PR template check, test-with-source requirement, Docker tag lint | Git hygiene, AI008 |
 
-When formal specs (`*.tla`, invariants) or `(verified=…)` markers exist, run AI011 meta-gates in
-CI - slow (or verify-quick) — not optional. Load `detection-patterns-gates-formal.md`.
+For active formal claims or required verification markers, inspect the matching gate and completion.
+Draft/example artifacts can be explicitly inapplicable. Load `detection-patterns-gates-formal.md`.
 
 ## Enforcement Levels
 
 | Level | Meaning | When appropriate |
 |-------|---------|-----------------|
-| **Blocking** | Fails build, prevents merge | High-severity smells (AI001, AI004, AI011 when formal specs or verified markers exist) |
-| **Warning** | PR annotation, does not block | Medium-severity (AI002, AI003, AI005, AI007, AI008, AI009, AI010); AI011 when no formal artifacts on disk |
+| **Blocking** | Fails build, prevents merge | Required checks for consequential claims, including active AI011 verification claims |
+| **Warning** | PR annotation, does not block | Scoped findings needing review or gates in calibration |
 | **Informational** | Report only, trend tracked | Low-severity (AI006), new gates in trial period |
 
 ## Feedback Quality Criteria
@@ -45,7 +45,8 @@ Assess each gate: does its output include all five? Missing elements reduce agen
 
 ### Per-PR delta (recommended)
 
-Compare smell-related metric on branch vs main. Fail if regression exceeds threshold.
+Compare the same source scope and tool configuration on branch vs base. Investigate changes before
+enforcing a reviewed threshold; measurements alone do not establish maintenance outcomes.
 
 Applicable metrics:
 - Mutation score (should not decrease)
@@ -60,12 +61,12 @@ Applicable metrics:
 Store metrics over time. Watch for:
 - Gradual drift (small per-PR increases that compound)
 - Sudden spikes (bulk AI-generated code merged)
-- Plateau after gate introduction (gate is working)
+- Plateau after gate introduction (check whether this reflects improvement or missing detection)
 
 ### Gate effectiveness measurement
 
 Track per gate:
-- How often it fires (too rare = misconfigured, too often = too strict)
+- How often it fires, interpreted with representative positive/negative qualification controls
 - False positive rate (developers overriding/ignoring)
 - Time-to-fix after gate fires (indicates feedback quality)
 
@@ -77,3 +78,6 @@ Track per gate:
 | 1 | Partial coverage | Some gates exist (e.g., empty catch rules) but gaps in 4+ categories |
 | 2 | Broad coverage | Gates for 7+ categories, mix of blocking and warning, pinning + fail-fast covered |
 | 3 | Fitness function maturity | Trend tracking, per-PR deltas, gate effectiveness measurement, automated update mechanisms for pins |
+
+These are workflow signals, not proof of category-wide detection. Pair them with the scoped
+Qualified/Partial/Configured/None/Unknown/Not applicable statuses and shared evidence ledger.
