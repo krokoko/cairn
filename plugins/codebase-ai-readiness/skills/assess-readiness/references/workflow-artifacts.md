@@ -26,10 +26,13 @@ Workflow artifacts primarily affect **compound engineering readiness** and
 
 | Maturity | Signals |
 |----------|---------|
-| Strong (boost compound toward 76+) | 2+ artifact types present; recent dated files; cross-links from agent entry docs |
+| Strong (supports 76–100) | Current task-relevant intent, decisions and progress can be retrieved from agent entry docs and used to resume work |
 | Moderate (51-75) | One plan or spec directory with a few files; sporadic updates |
 | Weak (26-50) | Only generic README/ADR template; no feature-scoped artifacts |
 | Absent (0-25) | No versioned plans/specs; context only in issues/chat |
+
+File counts and timestamps are discovery signals. Inspect whether content is current and useful;
+do not reward extra directories or recent edits without relevant maintained decisions.
 
 ## Discovery commands
 

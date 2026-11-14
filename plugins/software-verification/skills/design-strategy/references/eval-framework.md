@@ -10,8 +10,8 @@ produce working code here?"
 
 ## Why evals matter for verification strategy
 
-Traditional verification checks code correctness. Evals check *agent* correctness —
-whether agents consistently produce quality code across diverse tasks. Without evals,
+Code checks support scoped claims. Evals measure an agent workflow on declared tasks and criteria,
+with results depending on fixture quality, model/configuration, and sampling. Without evals,
 teams rely on anecdotes rather than data to assess whether their verification
 infrastructure actually enables autonomous work.
 
@@ -23,7 +23,7 @@ Each eval task requires:
 |-----------|---------|---------|
 | Defined input | Reproducible starting state | Prompt, context files, instruction file |
 | Success criteria | Automated pass/fail | Tests pass, types check, lint clean, behavior correct |
-| Repeatability | Statistical confidence | Same task runs 3-5 times; success rate measured |
+| Repeatability | Estimate variability | Record repeated attempts, sample size, and uncertainty |
 | Difficulty calibration | Horizon mapping | Task annotated with estimated human-expert time |
 
 ## Measurement dimensions
@@ -53,3 +53,19 @@ For each, record:
 - The files that should change
 - The tests that validate correctness
 - The estimated human-expert time
+
+## Independent evaluation and maintenance tasks
+
+Include independently authored accepted/rejected controls and prohibited conclusions, not only
+tests copied from the implementation. For an assessment skill, examples include configured-but-not-run
+checks, stale reports, skipped linked tests, equivalent surviving mutations, and local-only evidence.
+Keep format validation separate from semantic adjudication of the findings.
+
+For maintainability, ask for a representative change through an intended extension point. Record
+unexpected edits, effort, regressions, and boundary violations. Improved metrics alone do not show that
+the change became easier. Define acceptable behavioral differences explicitly for refactors.
+
+Version source fixtures, requirements, oracle labels, model, prompts, and tool configuration. Separate
+development cases from evaluation cases where practical; repeated feedback can weaken held-out status.
+Evaluate model judges against independent labels including allowed and rejected outcomes. A sample's
+success does not establish general reliability or authorize actions.

@@ -2,6 +2,15 @@
 
 Tools organized by language ecosystem and verification category. Load `toolchain-catalog-ecosystems.md` for JVM and cross-language tools.
 
+## Qualification before recommendation
+
+This inventory is a discovery aid, not a reviewed license list, maturity ranking, or record of
+successful runs. For tools actually recommended, record documentation URL/date, intended release,
+supported language/parser/runner scope, evidence mode, configuration, and known limits. Mark unreviewed
+items unknown. Check maintenance, distribution/license terms, and fit instead of inferring them from
+a name. Pilot relevant positive/negative cases before relying on a gate; preserve existing tools
+when they satisfy the claim. Grouped entries need individual evaluation.
+
 ## Python
 
 | Category | Tools |
@@ -20,6 +29,7 @@ Tools organized by language ecosystem and verification category. Load `toolchain
 | Contracts | icontract, deal, dpcontracts |
 | Coverage | coverage.py, pytest-cov |
 | Security | bandit, semgrep |
+| Module boundaries | Import Linter (qualify direct/indirect imports and exclusions) |
 
 ## TypeScript / JavaScript
 

@@ -4,8 +4,7 @@
 
 Context engineering friendliness measures how well a codebase's structure supports
 the deliberate management of what an agent sees, in what sequence, and with what
-priority. Agent failures typically stem from inadequate context rather than model
-incapability.
+priority. Inadequate context is one possible source of agent errors.
 
 ## Four dimensions
 
@@ -14,12 +13,21 @@ incapability.
 Agents operate within finite context windows. Files that exceed agent working memory
 force partial reads or require complex summarization strategies.
 
-| Signal | Good | Problematic |
-|--------|------|-------------|
-| Average file length | <300 lines | >500 lines |
-| Maximum file length | <800 lines | >2000 lines |
-| Function length | <50 lines | >100 lines |
-| Single-responsibility | One concept per file | Multiple unrelated concerns |
+| Signal | Investigate | Useful evidence |
+|--------|-------------|-----------------|
+| File/function length outliers | Unrelated concerns or expensive partial reads | A representative task can find and understand the relevant behavior |
+| Many small files | Excessive indirection or new dependency cycles | Boundaries support changes without unexpected edit spread |
+| Cohesion | Concepts that change independently are entangled | A scoped change preserves unrelated behavior and dependency rules |
+
+Exclude generated/vendor output when measuring. Counts locate investigation targets; a
+shorter file is not proof of single responsibility or easier maintenance. Avoid splitting
+cohesive code solely to meet a line threshold.
+
+For repeatable triage, start with the three largest maintained source files per major component,
+or the project's existing size rule. A 500-line warning can locate candidates; under 300 lines is
+not automatically good. Trace a representative task through each candidate and record unrelated
+concerns, navigation steps, unexpected edits, and new coupling. Recommend a split only when that
+exercise shows a boundary problem; otherwise retain the file with the rationale.
 
 ### 2. Layered documentation for progressive loading
 
@@ -61,16 +69,16 @@ be optimized for these access patterns.
 ## Scoring signals
 
 ### Strong context friendliness (score 76-100)
-- 90%+ of files under 300 lines
+- Cohesive boundaries supported by navigation/change evidence
 - Layered documentation from root to module level
 - Clear entry points and module exports
 - Consistent naming without synonyms
 - Agent context file with progressive disclosure design
 - Structured headings in all documentation
-- No generic filenames (utils, helpers, misc, common)
+- Names let tasks find the relevant domain concept; established conventions are considered
 
 ### Moderate context friendliness (score 51-75)
-- Most files under 500 lines, some outliers
+- Generally navigable modules, with some demonstrated cohesion or indirection problems
 - Root README and some module-level docs
 - Entry points identifiable but not explicitly marked
 - Mostly consistent naming with occasional drift
@@ -78,7 +86,7 @@ be optimized for these access patterns.
 - Documentation partially structured
 
 ### Weak context friendliness (score 26-50)
-- Many files >500 lines, some >1000
+- Unrelated concerns or excessive indirection repeatedly obstruct scoped changes
 - Only root README, no layered docs
 - Entry points ambiguous
 - Naming inconsistencies across modules
@@ -86,7 +94,7 @@ be optimized for these access patterns.
 - Documentation unstructured or missing headings
 
 ### Poor context friendliness (score 0-25)
-- Files routinely >1000 lines
+- Important tasks require broad, poorly explained changes across the codebase
 - No documentation beyond minimal README
 - No clear entry points
 - Inconsistent naming pervasive

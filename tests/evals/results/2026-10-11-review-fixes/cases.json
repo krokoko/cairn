@@ -1,0 +1,174 @@
+{
+  "version": 1,
+  "cases": [
+    {
+      "id": "configured-only",
+      "skill": "assess-readiness",
+      "prompt": "Assess this repository snapshot using the named skill. Use only supplied files; do not execute target checks or retrieve remote state. Write the skill report in the snapshot directory. Treat snapshot.json as the declared fixture identity, not evidence of any run.",
+      "files": {
+        "snapshot.json": "{\n  \"source_revision\": \"configured-only-r2\",\n  \"environment\": \"synthetic read-only repository snapshot\"\n}\n",
+        "README.md": "# Ledger utility\nRun `python3 -m unittest discover -s tests` for local checks. CI is configured below. No run artifacts or hosting settings are included in this snapshot.\n",
+        "ledger.py": "def total(values):\n    return sum(values)\n",
+        "tests/test_ledger.py": "import unittest\nfrom ledger import total\nclass Totals(unittest.TestCase):\n    def test_two_values(self):\n        self.assertEqual(total([2, 3]), 5)\n",
+        ".github/workflows/test.yml": "name: Checks\non: [pull_request]\njobs:\n  test:\n    runs-on: ubuntu-latest\n    steps:\n      - uses: actions/checkout@v4\n      - run: python3 -m unittest discover -s tests\n"
+      }
+    },
+    {
+      "id": "oracle-rot",
+      "skill": "assess-verification",
+      "prompt": "Assess this repository snapshot using the named skill. Use only supplied files; do not execute target checks or retrieve remote state. Write the skill report in the snapshot directory. Treat snapshot.json as the declared fixture identity, not evidence of any run.",
+      "files": {
+        "snapshot.json": "{\n  \"source_revision\": \"oracle-rot-r2\",\n  \"environment\": \"synthetic read-only repository snapshot\"\n}\n",
+        "requirements.md": "# REQ-DISCOUNT revision 2\nApproved: preferred customers receive a 15 percent discount. Revision 1 specified 10 percent.\n",
+        "price.py": "def preferred_price(cents):\n    return cents * 90 // 100\n",
+        "tests/test_price.py": "from price import preferred_price\ndef test_req_discount():\n    assert preferred_price(10000) == 9000\n",
+        "evidence/run.json": "{\n  \"source_revision\": \"oracle-rot-r2\",\n  \"tests\": {\n    \"executed\": 1,\n    \"failed\": 0\n  },\n  \"mutation_score\": 0.98,\n  \"assertion_review\": {\n    \"requirement_revision\": 1,\n    \"expected_discount_percent\": 10\n  },\n  \"environment\": \"local Python\"\n}\n"
+      }
+    },
+    {
+      "id": "skipped-acceptance",
+      "skill": "assess-verification",
+      "prompt": "Assess this repository snapshot using the named skill. Use only supplied files; do not execute target checks or retrieve remote state. Write the skill report in the snapshot directory. Treat snapshot.json as the declared fixture identity, not evidence of any run.",
+      "files": {
+        "snapshot.json": "{\n  \"source_revision\": \"skipped-acceptance-r2\",\n  \"environment\": \"synthetic read-only repository snapshot\"\n}\n",
+        "requirements.md": "# REQ-ID\nRepeated key and payload must return the same job ID.\n",
+        "trace.json": "{\"REQ-ID\": [\"test_idempotency\"]}\n",
+        "service.py": "def create_job(key, payload):\n    return object()\n",
+        "tests/test_service.py": "import unittest\nclass Retry(unittest.TestCase):\n    @unittest.skip(\"staging unavailable\")\n    def test_idempotency(self):\n        self.fail(\"acceptance assertion not implemented\")\n",
+        "evidence/junit.xml": "<testsuite tests=\"1\" failures=\"0\" skipped=\"1\"><testcase classname=\"Retry\" name=\"test_idempotency\"><skipped message=\"staging unavailable\"/></testcase></testsuite>\n",
+        "evidence/run.json": "{\"source_revision\":\"skipped-acceptance-r2\",\"exit_code\":0,\"report\":\"junit.xml\",\"environment\":\"local\"}\n"
+      }
+    },
+    {
+      "id": "stale-run",
+      "skill": "assess-verification",
+      "prompt": "Assess this repository snapshot using the named skill. Use only supplied files; do not execute target checks or retrieve remote state. Write the skill report in the snapshot directory. Treat snapshot.json as the declared fixture identity, not evidence of any run.",
+      "files": {
+        "snapshot.json": "{\n  \"source_revision\": \"stale-run-r2\",\n  \"environment\": \"synthetic read-only repository snapshot\"\n}\n",
+        "requirements.md": "# REQ-ROUNDTRIP\nDecode(encode(value)) must equal value for supported integers.\n",
+        "codec.py": "def encode(value):\n    return str(value + 1)\ndef decode(value):\n    return int(value)\n",
+        "tests/test_codec.py": "from codec import encode, decode\ndef test_roundtrip():\n    assert decode(encode(3)) == 3\n",
+        "evidence/run.json": "{\"source_revision\":\"stale-run-r1\",\"environment\":\"local\",\"executed\":1,\"failed\":0,\"requirement\":\"REQ-ROUNDTRIP\"}\n"
+      }
+    },
+    {
+      "id": "model-and-adapter",
+      "skill": "assess-verification",
+      "prompt": "Assess this repository snapshot using the named skill. Use only supplied files; do not execute target checks or retrieve remote state. Write the skill report in the snapshot directory. Treat snapshot.json as the declared fixture identity, not evidence of any run.",
+      "files": {
+        "snapshot.json": "{\n  \"source_revision\": \"model-and-adapter-r2\",\n  \"environment\": \"synthetic read-only repository snapshot\"\n}\n",
+        "requirements.md": "# REQ-JOB\nWithin 24 hours, retrying a request key must not create a second provider job. Conflicting payloads must be rejected.\n",
+        "model.py": "def submit(state, key, payload):\n    if key in state:\n        assert state[key][0] == payload\n        return state[key][1]\n    state[key] = (payload, len(state))\n    return state[key][1]\n",
+        "adapter.py": "def submit(provider, key, payload):\n    return provider.create_job(payload)\n",
+        "evidence/model.json": "{\"source_revision\":\"model-and-adapter-r2\",\"campaign\":\"20 generated local sequences\",\"failed\":0,\"environment\":\"in-memory model\",\"provider_calls\":0}\n"
+      }
+    },
+    {
+      "id": "mixed-surfaces",
+      "skill": "assess-readiness",
+      "prompt": "Assess this repository snapshot using the named skill. Use only supplied files; do not execute target checks or retrieve remote state. Write the skill report in the snapshot directory. Treat snapshot.json as the declared fixture identity, not evidence of any run.",
+      "files": {
+        "snapshot.json": "{\n  \"source_revision\": \"mixed-surfaces-r2\",\n  \"environment\": \"synthetic read-only repository snapshot\"\n}\n",
+        "README.md": "# Billing library\nCore arithmetic is pure. The provider adapter has no contract or environment qualification. Only core changes may use the existing local gates.\n",
+        "requirements.md": "# REQ-TOTAL reviewed r2\nTotal integer cents is the sum of item amounts.\n",
+        "core.py": "def total(items):\n    return sum(items)\n",
+        "provider.py": "def charge(client, items):\n    return client.charge(sum(items))\n",
+        "tests/test_core.py": "from core import total\ndef test_total():\n    assert total([200, 300]) == 500\n",
+        "evidence/core.json": "{\"source_revision\":\"mixed-surfaces-r2\",\"environment\":\"supported Python runtime\",\"requirement_review\":\"r2\",\"negative_control_detected\":true,\"executed\":20,\"failed\":0,\"scope\":\"core arithmetic only\"}\n"
+      }
+    },
+    {
+      "id": "missing-recovery",
+      "skill": "assess-readiness",
+      "prompt": "Assess this repository snapshot using the named skill. Use only supplied files; do not execute target checks or retrieve remote state. Write the skill report in the snapshot directory. Treat snapshot.json as the declared fixture identity, not evidence of any run.",
+      "files": {
+        "snapshot.json": "{\n  \"source_revision\": \"missing-recovery-r2\",\n  \"environment\": \"synthetic read-only repository snapshot\"\n}\n",
+        "README.md": "# Event service\nPrevious readiness review scored 94/100. Re-evaluate the current snapshot. Deployment recovery is manual: an engineer must select and redeploy the last version. There is no automatic rollback trigger.\n",
+        "requirements.md": "# REQ-EVENT reviewed r2\nAt-least-once delivery must not duplicate recorded event IDs.\n",
+        "service.py": "def record(seen, event_id):\n    if event_id in seen:\n        return False\n    seen.add(event_id)\n    return True\n",
+        "tests/test_service.py": "from service import record\ndef test_duplicate():\n    seen=set()\n    assert record(seen, \"a\")\n    assert not record(seen, \"a\")\n",
+        "evidence/controls.json": "{\n  \"source_revision\": \"missing-recovery-r2\",\n  \"requirement_review\": \"r2\",\n  \"oracle_review\": \"independent event identity examples and known-bad duplicate control\",\n  \"staging\": \"recorded supported provider scenarios completed\",\n  \"outcome_telemetry\": \"duplicate_event_id alert exercised\",\n  \"rollback\": \"manual only\",\n  \"completed_checks\": 24,\n  \"failures\": 0\n}\n"
+      }
+    },
+    {
+      "id": "equivalent-mutant",
+      "skill": "assess-verification",
+      "prompt": "Assess this repository snapshot using the named skill. Use only supplied files; do not execute target checks or retrieve remote state. Write the skill report in the snapshot directory. Treat snapshot.json as the declared fixture identity, not evidence of any run.",
+      "files": {
+        "snapshot.json": "{\n  \"source_revision\": \"equivalent-mutant-r2\",\n  \"environment\": \"synthetic read-only repository snapshot\"\n}\n",
+        "requirements.md": "# REQ-IDENTITY\nFor Python integers, identity(value) returns the same integer.\n",
+        "identity.py": "def identity(value):\n    return value + 0\n",
+        "tests/test_identity.py": "from identity import identity\ndef test_identity():\n    for value in (-10, 0, 4, 999):\n        assert identity(value) == value\n",
+        "evidence/mutation.json": "{\n  \"source_revision\": \"equivalent-mutant-r2\",\n  \"environment\": \"Python integer inputs\",\n  \"test_failures\": 0,\n  \"survivors\": [\n    {\n      \"original\": \"return value + 0\",\n      \"mutated\": \"return 0 + value\"\n    }\n  ]\n}\n"
+      }
+    },
+    {
+      "id": "roadmap-stale-baseline",
+      "skill": "generate-roadmap",
+      "prompt": "Generate an AI readiness improvement roadmap targeting L5 for the payment adapter using the named skill. Use only supplied files; do not execute target checks or retrieve remote state. Write the skill report in the snapshot directory. Treat snapshot.json as the declared fixture identity, not evidence of any run.",
+      "files": {
+        "snapshot.json": "{\n  \"source_revision\": \"roadmap-stale-baseline-r3\",\n  \"environment\": \"synthetic read-only repository snapshot\"\n}\n",
+        "README.md": "# Invoice service\nCurrent scope: the provider adapter is being changed to the revised payment requirement.\nThe arithmetic module and its requirement are unchanged since r1. Provider settings,\nfresh provider runs, and current branch-protection exports are not in this snapshot.\nRecovery is a manual previous-version redeploy. It cannot undo a completed charge.\n",
+        "requirements.md": "# Approved requirements\nREQ-TOTAL revision 1: total_cents returns the sum of supplied integer item amounts.\nREQ-PAY revision 2, approved 2026-10-10 by payments owner:\nA tenant and payment key identify one durable charge for 24 hours. The same key and\npayload return its original charge; a conflicting payload must be rejected.\nRevision 1 covered retries for five minutes only.\n",
+        "core.py": "def total_cents(items):\n    return sum(items)\n",
+        "adapter.py": "def pay(client, tenant, key, cents):\n    return client.create_charge(cents=cents)\n",
+        "tests/test_core.py": "from core import total_cents\ndef test_total():\n    assert total_cents([200, 300]) == 500\n",
+        "tests/test_adapter.py": "from adapter import pay\nclass FakeProvider:\n    def create_charge(self, **kwargs):\n        return {\"id\": \"charge-1\", **kwargs}\ndef test_payment():\n    assert pay(FakeProvider(), \"t1\", \"k1\", 500)[\"id\"] == \"charge-1\"\n",
+        "readiness-report.md": "# AI Readiness Assessment\n## Evidence Scope\n**Source revision**: roadmap-stale-baseline-r1\n**Assessment date**: 2026-10-01\n**Inspected scope**: core and payment adapter against REQ-TOTAL/1 and REQ-PAY/1\n**Evidence basis**: earlier local and provider receipts; exported protections at r1\n## Overall Score\nProvisional score: 94/100; assessed weight: 1.0. Rubric: readiness/2.\n## Recommended Autonomy\nL4 for both assessed surfaces at r1; next target L5.\n## Surface Autonomy\n| Surface | Provisional level | Prerequisite ceiling | Recommended level | Rationale |\n|---------|-------------------|----------------------|-------------------|-----------|\n| core | L4 | L4 | L4 | Reviewed sum contract and repeatable local runs |\n| payment adapter | L4 | L4 | L4 | Provider retry evidence for REQ-PAY/1 five-minute window |\n## Autonomy Prerequisites\nThe payment adapter had no automatic recovery at r1. Its L5 recovery gate was missing.\nOther provider evidence and requirement review applied to the five-minute contract only.\n## Category Scores\nTest infrastructure 90; CI 95; requirements 95; compound engineering not measured.\n## Blockers\nAutomatic recovery/escalation had not been exercised. Collaboration effectiveness and\nsession context durability had not been measured.\n",
+        "evidence/core-runs.json": "{\n  \"source_revision\": \"roadmap-stale-baseline-r3\",\n  \"scope\": \"core.py and tests/test_core.py; REQ-TOTAL/1 only\",\n  \"environment\": \"CPython 3.12\",\n  \"repeats\": 3,\n  \"executed_per_repeat\": 1,\n  \"failed\": 0,\n  \"adapter_calls\": 0\n}\n",
+        "evidence/provider-old.json": "{\n  \"source_revision\": \"roadmap-stale-baseline-r1\",\n  \"requirement\": \"REQ-PAY/1\",\n  \"environment\": \"provider sandbox API revision 1\",\n  \"retry_window_seconds\": 300,\n  \"executed\": 12,\n  \"failed\": 0\n}\n"
+      }
+    },
+    {
+      "id": "strategy-provider-migration",
+      "skill": "design-strategy",
+      "prompt": "Design a verification strategy for migrating the payment adapter to the supplied provider API v2 and revised payment requirements using the named skill. Use only supplied files; do not execute target checks or retrieve remote state. Write the skill report in the snapshot directory. Treat snapshot.json as the declared fixture identity, not evidence of any run.",
+      "files": {
+        "snapshot.json": "{\n  \"source_revision\": \"strategy-provider-migration-r3\",\n  \"environment\": \"synthetic read-only repository snapshot\"\n}\n",
+        "README.md": "# Payment adapter migration\nThe existing integration uses the provider's v1 create_charge endpoint with integer cents.\nThe requested change uses v2 create_payment with amount_minor, currency and a tenant-scoped\nidempotency key. Old and new application versions will overlap for one deployment window.\nA provider timeout can occur after the provider commits a charge. An application rollback\ncannot cancel an already committed charge. The supplied local model predates this migration.\nOnly local artifacts are included; current provider execution and hosting settings are absent.\n",
+        "requirements.md": "# Payment requirements revision 3\nApproved 2026-10-10 by payments owner.\nREQ-AMOUNT: For USD, preserve the integer amount in minor units; reject unsupported currencies.\nREQ-ID: For one tenant and key, identical payloads return one durable charge ID for 24 hours.\nA different tenant has an independent key namespace. Conflicting payloads are rejected.\nREQ-RETRY: Timeout after commit and process restart must not cause a second charge.\nREQ-MIGRATE: The v1/v2 overlap must preserve the same durable idempotency identity;\ncustomers must not be charged again when a retry reaches the other application version.\nExpired keys require an explicit caller decision; do not automatically charge again.\n",
+        "adapter.py": "def pay(client, tenant, key, cents):\n    try:\n        return client.create_charge(amount=cents)\n    except TimeoutError:\n        return client.create_charge(amount=cents)\n",
+        "local_model.py": "def submit(state, key, cents):\n    if key not in state:\n        state[key] = {\"id\": len(state), \"cents\": cents}\n    return state[key]\n",
+        "tests/test_adapter.py": "from adapter import pay\nclass FakeProvider:\n    def create_charge(self, amount):\n        return {\"id\": \"p1\", \"amount\": amount}\ndef test_payment():\n    assert pay(FakeProvider(), \"tenant-a\", \"key-a\", 1250)[\"amount\"] == 1250\n",
+        "provider-api-v2.json": "{\n  \"provenance\": \"Synthetic independent provider API extract, reviewed by integration owner 2026-10-10\",\n  \"api_revision\": \"v2-2026-10\",\n  \"create_payment\": {\n    \"required\": [\n      \"tenant\",\n      \"idempotency_key\",\n      \"amount_minor\",\n      \"currency\"\n    ],\n    \"currency\": [\n      \"USD\"\n    ],\n    \"same_key_same_payload\": \"same payment ID within 24 hours\",\n    \"same_key_changed_payload\": \"409 conflict\",\n    \"key_namespace\": \"tenant\"\n  },\n  \"lookup_payment\": {\n    \"by\": [\n      \"tenant\",\n      \"idempotency_key\"\n    ]\n  },\n  \"limitations\": [\n    \"Documented interface only; no executed fidelity or live provider receipt supplied\"\n  ]\n}\n",
+        "evidence/model-r2.json": "{\n  \"source_revision\": \"strategy-provider-migration-r2\",\n  \"requirement_revision\": 2,\n  \"environment\": \"in-memory Python model\",\n  \"generated_sequences\": 50,\n  \"failed\": 0,\n  \"provider_calls\": 0,\n  \"excluded\": [\n    \"timeouts after commit\",\n    \"process restarts\",\n    \"v1/v2 overlap\",\n    \"tenant namespaces\"\n  ]\n}\n"
+      }
+    },
+    {
+      "id": "smell-gate-scope",
+      "skill": "detect-ai-smells",
+      "prompt": "Assess the current AI smell detection gates in this snapshot using the named skill. Use only supplied files; do not execute target checks or retrieve remote state. Write the skill report in the snapshot directory. Treat snapshot.json as the declared fixture identity, not evidence of any run.",
+      "files": {
+        "snapshot.json": "{\n  \"source_revision\": \"smell-gate-scope-r2\",\n  \"environment\": \"synthetic read-only repository snapshot\"\n}\n",
+        "README.md": "# Checkout helper\nThe empty-except gate is custom gate version 1. It parses Python and rejects exception\nhandlers whose entire body is pass. It does not examine return values or business rules.\nOther than supplied current receipts, CI history and hosting protection are unavailable.\nAuthorship and generation history are not recorded.\n",
+        "requirements.md": "# Checkout requirements revision 2\nApproved by checkout owner 2026-10-10.\nREQ-DISCOUNT: Preferred customers receive 15 percent off, rounded down in integer cents.\nPrevious revision specified 10 percent off.\nREQ-ERROR: Catalog lookup failures propagate an error; they must not appear as an empty cart.\n",
+        "checkout.py": "def preferred_price(cents):\n    return cents * 90 // 100\ndef catalog(client):\n    try:\n        return client.list_items()\n    except OSError:\n        return []\n",
+        "tests/test_checkout.py": "from checkout import preferred_price, catalog\ndef test_discount():\n    assert preferred_price(10000) == 9000\nclass OK:\n    def list_items(self):\n        return [\"item\"]\nclass Down:\n    def list_items(self):\n        raise OSError(\"offline\")\ndef test_catalog():\n    assert catalog(OK()) == [\"item\"]\n    assert catalog(Down()) == []\n",
+        "tools/empty_except.py": "import ast\nimport sys\nfrom pathlib import Path\ndef violations(source):\n    return [node.lineno for node in ast.walk(ast.parse(source))\n            if isinstance(node, ast.ExceptHandler)\n            and len(node.body) == 1 and isinstance(node.body[0], ast.Pass)]\nif __name__ == \"__main__\":\n    findings = [(name, line) for name in sys.argv[1:]\n                for line in violations(Path(name).read_text())]\n    for name, line in findings:\n        print(f\"{name}:{line}: empty exception handler; propagate or handle the error\")\n    raise SystemExit(bool(findings))\n",
+        "gate_controls/allowed.py": "try:\n    operation()\nexcept OSError:\n    raise\n",
+        "gate_controls/violating.py": "try:\n    operation()\nexcept OSError:\n    pass\n",
+        ".github/workflows/checks.yml": "name: checks\non: [pull_request]\njobs:\n  empty-except:\n    runs-on: ubuntu-latest\n    steps:\n      - uses: actions/checkout@v4\n      - run: python3 tools/empty_except.py checkout.py\n  tests:\n    runs-on: ubuntu-latest\n    steps:\n      - uses: actions/checkout@v4\n      - run: pytest --cov=checkout --cov-branch tests\n",
+        "evidence/empty-except.json": "{\n  \"source_revision\": \"smell-gate-scope-r2\",\n  \"tool\": \"empty-except/1\",\n  \"environment\": \"CPython 3.12 AST parser\",\n  \"source_scope\": [\n    \"checkout.py\"\n  ],\n  \"completed\": true,\n  \"violations\": [],\n  \"controls\": [\n    {\n      \"path\": \"gate_controls/allowed.py\",\n      \"exit_code\": 0,\n      \"expected_exit_code\": 0\n    },\n    {\n      \"path\": \"gate_controls/violating.py\",\n      \"exit_code\": 1,\n      \"expected_exit_code\": 1\n    }\n  ],\n  \"controls_completed\": true\n}\n",
+        "evidence/tests.json": "{\n  \"source_revision\": \"smell-gate-scope-r2\",\n  \"environment\": \"CPython 3.12\",\n  \"tests_executed\": 2,\n  \"failed\": 0,\n  \"branch_coverage\": 1.0,\n  \"mutation_score\": 0.98,\n  \"semantic_review\": {\n    \"requirement_revision\": 1,\n    \"expected_discount_percent\": 10,\n    \"catalog_failure\": \"empty list\"\n  }\n}\n"
+      }
+    },
+    {
+      "id": "qualified-local-component",
+      "skill": "assess-verification",
+      "prompt": "Assess this repository snapshot using the named skill. Use only supplied files; do not execute target checks or retrieve remote state. Write the skill report in the snapshot directory. Treat snapshot.json as the declared fixture identity, not evidence of any run.",
+      "files": {
+        "snapshot.json": "{\n  \"source_revision\": \"qualified-local-component-r4\",\n  \"environment\": \"synthetic read-only repository snapshot\"\n}\n",
+        "README.md": "# Local status badge helper\nThis private utility is used only by an offline local developer display. Its sole assessed\nbehavior is is_terminal(Status) for the four declared Status enum members. The caller supplies\na validated enum; arbitrary inputs, network behavior, persistence and deployment are outside\nthe interface. There is no service, third-party adapter or package release in this repository.\nSupported environments are CPython 3.12.6 on Linux and macOS. The module has no external dependencies.\nCurrent immutable check receipts and a repository-settings export are included for this snapshot.\nA long-term review/incident portfolio maintenance process has not yet been established.\n",
+        "requirements.md": "# REQ-TERMINAL revision 4\nApproved 2026-10-10 by the developer-display domain owner, Mira.\nThe Status enum has QUEUED, RUNNING, DONE and CANCELLED. is_terminal returns False for\nQUEUED and RUNNING, and True for DONE and CANCELLED. This is the complete input domain.\nThe expected table was authored by the domain owner before the current implementation.\nNo behavior for arbitrary strings, foreign objects or dynamically modified enum classes is promised.\n",
+        "terminal.py": "from enum import Enum\nclass Status(Enum):\n    QUEUED = \"queued\"\n    RUNNING = \"running\"\n    DONE = \"done\"\n    CANCELLED = \"cancelled\"\ndef is_terminal(status: Status) -> bool:\n    return status in (Status.DONE, Status.CANCELLED)\n",
+        "tests/test_terminal.py": "import unittest\nfrom terminal import Status, is_terminal\n# REQ-TERMINAL/4 expected table supplied independently by domain owner Mira.\nclass TerminalTable(unittest.TestCase):\n    def test_queued(self):\n        self.assertIs(is_terminal(Status.QUEUED), False)\n    def test_running(self):\n        self.assertIs(is_terminal(Status.RUNNING), False)\n    def test_done(self):\n        self.assertIs(is_terminal(Status.DONE), True)\n    def test_cancelled(self):\n        self.assertIs(is_terminal(Status.CANCELLED), True)\n",
+        ".github/workflows/verify.yml": "name: verify-enum\non: [pull_request, workflow_dispatch]\njobs:\n  truth-table:\n    strategy:\n      matrix:\n        os: [ubuntu-latest, macos-latest]\n    runs-on: ${{ matrix.os }}\n    steps:\n      - uses: actions/checkout@v4\n      - uses: actions/setup-python@v5\n        with:\n          python-version: '3.12.6'\n      - run: python3 -m unittest discover -s tests -v\n",
+        "evidence/oracle-review.json": "{\n  \"source_revision\": \"qualified-local-component-r4\",\n  \"review_date\": \"2026-10-10\",\n  \"review_owner\": \"Mira, developer-display domain owner\",\n  \"requirement\": \"REQ-TERMINAL/4\",\n  \"assertion_revision\": \"terminal-table/2\",\n  \"fixture_revision\": \"domain-truth-table/1\",\n  \"expectation_helpers\": \"none\",\n  \"artifact_sha256\": {\n    \"requirements.md\": \"db3febce1278d7ef1f05296c6403a37e81d07f8102fdc7475daec2083175bf86\",\n    \"terminal.py\": \"92a258f5079ed3543052484eaa8fb73be3f877a9c232f96b2abb57ec2bae0f04\",\n    \"tests/test_terminal.py\": \"dc46af2eb500f02094338e63c370ae3af6b95d5004016c306046d564ea496c6c\",\n    \".github/workflows/verify.yml\": \"97e22f3393ba2d3377aa1dcefc20b0b2f6113b5eb17a183e291f0b8a0498ed3e\"\n  },\n  \"approved_claim\": \"The four explicit expected booleans cover the entire declared Status domain.\",\n  \"independent_derivation\": \"Mira supplied the truth table from display requirements before terminal.py implementation; test expectations do not call an implementation helper.\",\n  \"reviewed_assertion_ids\": [\n    \"TerminalTable.test_queued\",\n    \"TerminalTable.test_running\",\n    \"TerminalTable.test_done\",\n    \"TerminalTable.test_cancelled\"\n  ],\n  \"environment_scope\": \"Pure in-process enum membership on supported CPython environments; no deployed or external-dependency claim.\",\n  \"exclusions\": [\n    \"arbitrary input coercion\",\n    \"dynamic enum modification\",\n    \"UI rendering\",\n    \"external services\"\n  ]\n}\n",
+        "evidence/current-runs.json": "{\n  \"source_revision\": \"qualified-local-component-r4\",\n  \"artifact_sha256\": {\n    \"requirements.md\": \"db3febce1278d7ef1f05296c6403a37e81d07f8102fdc7475daec2083175bf86\",\n    \"terminal.py\": \"92a258f5079ed3543052484eaa8fb73be3f877a9c232f96b2abb57ec2bae0f04\",\n    \"tests/test_terminal.py\": \"dc46af2eb500f02094338e63c370ae3af6b95d5004016c306046d564ea496c6c\",\n    \".github/workflows/verify.yml\": \"97e22f3393ba2d3377aa1dcefc20b0b2f6113b5eb17a183e291f0b8a0498ed3e\"\n  },\n  \"requirement\": \"REQ-TERMINAL/4\",\n  \"runs\": [\n    {\n      \"id\": \"Linux-repeat-1\",\n      \"recorded_at\": \"2026-10-11\",\n      \"environment\": \"CPython 3.12.6 / Linux\",\n      \"command\": \"python3 -m unittest discover -s tests -v\",\n      \"executed\": [\n        \"TerminalTable.test_queued\",\n        \"TerminalTable.test_running\",\n        \"TerminalTable.test_done\",\n        \"TerminalTable.test_cancelled\"\n      ],\n      \"failed\": [],\n      \"skipped\": [],\n      \"exit_code\": 0\n    },\n    {\n      \"id\": \"Linux-repeat-2\",\n      \"recorded_at\": \"2026-10-11\",\n      \"environment\": \"CPython 3.12.6 / Linux\",\n      \"command\": \"python3 -m unittest discover -s tests -v\",\n      \"executed\": [\n        \"TerminalTable.test_queued\",\n        \"TerminalTable.test_running\",\n        \"TerminalTable.test_done\",\n        \"TerminalTable.test_cancelled\"\n      ],\n      \"failed\": [],\n      \"skipped\": [],\n      \"exit_code\": 0\n    },\n    {\n      \"id\": \"Linux-repeat-3\",\n      \"recorded_at\": \"2026-10-11\",\n      \"environment\": \"CPython 3.12.6 / Linux\",\n      \"command\": \"python3 -m unittest discover -s tests -v\",\n      \"executed\": [\n        \"TerminalTable.test_queued\",\n        \"TerminalTable.test_running\",\n        \"TerminalTable.test_done\",\n        \"TerminalTable.test_cancelled\"\n      ],\n      \"failed\": [],\n      \"skipped\": [],\n      \"exit_code\": 0\n    },\n    {\n      \"id\": \"macOS-repeat-1\",\n      \"recorded_at\": \"2026-10-11\",\n      \"environment\": \"CPython 3.12.6 / macOS\",\n      \"command\": \"python3 -m unittest discover -s tests -v\",\n      \"executed\": [\n        \"TerminalTable.test_queued\",\n        \"TerminalTable.test_running\",\n        \"TerminalTable.test_done\",\n        \"TerminalTable.test_cancelled\"\n      ],\n      \"failed\": [],\n      \"skipped\": [],\n      \"exit_code\": 0\n    },\n    {\n      \"id\": \"macOS-repeat-2\",\n      \"recorded_at\": \"2026-10-11\",\n      \"environment\": \"CPython 3.12.6 / macOS\",\n      \"command\": \"python3 -m unittest discover -s tests -v\",\n      \"executed\": [\n        \"TerminalTable.test_queued\",\n        \"TerminalTable.test_running\",\n        \"TerminalTable.test_done\",\n        \"TerminalTable.test_cancelled\"\n      ],\n      \"failed\": [],\n      \"skipped\": [],\n      \"exit_code\": 0\n    },\n    {\n      \"id\": \"macOS-repeat-3\",\n      \"recorded_at\": \"2026-10-11\",\n      \"environment\": \"CPython 3.12.6 / macOS\",\n      \"command\": \"python3 -m unittest discover -s tests -v\",\n      \"executed\": [\n        \"TerminalTable.test_queued\",\n        \"TerminalTable.test_running\",\n        \"TerminalTable.test_done\",\n        \"TerminalTable.test_cancelled\"\n      ],\n      \"failed\": [],\n      \"skipped\": [],\n      \"exit_code\": 0\n    }\n  ],\n  \"flake_observation\": \"No inconsistent outcomes over these six complete runs; no broader reliability estimate claimed.\"\n}\n",
+        "evidence/sensitivity-controls.json": "{\n  \"source_revision\": \"qualified-local-component-r4\",\n  \"assertion_revision\": \"terminal-table/2\",\n  \"artifact_sha256\": {\n    \"requirements.md\": \"db3febce1278d7ef1f05296c6403a37e81d07f8102fdc7475daec2083175bf86\",\n    \"terminal.py\": \"92a258f5079ed3543052484eaa8fb73be3f877a9c232f96b2abb57ec2bae0f04\",\n    \"tests/test_terminal.py\": \"dc46af2eb500f02094338e63c370ae3af6b95d5004016c306046d564ea496c6c\",\n    \".github/workflows/verify.yml\": \"97e22f3393ba2d3377aa1dcefc20b0b2f6113b5eb17a183e291f0b8a0498ed3e\"\n  },\n  \"environment\": \"CPython 3.12.6 / Linux and macOS\",\n  \"known_good\": {\n    \"implementation\": \"terminal.py at r4\",\n    \"executed\": [\n      \"TerminalTable.test_queued\",\n      \"TerminalTable.test_running\",\n      \"TerminalTable.test_done\",\n      \"TerminalTable.test_cancelled\"\n    ],\n    \"failed\": [],\n    \"exit_code\": 0\n  },\n  \"known_bad\": [\n    {\n      \"variant\": \"always_false\",\n      \"violates\": [\n        \"DONE\",\n        \"CANCELLED\"\n      ],\n      \"failed\": [\n        \"TerminalTable.test_done\",\n        \"TerminalTable.test_cancelled\"\n      ],\n      \"exit_code\": 1\n    },\n    {\n      \"variant\": \"always_true\",\n      \"violates\": [\n        \"QUEUED\",\n        \"RUNNING\"\n      ],\n      \"failed\": [\n        \"TerminalTable.test_queued\",\n        \"TerminalTable.test_running\"\n      ],\n      \"exit_code\": 1\n    },\n    {\n      \"variant\": \"exclude_cancelled\",\n      \"violates\": [\n        \"CANCELLED\"\n      ],\n      \"failed\": [\n        \"TerminalTable.test_cancelled\"\n      ],\n      \"exit_code\": 1\n    },\n    {\n      \"variant\": \"include_running\",\n      \"violates\": [\n        \"RUNNING\"\n      ],\n      \"failed\": [\n        \"TerminalTable.test_running\"\n      ],\n      \"exit_code\": 1\n    }\n  ],\n  \"completed\": true,\n  \"controls_match_approved_requirement\": true,\n  \"limits\": \"Sensitivity to these explicit relevant violations; not a claim about all possible implementation defects.\"\n}\n",
+        "evidence/hosting-settings.json": "{\n  \"provenance\": \"Read-only repository settings export captured 2026-10-11 for this synthetic snapshot\",\n  \"source_revision\": \"qualified-local-component-r4\",\n  \"branch\": \"main\",\n  \"required_status_checks\": [\n    \"truth-table (ubuntu-latest)\",\n    \"truth-table (macos-latest)\"\n  ],\n  \"require_up_to_date_branch\": true,\n  \"bypass_actors\": [],\n  \"enforcement_probe\": {\n    \"source_revision\": \"qualified-local-component-r4\",\n    \"known_bad_variant\": \"exclude_cancelled\",\n    \"failed_required_check\": \"truth-table (ubuntu-latest)\",\n    \"merge_result\": \"blocked\"\n  }\n}\n",
+        "evidence/traceability.json": "{\n  \"source_revision\": \"qualified-local-component-r4\",\n  \"requirement\": \"REQ-TERMINAL/4\",\n  \"source\": [\n    \"terminal.py:is_terminal\"\n  ],\n  \"assertions\": [\n    \"TerminalTable.test_queued\",\n    \"TerminalTable.test_running\",\n    \"TerminalTable.test_done\",\n    \"TerminalTable.test_cancelled\"\n  ],\n  \"expected_inventory\": [\n    \"TerminalTable.test_queued\",\n    \"TerminalTable.test_running\",\n    \"TerminalTable.test_done\",\n    \"TerminalTable.test_cancelled\"\n  ],\n  \"execution_artifact\": \"evidence/current-runs.json\",\n  \"semantic_review_artifact\": \"evidence/oracle-review.json\",\n  \"sensitivity_artifact\": \"evidence/sensitivity-controls.json\",\n  \"partial_claims\": [],\n  \"scope\": \"Only the four approved enum values and supported Python environments\"\n}\n"
+      }
+    }
+  ]
+}

@@ -1,0 +1,30 @@
+{
+  "source_revision": "qualified-local-component-r4",
+  "review_date": "2026-10-10",
+  "review_owner": "Mira, developer-display domain owner",
+  "requirement": "REQ-TERMINAL/4",
+  "assertion_revision": "terminal-table/2",
+  "fixture_revision": "domain-truth-table/1",
+  "expectation_helpers": "none",
+  "artifact_sha256": {
+    "requirements.md": "db3febce1278d7ef1f05296c6403a37e81d07f8102fdc7475daec2083175bf86",
+    "terminal.py": "92a258f5079ed3543052484eaa8fb73be3f877a9c232f96b2abb57ec2bae0f04",
+    "tests/test_terminal.py": "dc46af2eb500f02094338e63c370ae3af6b95d5004016c306046d564ea496c6c",
+    ".github/workflows/verify.yml": "97e22f3393ba2d3377aa1dcefc20b0b2f6113b5eb17a183e291f0b8a0498ed3e"
+  },
+  "approved_claim": "The four explicit expected booleans cover the entire declared Status domain.",
+  "independent_derivation": "Mira supplied the truth table from display requirements before terminal.py implementation; test expectations do not call an implementation helper.",
+  "reviewed_assertion_ids": [
+    "TerminalTable.test_queued",
+    "TerminalTable.test_running",
+    "TerminalTable.test_done",
+    "TerminalTable.test_cancelled"
+  ],
+  "environment_scope": "Pure in-process enum membership on supported CPython environments; no deployed or external-dependency claim.",
+  "exclusions": [
+    "arbitrary input coercion",
+    "dynamic enum modification",
+    "UI rendering",
+    "external services"
+  ]
+}

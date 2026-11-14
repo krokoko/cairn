@@ -1,0 +1,13 @@
+name: checks
+on: [pull_request]
+jobs:
+  empty-except:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: python3 tools/empty_except.py checkout.py
+  tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: pytest --cov=checkout --cov-branch tests

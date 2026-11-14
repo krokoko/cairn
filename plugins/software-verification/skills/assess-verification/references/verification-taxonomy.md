@@ -1,55 +1,58 @@
 # Verification Taxonomy
 
-## Method ratings
+## Method selection
 
-Ratings: VH=Very High, H=High, M=Medium, L=Low. Columns: Assurance / Cost / Automation / Scalability / Expertise.
+Select methods by claim and failure surface. There is no method-wide assurance score: a proof
+of the wrong proposition can be less useful than a relevant regression example. Use
+`evidence-semantics.md` to interpret results and `method-failure-modes.md` for prerequisites.
+Cost and automation depend on the configured scope, ecosystem, and existing expertise.
 
 ### Testing and generative methods
 
-| Method | Key tools | Ratings (A/C/Au/S/E) | When to use |
-|--------|-----------|----------------------|-------------|
-| Unit testing | pytest, Jest, go test | M / L / H / H / L | Per-PR baseline; deterministic, scoped logic |
-| BDD / executable specs | Cucumber, Behave, godog | M / M / H / M / M | Acceptance criteria as runnable Gherkin; links intent to tests |
-| Integration testing | testcontainers, supertest | M / M / H / M / M | Cross-boundary interactions (DB, APIs, queues) |
-| System testing | End-to-end frameworks | M-H / H / M / L-M / M | Release gates, customer-visible workflows |
-| Property-based testing | Hypothesis, fast-check, proptest | H / M / H / H / M | Clear invariants: round-trips, ordering, idempotence |
-| Fuzzing | libFuzzer, AFL, cargo-fuzz | M-H / M / H / H / M | Parsers, codecs, security-sensitive inputs |
-| Consumer-driven contracts | Pact, Spring Cloud Contract | M-H / M / H / H / M | Multi-service APIs; prevents agent-caused breaking changes |
-| Behavioral twin testing | Agent-built service clones, scenario runners | H / M-H / H / H / M | Third-party integrations; verifies real behavior, not assumptions |
-| Approval / characterization testing | ApprovalTests, insta, snapshots | M / L / H / M / L | Freezing existing behavior of untested/legacy code before refactor; text/render-heavy output |
-| Regression replay | Captured inputs/outputs, production golden traces | M / L-M / H / H / L | Every bug becomes a permanent test case; replay sanitized production traffic against a candidate |
-| Mutation testing | mutmut, Stryker, cargo-mutants | M / M / H / M / M | Assessing test suite quality and strength |
+| Method | Key tools | Evidence mode | Useful scope / limit |
+|--------|-----------|---------------|----------------------|
+| Unit testing | pytest, Jest, go test | Sampled execution | Scoped cases; assertions decide what is checked |
+| BDD / executable specs | Cucumber, Behave, godog | Sampled execution | Reviewed acceptance rules; scenario declarations alone are not runs |
+| Integration testing | testcontainers, supertest | Sampled execution | DB/API/queue interactions; qualify environment fidelity |
+| System testing | End-to-end frameworks | Sampled execution | Customer workflows; tested paths and conditions only |
+| Property-based testing | Hypothesis, fast-check, proptest | Sampled exploration | Generated cases of round-trips, ordering, idempotence; review properties/generators |
+| Fuzzing | libFuzzer, AFL, cargo-fuzz | Sampled exploration | Parsers/codecs; semantic checks require an oracle beyond crashes |
+| Consumer-driven contracts | Pact, Spring Cloud Contract | Sampled/contract checks | Reviewed consumer expectations within provider/version scope |
+| Behavioral twin testing | Service clones, scenario runners | Sampled execution | Tests a dependency model; fidelity to the real provider needs evidence |
+| Approval / characterization testing | ApprovalTests, insta, snapshots | Sampled comparison | Preserve reviewed behavior; a baseline can contain bugs |
+| Regression replay | Captured inputs/outputs, golden traces | Sampled comparison | Historical cases with approved outputs and relevant environments |
+| Mutation testing | mutmut, Stryker, cargo-mutants | Diagnostic campaign | Sensitivity to selected violating edits; investigate equivalent mutants |
 
 ### Static and formal methods
 
-| Method | Key tools | Ratings (A/C/Au/S/E) | When to use |
-|--------|-----------|----------------------|-------------|
-| Linters/SAST | ESLint, ruff, Semgrep, clippy | L-M / L / H / H / L | First static gate for every repo |
-| Type systems | TypeScript strict, mypy, Rust | M-H / L-M / H / H / M | Everywhere; cheapest bug-class elimination |
-| Profiling | pprof, perf, py-spy | L(func), M(perf) / L-M / H / H / M | Performance budgets, regression detection |
-| Sanitizers | ASan, TSan, UBSan, MSan | H / L-M / H / H / L-M | Mandatory for native/unsafe code |
-| Contracts (DbC) | icontract, JML, assertions | M-H / M / H / H / M | Interface semantics; first step to formal |
-| Abstract interpretation | Astree, Frama-C/EVA | H / H / H / M / H | Safety-critical embedded, numeric code |
-| Schedule exploration | Loom (exhaustive), Shuttle (randomized), Coyote | H / M-H / H / M / M-H | Concurrent implementation code: explores interleavings of the real code, not a model |
-| Formal spec + model checking | TLA+/TLC, Alloy, Stateright | H-VH / M-H / H / M-L / H | Protocols, distributed state, concurrency |
-| SMT / bounded verification | Kani, Dafny, Z3 | H / M / H / M / H | Bit-precise kernels, arithmetic invariants |
-| Deductive verification | Dafny, SPARK, Frama-C/WP | H-VH / H / M-H / M / H | Critical algorithms, codecs, memory safety |
-| Theorem proving | Lean, Coq/Rocq | VH / VH / L-M / L / VH | Crypto, verified compilers, protocol cores |
-| Symbolic execution | KLEE, angr, Mythril | M-H / M-H / H / M / H | Security analysis, smart contracts, path coverage |
-| Statistical model checking | PRISM, Monte Carlo methods | M-H / M / H / H / H | Randomized protocols, reliability, queuing |
+| Method | Key tools | Evidence mode | Useful scope / limit |
+|--------|-----------|---------------|----------------------|
+| Linters/SAST | ESLint, ruff, Semgrep, clippy | Static rules/search | Configured patterns; soundness and missed cases vary |
+| Type systems | TypeScript strict, mypy, Rust | Static properties | Language/checked subset and escape hatches limit guarantees |
+| Profiling | pprof, perf, py-spy | Diagnostic measurement | Performance under the measured workload; not functional correctness |
+| Sanitizers | ASan, TSan, UBSan, MSan | Instrumented execution | Supported error classes on executed native/unsafe paths |
+| Contracts (DbC) | icontract, JML, assertions | Runtime checks or proof | Reviewed pre/postconditions; distinguish execution from static discharge |
+| Abstract interpretation | Astree, Frama-C/EVA | Static analysis | Supported semantics/environment; unresolved alarms need interpretation |
+| Schedule exploration | Loom, Shuttle, Coyote | Bounded or sampled exploration | Instrumented concurrency; record bound and exhaustive versus randomized mode |
+| Formal spec + model checking | TLA+/TLC, Alloy, Stateright | Model exploration | Completed model scope; implementation correspondence remains an obligation |
+| SMT / bounded verification | Kani, Z3 encodings | Bounded analysis | Completed obligations, bounds, unwinding, and assumptions |
+| Deductive verification | Dafny, SPARK, Frama-C/WP | Proof | Stated propositions and trusted toolchain, not all stakeholder needs |
+| Theorem proving | Lean, Coq/Rocq | Proof | Formalized semantics, assumptions, and connection to shipped artifacts |
+| Symbolic execution | KLEE, angr, Mythril | Search or bounded analysis | Report tool/mode guarantees; path search alone is not exhaustive proof |
+| Statistical model checking | PRISM, Monte Carlo methods | Statistical analysis | Model, sampling assumptions, confidence/error bounds |
 
 ### Operational and human methods
 
-| Method | Key tools | Ratings (A/C/Au/S/E) | When to use |
-|--------|-----------|----------------------|-------------|
-| Agentic manual testing | Playwright, CDP, shell + QA charters | M / M / H / M / L-M | Integration flows, UI validation, exploratory QA |
-| Runtime verification | Monitors, RV-Monitor | M-H / M / H / M / H | Temporal protocols, API usage rules |
-| Shadow testing | Traffic mirroring | H / M / H / H / M | Rewrites, replacements, before promotion |
-| Canary / progressive delivery | Argo Rollouts, feature flags | M-H / M / H / H / M | All production-facing releases |
-| Chaos engineering | Chaos Monkey, Litmus | M / M / M / M / M | Distributed systems, failover paths |
-| LLM-as-Judge evaluation | Model scoring against rubrics | M / L-M / H / H / M | Non-deterministic outputs, style, generated content |
-| Provenance / attestation | in-toto, SLSA, Sigstore/Cosign | M / M / H / H / M | Packaging signed evidence of what ran on which commit; cross-team/regulated delivery (evidence, not an oracle) |
-| Human review | Code review, approvals | Variable / M / M / M / M | High-risk, ambiguous, low-confidence changes |
+| Method | Key tools | Evidence mode | Useful scope / limit |
+|--------|-----------|---------------|----------------------|
+| Agentic manual testing | Playwright, CDP, shell + QA charters | Observed workflows | Acceptance or validation purpose depends on the question |
+| Runtime verification | Monitors, RV-Monitor | Trace monitoring | Recorded events and ordering; detection needs a separate enforcement mechanism |
+| Shadow testing | Traffic mirroring | Sampled comparison | Compared traffic, side effects, reference quality, and tolerance |
+| Canary / progressive delivery | Argo Rollouts, feature flags | Operational observation | Exposed cohort, signals, thresholds, rollback coverage |
+| Chaos engineering | Chaos Monkey, Litmus | Fault campaign | Tested hypotheses/faults and monitored invariants |
+| LLM-as-Judge evaluation | Model scoring against rubrics | Statistical/heuristic judgment | Independently labeled calibration, model/rubric version, bias |
+| Provenance / attestation | in-toto, SLSA, Sigstore/Cosign | Provenance | Authenticates records about artifact/process; not behavioral correctness |
+| Human review | Code/intent review, user studies | Reviewed/observed outcomes | Reviewer/task context and recorded decision, not universal correctness |
 
 ## Oracle types
 
@@ -73,24 +76,16 @@ output correctness. Treat it as an evidence rail, not an oracle.
 
 ## Oracle strength
 
-Oracle *type* (above) is only half the picture; rate each oracle's *strength*, because autonomy is
-capped by it. Without an oracle a test only proves the code ran without crashing — not that it did
-the right thing.
+Load `oracle-lifecycle.md`. Evaluate adequacy, sensitivity, independence, and semantic freshness
+against the bounded claim; machine-checkability or determinism alone does not establish strength.
 
-| Strength | Characteristics | Examples |
-|----------|-----------------|----------|
-| Strong | Machine-checkable, deterministic, generalizes across inputs | Property checks, contracts, differential/reference comparison, exact I/O |
-| Weak | Brittle, narrow, or unverified | Hardcoded expected values that rot as requirements change; satisfaction thresholds with no ground truth; an oracle copied without confirming it is itself correct |
+| Strength | Meaning for the assessed claim |
+|----------|--------------------------------|
+| Qualified | Relevant current review, sensitivity controls, and independence/fidelity evidence support the claim |
+| Weak | A demonstrated adequacy, sensitivity, independence, or freshness gap limits the oracle |
+| Unknown | Necessary evidence was not inspected; do not label an unexamined oracle strong or absent |
+| None | No applicable oracle found in the inspected scope |
 
-**Oracle rot**: a weak oracle drifts out of sync with the requirement while its tests keep passing —
-so the suite is green but no longer asserts the right thing. This is *more* dangerous than a missing
-oracle because it gives false confidence. Treat it as a distinct gap. Mutation testing is the main
-defense: it reveals oracles that pass regardless of whether the code is correct.
-
-When exact verification is impossible, prefer defining **properties** (validity, invariants,
-performance bounds) over brittle hardcoded values — they catch real bugs without rotting.
-
-## Key insight
-
-Property-based testing is the most important bridge method for autonomous construction:
-cheaper than proof, far more scalable than hand-written examples when invariants are crisp.
+Properties, examples, and recorded references can all encode obsolete intent. Mutation challenges
+sensitivity to selected edits, not business-rule freshness. A property-based campaign is useful
+when reviewed invariants and generators explore failures that examples leave uncovered.

@@ -1,6 +1,8 @@
 # Detection Patterns
 
 What tools and gate configurations catch each AI smell. Load `detection-patterns-gates.md` for AI005–AI010, `detection-patterns-gates-formal.md` for AI011, and the minimum viable gate set in the latter files.
+Treat searches and metrics as candidate findings. Confirm the requirement and actual configured/run
+scope before reporting detection. Tool presence alone supports `configuration_only`.
 
 ## AI001: Plausible Fabrication
 
@@ -10,17 +12,19 @@ What tools and gate configurations catch each AI smell. Load `detection-patterns
 | Type checking | `tsc --noEmit`, `mypy`, `pyright` | Calls to non-existent functions/methods |
 | Schema validation | OpenAPI linting, protobuf compilation | API calls to undefined endpoints |
 | Lockfile integrity | `npm ci`, `pip install --require-hashes` | References to non-existent package versions |
-| Behavioral twin testing | Agent-built service clones, scenario runners | Fabricated API behavior that mocks wouldn't catch |
-| Contract tests | Pact, Spring Cloud Contract | Schema drift between services |
+| Behavioral twin testing | Qualified service approximations, scenario runners | Selected behavior mismatches within the twin's supported scope |
+| Contract tests | Pact, Spring Cloud Contract | Exercised consumer/provider agreement violations |
 
-**Note:** Interface mocks do NOT catch fabrication — the agent writes both code and mocks. Only external verification (twins, contracts against real schemas) breaks this loop.
+**Note:** Implementation and mocks can share invented expectations. Independent provider/consumer
+evidence challenges that agreement. Twins also need fidelity qualification; local passes do not
+establish deployed compatibility, and held-out feedback can leak evaluation cases.
 
 ## AI002: Cargo-Cult Patterns
 
 | Gate type | Tools | What it catches |
 |-----------|-------|-----------------|
 | Dead code detection | `knip`, `ts-prune`, `vulture` | Unused interfaces, factories, abstractions |
-| Architecture enforcement | `dependency-cruiser`, `deptry` | Unnecessary indirection layers |
+| Architecture enforcement | `dependency-cruiser`, Import Linter | Configured boundary violations; indirection still needs review |
 | Complexity metrics | SonarQube, Code Climate | Over-engineered modules relative to function |
 
 ## AI003: Architecture Astronaut
@@ -44,7 +48,8 @@ What tools and gate configurations catch each AI smell. Load `detection-patterns
 | Default substitution on failure | Custom semgrep on catch assigning defaults | Parse/fetch failures masked without logging |
 | Boundary validation absence | Architecture rules, custom semgrep | Missing input validation at public API entry points |
 
-**Fail-fast principle:** The most dangerous pattern is a catch that returns something plausible — empty array, null, default timeout. These create hidden corruption.
+**Fail-fast principle:** A plausible default can hide failure, but can also implement an approved
+fallback. Review the error contract, observability, and negative cases before classifying it.
 
 **Detection priority for semgrep rules:**
 ```yaml

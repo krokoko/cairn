@@ -1,44 +1,61 @@
 # Traceability Strategy Design
 
-How to make the requirement → criterion → test → code → result trace a living artifact the
-pipeline enforces, rather than a spreadsheet maintained by hand. Load
-`../../assess-verification/references/traceability-model.md` for the RTM model and maturity levels.
+Connect approved requirement → bounded claim → scenario/property → executed check → versioned
+evidence → reviewed decision. Load `../../assess-verification/references/traceability-model.md`
+for assessment and `../../assess-verification/references/evidence-semantics.md` for result states.
 
-## Design progression by current level
+## Three separate obligations
 
-| Current level | Recommended next step | Tools / mechanism |
-|---------------|----------------------|-------------------|
-| 0 (intent in chat only) | Capture requirements as files with stable IDs | `docs/requirements/`, EARS statements, issue templates |
-| 1 (PR↔issue only) | Make acceptance criteria executable | Gherkin + Cucumber/Behave/SpecFlow; tag scenarios with requirement IDs |
-| 2 (executable criteria) | Generate a requirement-coverage report in CI | Map criterion IDs → tests; fail build on uncovered criterion |
-| 3 (living RTM) | Enforce bidirectional check at the gate | Block merge on untraced code or uncovered requirement |
+| Obligation | Mechanism | Limit |
+|------------|-----------|-------|
+| Links | Parse requirement IDs, check IDs, and change references | A link does not establish relevance |
+| Execution | Compare expected check inventory with current runner reports | A declared scenario or skipped test is not an executed check |
+| Meaning | Review assertions, conditions, exclusions, and approved claim together | A fresh run cannot establish current business intent |
 
-## Linking conventions
+## Design progression
 
-- **Requirement IDs**: stable, referenceable (`REQ-123`, story key). Put them in spec files and issues.
-- **Criterion → test**: tag tests or Gherkin scenarios with the requirement ID (`@REQ-123`,
-  test name prefix, or a `traceability:` annotation). A convention a script can parse beats prose.
-- **Code → requirement**: PR body references the issue; commit trailer (`Refs: REQ-123`) for durability.
-- **Result**: CI publishes which criteria passed, surfacing the full chain per run.
+| Current gap | Next step | Completion evidence |
+|-------------|-----------|---------------------|
+| Intent only in chat | Version requirements with stable IDs and acceptance criteria | Reviewable bounded claims |
+| PR/issue links only | Map claims to ordinary test annotations, contracts, or executable scenarios | Parsed links and explicit unmapped claims |
+| Mappings without runs | Ingest runner-native JUnit or equivalent results in fresh run directories | Expected vs executed inventory with missing/skipped checks |
+| Runs without scope | Bind source/oracle/environment revisions, partial coverage, and exclusions | Current scoped evidence ledger |
+| Unreviewed or stale relationships | Review assertion-to-claim sufficiency and invalidate on changes | Named review owner, reviewed revisions, remaining gaps |
 
-## Pipeline enforcement (the gate)
+Gherkin is one representation. A scenario declaration with unexecuted steps is not acceptance evidence.
 
-The RTM becomes deterministic only when the pipeline checks it. Recommend a CI step that:
+## Linking and execution conventions
 
-1. Parses requirement IDs from spec/issue sources.
-2. Parses requirement tags from tests and Gherkin scenarios.
-3. Reports two gap lists: **uncovered requirements** (no test) and **untraced changes** (code/PR
-   with no requirement). Fail or warn per risk class.
+- Give requirements and checks stable IDs; retain revision identity independently of those IDs.
+- Link PRs or commit trailers to applicable requirements; permit documented maintenance work without
+  inventing a business requirement for every mechanical edit.
+- Keep an expected inventory and separate run artifacts so stale reports cannot satisfy a current run.
+- Validate each runner's report dialect, nested suites, skipped/error cases, and interrupted output.
+- Preserve model, mocked/local, staging, and deployed scopes instead of merging their results.
 
-| Risk class | Traceability gate |
-|------------|-------------------|
-| Low | Warn on missing PR↔issue link |
-| Medium | Require PR↔issue link; warn on uncovered criterion |
-| High / Critical | Block merge on uncovered criterion or untraced change; human ship-review confirms intent |
+## Gate design
 
-## Avoiding the agent-verifying-agents trap
+Use deterministic scripts for ID parsing and inventory comparison. Report missing links, missing
+execution, stale evidence, partial claims, deviations, and semantic-review gaps separately.
+Choose warning/blocking policies for the affected risk and existing release rules; record justified
+exceptions. Do not equate successful parsing with business correctness.
 
-An agent building the matrix by reading artifacts reintroduces indeterminism. Keep the *check*
-deterministic (a script parsing IDs/tags), and reserve the agent for the *judgment* step: comparing
-implementation to intent where the trace is ambiguous, escalating to a human on low confidence.
-This preserves the human's role at the final ship-review after all automated analysis.
+Bind semantic review to requirement, assertion, fixture, and expectation-helper revisions.
+Changes invalidate that relationship review even if IDs still resolve. Rerunning tests refreshes
+execution evidence only. Use independent expected values, relevant negative controls, and incident
+cases to challenge the checks; domain review still establishes whether the rule reflects intent.
+
+## Tool adoption
+
+Start with native test reports and the project's existing documentation format. A record-management
+tool can maintain links; it does not establish semantic sufficiency.
+
+| Candidate | Evaluate before adoption |
+|-----------|--------------------------|
+| Sphinx-Needs + Sphinx-Test-Reports | Typed scope/gap fields, installed release, each runner's JUnit dialect |
+| StrictDoc | Required authoring format and status of source/test integration in the exact release |
+| Reqstool | Schemas preserve partial claims, deviations, missing execution, and review states |
+| Doorstop | Fingerprint configuration, custom attributes, result ingestion, and review invalidation |
+
+These are candidates, not qualified defaults. Pilot representative accepted, rejected, skipped, stale,
+and partial mappings before migration; retain source URLs and reviewed release dates in the proposal.

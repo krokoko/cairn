@@ -26,8 +26,9 @@ mise install
 | Cross-refs | `mise run lint:cross-refs` | Claude + Codex + Cursor marketplaces vs plugin dirs; version sync across manifests |
 | JSON | `mise run lint:json` | JSON validity of all `.json` files |
 | References | `mise run validate:refs` | Broken links and orphan reference files |
-| Validators | `mise run test:validators` | Report-validator hook scripts + template-drift guard |
-| Secrets | `mise run security:secrets` | gitleaks secret scan (runs as part of `build`) |
+| Validators | `mise run test:validators` | Separately authored report fixtures, declared evidence-state consistency, portable CLI/hooks, and required template contract |
+| Eval records | `mise run evals:check` | Scenario/rubric integrity, retained evaluation artifacts and provenance, and integrity regression tests; does not execute a model |
+| Secrets | `mise run security:secrets` | gitleaks scan of committed Git history (runs as part of `build`; does not scan uncommitted changes) |
 | Pre-commit | `mise run pre-commit` | Optional local hook bundle |
 
 Custom markdownlint rules in `tools/`:
@@ -77,6 +78,17 @@ Add entries to `.claude-plugin/marketplace.json`, `.agents/plugins/marketplace.j
 **Cursor (Agent Plugins):** Import this repository URL in the Cursor Marketplace; Cursor reads `.cursor-plugin/marketplace.json` and each plugin's root `plugin.json`.
 
 Verify each skill follows its workflow, loads references, produces the expected report format, and hooks validate output when applicable.
+
+Use the [evaluation workflow](./SKILL_EVALUATIONS.md) for changes to reasoning,
+scoring, evidence semantics, and autonomy recommendations. Keep those behavioral results
+separate from structural build success. The [evidence contract guide](./EVIDENCE_CONTRACTS.md)
+describes the portable report validators and migration of earlier reports.
+
+When changing required report sections or tables, update the plugin's
+`scripts/report-contracts.json`, its template, and separately authored examples in
+`tests/validators/fixtures/`. Test rejected as well as accepted states. Both plugins ship
+the standalone `check-report.py` engine; keep the copies synchronized while preserving
+separate contracts and installation independence.
 
 ## Code style
 

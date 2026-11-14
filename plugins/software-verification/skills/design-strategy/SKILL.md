@@ -17,7 +17,9 @@ Design a tailored verification strategy for specific components or the full code
 
 ### Step 1: Load prior assessment
 
-Search for `verification-report.md` in the codebase. If it exists, read the component breakdown, maturity tier, and identified gaps.
+Load `../assess-verification/references/evidence-semantics.md`. Search for `verification-report.md`;
+check its source revision, inspected scope, evidence basis, and age before reusing findings. Identify
+changed or uninspectable claims instead of treating a prior report as current execution evidence.
 
 If no report exists, perform a lightweight discovery:
 - Identify main components/modules from directory structure
@@ -28,37 +30,43 @@ If no report exists, perform a lightweight discovery:
 
 - If the user specified a component path or name, focus on that component.
 - Otherwise, prioritize components by: (1) high criticality with low verification, (2) autonomy candidates that need one more layer, (3) components with missing oracles.
+- Load `references/change-portfolios.md`. Start with the change (service, boundary, migration,
+  retries/concurrency, maintenance, or agent workflow), state the claim, and select complementary
+  checks before choosing tools. Record uncertainty or failure that would justify escalation.
 
 ### Step 3: Apply decision framework
 
 Load `references/hybrid-strategies.md` for archetype-to-stack mappings.
-Load `references/toolchain-catalog.md` and `references/toolchain-catalog-ecosystems.md` for ecosystem-specific tool recommendations.
+Load the relevant parts of `references/toolchain-catalog.md` and
+`references/toolchain-catalog-ecosystems.md`. Treat entries as candidates: qualify installed release,
+supported scope, maintenance/license terms, and configuration against current project needs.
 
 For each target component:
 
 1. **Identify archetype**: Deterministic lib, CRUD service, distributed/stateful, safety kernel, ML-backed, data pipeline, infrastructure/IaC, legacy monolith, agent-written
-2. **Look up recommended stack**: From the hybrid strategies reference
-3. **Diff current vs recommended**: What already exists? What is missing?
+2. **Select a risk-matched portfolio**: Use the hybrid reference as a starting point, not a ladder
+3. **Diff current vs proposed**: Separate configuration observed, inspected runs, and missing evidence
 4. **Produce specific recommendations**:
    - Which tools/libraries to add
    - Which files to create or modify
    - Estimated effort (small/medium/large)
-   - Expected impact on verification maturity
+   - Failure addressed, required evidence, remaining limits, and an observable acceptance criterion
 
 ### Step 4: Design oracle strategy
 
-Load `references/oracle-patterns.md`.
+Load `references/oracle-patterns.md` and
+`../assess-verification/references/oracle-lifecycle.md`.
 
 For each component, recommend the best oracle type:
 
 | Component type | Recommended oracle approach |
 |---------------|----------------------------|
 | Pure functions | Exact expected output + property-based |
-| User-facing behavior | Executable acceptance criteria (Gherkin/BDD) linked to requirements |
+| User-facing behavior | Reviewed acceptance checks linked to requirements; representative user validation where needed |
 | API endpoints | Schema validation + contract tests |
 | Data pipelines | Metamorphic relations + replay |
 | ML models | Differential + statistical + human |
-| State machines | Model checking + replay |
+| State machines | State properties + action sequences; model checking where hidden interleavings justify it |
 | UI components | Snapshot + visual regression + human |
 
 For each recommendation, specify:
@@ -66,6 +74,11 @@ For each recommendation, specify:
 - How to implement it (specific library, pattern, or technique)
 - What properties or relations to check
 - How to handle cases where no oracle exists yet
+- Requirement/assertion/fixture/helper revisions, review owner, and semantic-review invalidation
+- Known-good/bad controls, independent expected values, and incident or old-versus-fixed regressions
+
+Verification/validation describes purpose; maintainability is a quality goal; static/dynamic describes
+how evidence is obtained. A browser acceptance check does not by itself validate stakeholder need.
 
 ### Step 5: Design architecture fitness functions
 
@@ -85,6 +98,11 @@ For each recommended fitness function, specify:
 - Where it runs, matched to execution cost: fast checks (seconds) at pre-commit/per-commit; slow checks (minutes — full Lighthouse, large benchmarks, deep scans) in nightly/scheduled builds so the agent's fast loop stays fast
 - The error message format (actionable for agents)
 - Current maturity level and target level
+- Allowed/forbidden qualification fixtures, parser/source scope, indirect edges, and reviewed exceptions
+
+Separate rule conformance from metrics. Where maintainability matters, propose a representative change
+(such as adding an adapter), recording effort, unexpected edits, regressions, and boundary behavior.
+Complexity, coverage, file length, and change coupling guide investigation, not universal quality scores.
 
 Calibrate deliberately (see "Calibration and execution cost" in the implementation reference): start permissive and tighten on observed violations; fitness functions enforce decisions already made, they do not replace architectural judgment.
 
@@ -94,20 +112,21 @@ Load `references/harness-architecture.md` for the five-lane model, interface sch
 
 Recommend how verification evidence should flow through CI/CD:
 
-**Per risk level:**
-- **Low risk** (utilities, internal tools): Unit tests pass, linter clean, types check
-- **Medium risk** (business logic, APIs): Above + integration tests + coverage threshold
-- **High risk** (payments, auth, data): Above + property tests + contract checks + human approval
-- **Critical** (safety, security): Above + formal verification evidence + shadow validation
+Select evidence for each affected claim, environment, and failure consequence. Examples include local
+properties for utilities, consumer/provider evidence for APIs, fault/state sequences for retries, and
+supported proofs for critical kernels. Do not infer a mandatory formal tool, holdout, or approval
+step solely from a risk label. Preserve existing authorization and release requirements.
 
 **Promotion policies:**
 - What checks must pass before merge
 - What checks must pass before deploy
-- When to require human approval
+- Which intent reviews or project-required approvals remain necessary
 - Rollback triggers and thresholds
-- For high/critical risk, require a signed evidence attestation (in-toto/SLSA via Sigstore/Cosign or GitHub artifact attestations) as the evidence rail — it records what ran on which commit with what verdict, not output correctness
+- Whether provenance/signing serves downstream consumers; authenticity does not establish correctness
 
-Check rail coverage (see `references/harness-architecture.md`): the stack should have one pre-merge rail, one boundary rail, one production-proximate rail, and one evidence rail.
+Review pre-merge, boundary, production-proximate, and evidence rails; justify inapplicable positions.
+Keep existing observations in the Evidence Ledger and proposed checks in Evidence Requirements.
+Bind acceptance/completion criteria to source/oracle revisions, environment, scope, and retained reports.
 
 ### Step 7: Design verification cost tiers
 
@@ -123,15 +142,18 @@ jobs) matched to bug-surface class and risk class:
 Recommend:
 - Post-write or pre-commit hooks for **Check** tier (T1 execution)
 - Pre-commit or CI for **Verify-quick**
-- Required CI check or nightly for **Verify-full** only where class C/D or High/Critical risk
+- Required CI or scheduled **Verify-full** where deeper failure surfaces and consequences justify it
 - Explicit auditable opt-outs for Class A + Low risk (never silent skip)
 
 Flag components where verify-full tools run on every save (blocks agents) or Check tier runs only in
 CI (late feedback).
 
-When bug-surface depth and risk class conflict, use the **higher** requirement (e.g. Low risk + Class C
-→ verify-full for simulation/model-check; High risk + Class A → verify-quick sufficient unless ADR
-documents deeper need).
+When bug-surface depth and consequence suggest different requirements, use the higher applicable
+evidence requirement: satisfy both sets of claims, retaining the stronger requirement where they
+overlap. Low-impact Class C still needs relevant schedule/fault exploration; high-impact Class A
+needs sensitive checks and consequential intent review without automatically needing model checking.
+If requirements conflict, record the unresolved decision and owner; do not silently pick the cheaper
+option. Document scope and exceptions instead of choosing tools from a maturity label.
 
 ### Step 8: Design feedback loop improvements
 
@@ -185,8 +207,8 @@ If `verification-report.md` exists, read the Workflow Gate Assessment section. O
 
 Recommend gate consolidation toward the three-checkpoint model:
 
-1. **Gates to remove or automate**: Low-risk reviews where CI is authoritative, rubber-stamp approvals
-2. **Gates to add**: High-risk components lacking human checkpoints
+1. **Gates to consolidate or automate**: Mechanical reviews with qualified checks and unchanged permissions
+2. **Gates to add**: Unchecked consequences or intent decisions needing a designated reviewer
 3. **Gates to reposition**: Checks happening too late (at deploy) that should be at PR time
 4. **Feedback improvements**: Gates that reject without actionable context for agents
 
@@ -206,7 +228,7 @@ Recommend an eval framework appropriate for the codebase:
 2. **Calibrate difficulty** — annotate each with estimated human-expert time
 3. **Define success criteria** — for each task, what must pass (tests, types, lint, behavior)
 4. **Recommend automation** — how to run evals (scripts, CI workflow, scheduled job)
-5. **Map to verification gaps** — low eval scores indicate weak oracles, poor feedforward, or exceeded horizons
+5. **Investigate causes** — distinguish oracle/harness gaps, agent failures, environment issues, and task difficulty
 
 For each recommended eval task:
 - Source (issue, PR, or synthetic scenario)
@@ -214,19 +236,20 @@ For each recommended eval task:
 - Files that should change
 - Success criteria (which checks must pass)
 - Measurement dimensions (correctness, convention, efficiency)
+- Independent expected findings and prohibited overclaims; versioned model/configuration and sample limits
 
 ### Step 12: Design generator-evaluator strategy
 
 Load `references/generator-evaluator.md` for pattern variants and application guidance.
 
-For high-criticality components, recommend whether generator-evaluator patterns apply:
+Where failure consequences justify the cost, consider generator-evaluator patterns:
 
 | Variant | Apply when | Cost |
 |---------|-----------|------|
-| Generator + Test-Writer | New features with clear specs | 2x |
-| Generator + Critic | Security-sensitive or complex changes | 1.5x |
-| Generator + Mutant | Assessing test adequacy | 2-3x |
-| N-of-M Consensus | Critical, well-specified components | Nx |
+| Generator + Test-Writer | Features with reviewed specs | Another generation plus reconciliation |
+| Generator + Critic | Security-sensitive or complex changes | Review and repair iterations |
+| Generator + Mutant | Sensitivity of critical test decisions | Campaign size × test runtime |
+| N-of-M Consensus | Comparing alternative implementations | Multiple generations and comparison |
 
 For each recommended application:
 - Which component/change type it applies to
@@ -262,21 +285,22 @@ Order recommendations by priority:
 2. **Foundation** (medium effort, enables future): property tests, contract testing, close feedback loops, focused test scripts, seed eval suite, schema-doc sync, requirement-coverage check
 3. **Deep investment** (large effort, high assurance): formal specs, model checking, shadow testing, gate redesign, generator-evaluator for critical paths, behavioral twins, pipeline-enforced RTM
 
-For each item specify: action, component, effort, dependencies, tools to install.
+For each item specify action, component, effort, dependencies, candidate tools, failure addressed,
+and completion evidence. Do not promise maturity points or describe proposed work as executed.
 
 ### Step 15: Design requirement traceability
 
 Load `references/traceability-design.md`. Read the report's Requirement Traceability section if present;
 otherwise check for stable requirement IDs, executable acceptance criteria (Gherkin/BDD), PR→issue links,
-and a requirement-coverage report. Recommend the next maturity step plus three explicit deliverables:
+and a requirement-coverage report. Recommend three separate obligations:
 
-1. **Linking conventions**: stable requirement IDs, criterion→test tags, and code→requirement commit trailers.
-2. **The gate**: a CI step that reports uncovered requirements and untraced changes, blocking vs warning per risk class.
-3. **The human role**: comparing implementation to intent only where the trace is ambiguous.
+1. **Links**: stable requirement IDs, check mappings, and relevant change references.
+2. **Execution**: expected check inventory, fresh runner reports, revisions, environment, and gaps.
+3. **Meaning**: reviewed assertion-to-claim relationship, partial claims, deviations, and stale reviews.
 
-**Load-bearing constraint**: the gap *check* must be a deterministic script that parses IDs/tags — not
-an agent re-reading the spec. An agent re-reading the spec to "verify" the trace reintroduces the exact
-indeterminism the RTM exists to remove (an agent verifying agents). Make this explicit in the recommendation.
+Use deterministic scripts for IDs and execution inventory; parsing does not establish meaning.
+Review requirements, assertions, fixtures, and expectation helpers together when they change.
+Pilot record-management tools on skipped, missing, stale, and partial evidence before migration.
 
 ### Step 16: Design safe-evolution strategy
 
@@ -285,7 +309,8 @@ migrations), load `references/safe-evolution.md` and recommend a staged approach
 diff — the failure mode agents default to.
 
 - **Parallel Change** for interface/shape changes: expand (add new form alongside old) → migrate
-  callers incrementally → contract (remove old). No breaking window; each phase ships reversibly.
+  callers incrementally → contract (remove old). Check coexistence, persistent effects, and rollback
+  compatibility at each phase.
 - **Sweep** for one-rule-many-files changes: prefer codemods over regex; write the rule down, sample
   3-4 sites, execute in small batches, and gate each batch on tests + diff review.
 
@@ -294,4 +319,7 @@ Tie the gate back to the evidence pipeline (Step 6): each incremental step passe
 
 ### Step 17: Write the strategy
 
-Load `references/strategy-report-template.md`. Write `verification-strategy.md` following the template, covering all sections from Steps 1-16 (component strategies through roadmap, plus traceability and safe-evolution).
+Load `references/strategy-report-template.md`. Write `verification-strategy.md` with all required
+sections, including Evidence Scope, Evidence Ledger, Evidence Requirements, and Verification Cost
+Tiers. Replace example rows with observed or proposed records as labeled; justify inapplicable sections.
+Keep `unknown` when execution, repository settings, or environment evidence cannot be inspected.

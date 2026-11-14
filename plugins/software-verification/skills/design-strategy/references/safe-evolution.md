@@ -19,7 +19,8 @@ shippable, reversible phases:
 
 Use it for: public API/interface changes, renames touching many callers, schema/data migrations,
 config-shape changes, and any change crossing teams, services, or versions you do not control.
-The old form stays operational through the migration window, so there is no breaking window at all.
+Keep the old form operational through the migration window. Check coexistence, persistent side
+effects, and rollback compatibility; phased delivery alone does not guarantee an unbroken migration.
 
 ## Sweep (one rule, many files, disciplined batches)
 
@@ -45,5 +46,5 @@ old convention to new without drift or dangling exceptions. Three execution mode
 
 Big-bang agent edits are the dangerous failure mode: a single huge diff is hard to review, hard to
 revert, and turns one wrong assumption into a repo-wide regression. Staged evolution keeps every step
-small, independently verifiable, and reversible — which is what lets the verification pipeline (not a
-human reading a massive diff) remain the authoritative gate.
+small enough to check and review against approved differences. Retain exact revision/environment
+evidence for each stage; a reference can preserve bugs and a quiet comparison is not equivalence proof.

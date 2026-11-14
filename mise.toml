@@ -41,12 +41,20 @@ description = "Detect broken links and orphaned reference files"
 run = "python3 tools/validate-references.py"
 
 [tasks."test:validators"]
-description = "Test the report-validator hook scripts"
+description = "Test report contracts, evidence-state checks, and reference validation"
 run = "bash tests/validators/run.sh"
+
+[tasks."evals:check"]
+description = "Validate evaluation fixtures and retained archive integrity (does not execute skills)"
+run = [
+  "python3 tools/evaluate-skills.py check",
+  "python3 tests/evals/test_evaluation_records.py",
+  "python3 tools/evaluate-skills.py check-archives",
+]
 
 [tasks.validate]
 description = "Run validation checks"
-depends = ["validate:refs", "test:validators", "security:secrets"]
+depends = ["validate:refs", "test:validators", "evals:check", "security:secrets"]
 
 [tasks.build]
 description = "Lint and validate (CI entrypoint)"

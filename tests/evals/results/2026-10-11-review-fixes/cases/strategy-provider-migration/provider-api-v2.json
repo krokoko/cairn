@@ -1,0 +1,27 @@
+{
+  "provenance": "Synthetic independent provider API extract, reviewed by integration owner 2026-10-10",
+  "api_revision": "v2-2026-10",
+  "create_payment": {
+    "required": [
+      "tenant",
+      "idempotency_key",
+      "amount_minor",
+      "currency"
+    ],
+    "currency": [
+      "USD"
+    ],
+    "same_key_same_payload": "same payment ID within 24 hours",
+    "same_key_changed_payload": "409 conflict",
+    "key_namespace": "tenant"
+  },
+  "lookup_payment": {
+    "by": [
+      "tenant",
+      "idempotency_key"
+    ]
+  },
+  "limitations": [
+    "Documented interface only; no executed fidelity or live provider receipt supplied"
+  ]
+}

@@ -2,6 +2,10 @@
 
 ## Archetype-to-stack mapping
 
+These are candidate portfolios. Select checks for the bounded claim, bug surface, and consequence;
+justify omissions and supported scope. A maturity tier never requires a method solely for its label.
+Existing permission/release policy governs actions independently of verification scores.
+
 | Archetype | Recommended stack | Why this mix works |
 |-----------|-------------------|-------------------|
 | Deterministic library | Types + unit tests + property tests + fuzzing + sanitizers + selective SMT/deductive | Semantics are local, input-heavy; generative methods dominate |
@@ -12,7 +16,7 @@
 | Data pipeline | Schema/contract checks + golden datasets + data-quality assertions + metamorphic relations + replay + lineage tracking | Failures are silent data corruption, not crashes; correctness lives in the data, not the code path |
 | Infrastructure/IaC | Policy-as-code + plan validation + IaC scanning + drift detection + progressive rollout + post-apply checks | Blast radius is large and reversibility low; verify before apply and detect drift after |
 | Legacy monolith | Approval/characterization tests + golden-trace replay + integration smoke + baseline telemetry, then strangler-edge contracts | Freeze observable behavior before refactoring; the risk is silent regression, not greenfield design |
-| Agent-written | Equivalence oracle + held-out validation + sandboxing + progressive delivery + telemetry + risk-based human approval | Mirrors strongest pattern for autonomous iteration |
+| Agent-written | Reviewed acceptance rules + independent controls + permitted execution + applicable delivery/recovery checks | Addresses generated changes without treating evaluation as authorization |
 
 ## Detailed recommendations per archetype
 
@@ -21,7 +25,7 @@
 1. **Start with**: Strong types, comprehensive unit tests
 2. **Add next**: Property-based tests for core invariants (round-trips, associativity, ordering)
 3. **Add for native code**: Fuzzing (libFuzzer/AFL) + sanitizers (ASan, UBSan)
-4. **For highest assurance**: SMT-backed verification (Kani, Dafny) on critical functions
+4. **For suitable critical claims**: Supported SMT/bounded/deductive checks with declared assumptions
 
 ### CRUD/API service
 
@@ -32,8 +36,8 @@
 
 ### Distributed/stateful
 
-1. **Start with**: Write a formal spec (TLA+ or Alloy) of the protocol
-2. **Add next**: Model check the spec (TLC, Apalache, Stateright)
+1. **Start with**: Explicit states, transitions, and failure assumptions
+2. **When interleavings justify it**: Model-check a supported protocol model (TLC, Apalache, Stateright)
 3. **Add for implementation**: Schedule exploration of the real code (Loom/Shuttle), deterministic replay/simulation testing
 4. **Add for production**: Runtime monitors for temporal properties, chaos experiments
 
@@ -42,14 +46,14 @@
 1. **Start with**: Explicit contracts (pre/postconditions, invariants)
 2. **Add next**: Deductive verification or SMT-backed proof
 3. **Add for crypto/compilers**: Interactive theorem proving (Lean, Coq)
-4. **Always include**: Operational monitoring as spec-reality check
+4. **For operated systems**: Monitoring with explicit event/model correspondence; detection is not enforcement
 
 ### ML-backed
 
 1. **Start with**: Metamorphic tests (known input transformations -> expected output relations)
 2. **Add next**: Shadow testing against production traffic
 3. **Add for deployment**: Statistical monitoring, drift detection, canary analysis
-4. **Always include**: Human-in-the-loop for edge cases and low-confidence outputs
+4. **For consequential ambiguity**: Defined escalation and domain review under the project's policy
 
 ### Data pipeline
 
@@ -75,7 +79,7 @@
 
 ### Agent-written
 
-1. **Start with**: Sandbox execution, equivalence oracle (compare output to reference)
-2. **Add next**: Held-out validation against known-good examples
-3. **Add for deployment**: Progressive delivery with automated rollback
-4. **Always include**: Risk-based human approval for high-blast-radius changes
+1. **Start with**: Reviewed acceptance criteria and ordinary behavior/boundary gates; respect tool permissions
+2. **Where useful**: Separate evaluation cases, accepted/rejected controls, and independent expected values
+3. **For operated systems**: Progressive delivery with qualified detection and rollback
+4. **Review limits**: Shared oracle errors, repeated holdout exposure, and existing approval requirements

@@ -1,0 +1,1 @@
+<testsuite tests="1" failures="0" skipped="1"><testcase classname="Retry" name="test_idempotency"><skipped message="staging unavailable"/></testcase></testsuite>

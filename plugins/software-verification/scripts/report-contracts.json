@@ -1,0 +1,94 @@
+{
+  "verification-report.md": {
+    "sections": [
+      "Evidence Scope",
+      "Evidence Ledger",
+      "Verification Maturity",
+      "Component Breakdown",
+      "Bug-Surface Classification",
+      "Missing Oracles",
+      "Exactness Analysis",
+      "Human Review Requirements",
+      "Autonomy Candidates",
+      "Feedback Loop Completeness",
+      "Workflow Gate Assessment",
+      "Shift-Left Assessment",
+      "Documentation Verification",
+      "AgentOps Telemetry",
+      "Requirement Traceability",
+      "Verification Debt"
+    ],
+    "tables": {
+      "Evidence Ledger": [
+        "Claim / check",
+        "Artifact / revision",
+        "Environment",
+        "Observation",
+        "Execution",
+        "Conclusion",
+        "Limits"
+      ]
+    }
+  },
+  "verification-strategy.md": {
+    "sections": [
+      "Evidence Scope",
+      "Evidence Ledger",
+      "Component Strategies",
+      "Oracle Strategy",
+      "Evidence Requirements",
+      "Evidence Pipeline",
+      "Verification Cost Tiers",
+      "Shift-Left Recommendations",
+      "Feedback Loop Improvements",
+      "Workflow Gate Optimization",
+      "Architecture Fitness Functions",
+      "Eval Framework",
+      "Generator-Evaluator Recommendations",
+      "Documentation Verification",
+      "Requirement Traceability",
+      "Implementation Roadmap"
+    ],
+    "tables": {
+      "Evidence Ledger": [
+        "Claim / check",
+        "Artifact / revision",
+        "Environment",
+        "Observation",
+        "Execution",
+        "Conclusion",
+        "Limits"
+      ],
+      "Evidence Requirements": [
+        "Claim / requirement",
+        "Oracle / review owner",
+        "Required evidence / environment",
+        "Completion / acceptance criteria",
+        "Scope / limits"
+      ]
+    }
+  },
+  "ai-smells-gates-report.md": {
+    "sections": [
+      "Evidence Scope",
+      "Evidence Ledger",
+      "Gate Coverage Summary",
+      "Coverage Matrix",
+      "Git History Hygiene",
+      "Gap Analysis",
+      "Recommendations",
+      "Human Review Heuristics"
+    ],
+    "tables": {
+      "Evidence Ledger": [
+        "Claim / check",
+        "Artifact / revision",
+        "Environment",
+        "Observation",
+        "Execution",
+        "Conclusion",
+        "Limits"
+      ]
+    }
+  }
+}

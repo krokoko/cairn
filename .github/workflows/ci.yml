@@ -10,6 +10,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          # Preserve commit identities for history scans and Gitleaks fingerprints.
+          fetch-depth: 0
 
       - uses: jdx/mise-action@v4
         with:

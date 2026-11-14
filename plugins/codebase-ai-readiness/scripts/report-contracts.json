@@ -1,0 +1,49 @@
+{
+  "readiness-report.md": {
+    "sections": [
+      "Evidence Scope",
+      "Evidence Ledger",
+      "Overall Score",
+      "Category Breakdown",
+      "Recommended Autonomy Level",
+      "Surface Autonomy",
+      "Autonomy Prerequisites",
+      "Workflow artifacts",
+      "Collaboration effectiveness",
+      "Blockers",
+      "Roadmap"
+    ],
+    "tables": {
+      "Evidence Ledger": [
+        "Claim / check",
+        "Artifact / revision",
+        "Environment",
+        "Observation",
+        "Execution",
+        "Conclusion",
+        "Limits"
+      ],
+      "Surface Autonomy": [
+        "Surface",
+        "Provisional level",
+        "Evidence ceiling",
+        "Recommended level",
+        "Operating scope",
+        "Blockers"
+      ],
+      "Autonomy Prerequisites": [
+        "Surface",
+        "Prerequisite",
+        "Status",
+        "Evidence / gap"
+      ]
+    }
+  },
+  "readiness-roadmap.md": {
+    "sections": [
+      "Evidence Scope",
+      "Critical path (must-do for next level)",
+      "High-impact improvements"
+    ]
+  }
+}

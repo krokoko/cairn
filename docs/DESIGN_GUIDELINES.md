@@ -118,6 +118,12 @@ Hooks are shell scripts that run after the agent performs certain actions (e.g.,
 - **Graceful degradation**: If a dependency is missing, warn but do not fail with a confusing error.
 - **JSON feedback**: Hook scripts output JSON with a `systemMessage` field that gets fed back to the agent.
 
+Report-producing skills also expose a portable validator CLI for clients without hooks.
+The report contract names required sections, metadata, tables, and allowed declared states.
+Keep structural/state validation distinct from semantic sufficiency and operating authorization.
+Test the contract with independently authored examples and negative controls; a template
+matching a validator does not establish that either asks the right questions.
+
 ### hooks.json format
 
 ```json

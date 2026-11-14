@@ -11,7 +11,7 @@ Organization checks that enforce codebase consistency.
 | File-to-test mapping | Custom script or CI check | Every file in `src/` has corresponding test |
 | Naming conventions | Custom linter rule | All repository service files end in `.repository.ts` |
 | Layer compliance | ArchUnit, custom lint | Domain models have no framework imports |
-| Single responsibility | File length + export count checks | No file exports more than 5 public symbols |
+| Structural size heuristic | File length + export count checks | Investigate large files; counts do not establish single responsibility |
 | Documentation coverage | Custom check | Every exported function has JSDoc/docstring |
 
 ### 5. Security invariants
@@ -36,11 +36,11 @@ Automated checks for security-critical properties.
 
 | Level | Description | Agent impact |
 |-------|-------------|-------------|
-| 0 | No fitness functions | Agents freely violate architecture |
-| 1 | Manual enforcement (code review) | Agents unaware of constraints |
+| 0 | No fitness functions | No automated evidence about these constraints |
+| 1 | Manual enforcement (code review) | Constraints depend on reviewer context |
 | 2 | CI-only checks | Agents discover violations after push |
 | 3 | Local + CI checks, actionable messages | Agents self-correct within iteration loop |
-| 4 | Pre-commit + agent hooks, comprehensive | Violations caught per-file; near-zero drift |
+| 4 | Qualified local/CI hooks with reviewed scope and exceptions | Earlier detection within the configured analysis scope |
 
 ## Calibration and execution cost
 
@@ -52,6 +52,10 @@ line should be.
 around a hard blocker rather than rethink the change); too loose lets drift through unnoticed. Start
 permissive and tighten on observed violations rather than front-loading speculative rules. Each rule
 needs ongoing maintenance as the architecture evolves; a stale rule is its own form of drift.
+
+Use known-good and deliberately violating controls to qualify the analyzer. Review important
+unresolved edges and changing exceptions. Do not improve a file-length proxy by splitting cohesive
+code into additional coupled modules; assess the resulting boundaries and representative change.
 
 **Execution cost** — keep per-commit fitness functions fast (seconds). Functions that take minutes
 (full Lighthouse runs, large benchmark harnesses, deep dependency scans) belong in nightly or
@@ -69,4 +73,4 @@ placement to cost: fast structural checks at pre-commit/per-commit; slow envelop
 | ML-backed | Performance envelope, API surface, model version pinning |
 | Data pipeline | Schema compatibility, data-quality thresholds, freshness/volume bounds |
 | Infrastructure/IaC | Policy-as-code rules, no-secrets, drift detection, blast-radius limits |
-| Agent-written | Structural rules, naming conventions, test-to-source ratio |
+| Agent-written | Relevant boundary rules, behavioral checks, and representative maintenance tasks |

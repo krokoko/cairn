@@ -1,0 +1,13 @@
+{
+  "source_revision": "smell-gate-scope-r2",
+  "environment": "CPython 3.12",
+  "tests_executed": 2,
+  "failed": 0,
+  "branch_coverage": 1.0,
+  "mutation_score": 0.98,
+  "semantic_review": {
+    "requirement_revision": 1,
+    "expected_discount_percent": 10,
+    "catalog_failure": "empty list"
+  }
+}
