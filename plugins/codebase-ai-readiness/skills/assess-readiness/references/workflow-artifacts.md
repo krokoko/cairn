@@ -19,17 +19,15 @@ Pattern-agnostic locations to search (any subset counts):
 
 Also check progressive-context signals: cross-links from README or `AGENTS.md` to these dirs.
 
-## Scoring contribution
+## Verdict contribution
 
-Workflow artifacts primarily affect **compound engineering readiness** and
-**progressive context disclosure**. Use this rubric when scoring those categories:
+Workflow artifacts feed two table rows: **Workflow artifacts (feature context)** under compound
+engineering readiness and **Plans as versioned artifacts** under progressive context disclosure.
 
-| Maturity | Signals |
-|----------|---------|
-| Strong (boost compound toward 76+) | 2+ artifact types present; recent dated files; cross-links from agent entry docs |
-| Moderate (51-75) | One plan or spec directory with a few files; sporadic updates |
-| Weak (26-50) | Only generic README/ADR template; no feature-scoped artifacts |
-| Absent (0-25) | No versioned plans/specs; context only in issues/chat |
+| Row | PASS when | FAIL when |
+|-----|-----------|-----------|
+| Workflow artifacts (feature context) | Two or more artifact types with dated, feature-scoped files, cross-linked from agent entry docs | Templates only, or context lives in issues and chat |
+| Plans as versioned artifacts | An active or recently completed plan lives in-repo | No versioned plans |
 
 ## Discovery commands
 

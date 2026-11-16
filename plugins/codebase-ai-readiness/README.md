@@ -6,7 +6,8 @@ Assess how AI-friendly a codebase is and produce an autonomy maturity map.
 
 This plugin reviews an existing codebase and evaluates it across 15 categories that determine how safely and effectively AI agents can operate. It produces:
 
-- **Overall score** (0-100)
+- **Overall score** (0-100), computed from binary signal verdicts (PASS / FAIL / N/A) with evidence per signal
+- **Level gates** showing per-level pass percentages (a level unlocks at 80%)
 - **Category breakdown** with per-category scores
 - **Recommended autonomy level** (L0-L5)
 - **Collaboration effectiveness** with optional **alignment note** when agent practices and codebase score diverge
@@ -17,7 +18,7 @@ This plugin reviews an existing codebase and evaluates it across 15 categories t
 
 ### `/assess-readiness`
 
-Performs a full assessment of the codebase. Examines structure, documentation, tests, CI (including test impact analysis), typing, setup, architecture decisions, machine-readable intent (schemas, contracts, executable acceptance criteria, requirement traceability), progressive context disclosure, workflow artifacts, collaboration effectiveness metrics, hidden state, repository-scale reasoning, failure mode legibility, and feedforward surfaces (including non-bypassable hooks). Outputs `readiness-report.md` with an alignment note when practices and score diverge.
+Performs a full assessment of the codebase. Grounds on a prior report when one exists so verdicts stay stable across runs. Examines structure, documentation, tests, CI (including test impact analysis), typing, setup, architecture decisions, machine-readable intent (schemas, contracts, executable acceptance criteria, requirement traceability), progressive context disclosure, workflow artifacts, collaboration effectiveness metrics, hidden state, repository-scale reasoning, failure mode legibility (including operational legibility for deployed services), feedforward surfaces (including non-bypassable hooks and code-health scanners), and repository hygiene (pinned dependencies, dependency update automation, secret scanning, branch protection via `gh`). Outputs `readiness-report.md` with a signal evidence table and an alignment note when practices and score diverge.
 
 ### `/generate-roadmap`
 
@@ -30,15 +31,15 @@ Takes an existing readiness report and generates a detailed improvement plan to 
 | Structure and modularity | Directory organization, module boundaries, naming, architectural isolation |
 | Documentation | README, API docs, ADRs, changelogs |
 | Testable boundaries | Test coverage, isolation, fixtures |
-| CI reliability | Pipeline existence, check count, flakiness |
+| CI reliability | Pipeline existence, check count, flakiness, measured feedback time, required checks, scanning |
 | Typing strength | Annotations, strict mode, escape hatches |
-| Deterministic environment and deployment | Containers, reproducible envs, seed data, Infrastructure as Code |
+| Deterministic environment and deployment | Containers, reproducible envs, seed data, Infrastructure as Code, pinned and auto-updated dependencies, release automation |
 | Architecture decisions | ADRs, design docs, ownership |
 | Machine-readable intent | Schemas, contracts, property tests, specs |
 | Progressive context disclosure | Agent context files, layered docs, cross-linking |
 | Hidden state and magic | Env var docs, config schemas, explicit defaults |
 | Repository-scale reasoning | Naming consistency, predictable patterns |
-| Failure mode legibility | Error handling, structured errors, fail-fast |
+| Failure mode legibility | Error handling, structured errors, fail-fast, operational legibility for services |
 | Feedforward surfaces | Instruction files, strict types, boundary linters, non-bypassable pre-commit hooks |
 | Compound engineering readiness | Iterative instruction growth, custom skills, workflow artifacts, regression-from-bugs |
 | Context engineering friendliness | File size distribution, layered docs, retrieval-friendly naming |
